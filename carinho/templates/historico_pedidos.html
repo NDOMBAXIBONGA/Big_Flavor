@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+{% load static %}
+{% url 'login' as login_url %}
+{% url 'logout' as logout_url %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Pedidos - Big Flavor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            --gradient-dark: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --gradient-hero: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+            --shadow-strong: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark-text) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .badge-cart {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 15px 50px;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            border-radius: 25px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-strong);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--gradient-primary);
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23667eea' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Order Card */
+        .order-card {
+            background: white;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .order-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+            z-index: 0;
+        }
+
+        .order-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .order-card-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 25px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .order-id {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .order-date {
+            opacity: 0.9;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge-pendente { background: var(--gradient-warning); color: white; }
+        .badge-confirmado { background: var(--gradient-primary); color: white; }
+        .badge-preparacao { background: #3498db; color: white; }
+        .badge-despachado { background: #9b59b6; color: white; }
+        .badge-entregue { background: var(--gradient-success); color: white; }
+        .badge-cancelado { background: var(--gradient-secondary); color: white; }
+
+        .order-card-body {
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Items Section */
+        .items-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .item-row:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .item-category {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .item-quantity {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 1.1rem;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .order-summary:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .order-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+            border-top: 2px solid #dee2e6;
+            padding-top: 15px;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+
+        /* Buttons */
+        .btn-details {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-details::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-details:hover::before {
+            left: 0;
+        }
+
+        .btn-details:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            color: white;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 15px 30px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-primary-custom:hover::before {
+            left: 0;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 100px 40px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: var(--shadow-strong);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .empty-state::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            color: #6c757d;
+            margin-bottom: 30px;
+            opacity: 0.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state h3 {
+            color: var(--dark-text);
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .floating-1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 5%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .floating-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .page-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .page-header {
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .page-header {
+                padding: 30px;
+                margin-bottom: 30px;
+            }
+            
+            .order-card-header {
+                padding: 20px;
+            }
+            
+            .order-card-body {
+                padding: 25px;
+            }
+            
+            .item-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .item-price {
+                align-self: flex-end;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 25px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .order-card-body {
+                padding: 20px;
+            }
+            
+            .btn-details, .btn-primary-custom {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Nav Bar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
+                    </li>
+                    {% endif %}
+
+                    <!-- Elementos apenas para usuários NÃO logados -->
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'Index' %}" class="nav-link active">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'registro' %}" class="nav-link">Criar Conta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
+                    </li>
+
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
+                            
+                            <!-- Elementos apenas para usuários logados -->
+                            {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
+                            <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item position-relative">
+                        <a href="{% url 'ver_carrinho' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Carrinho
+                            {% if user.is_authenticated %}
+                                {% with user.carrinho_set.first as carrinho %}
+                                    {% if carrinho and carrinho.total_itens > 0 %}
+                                        <span class="badge-cart">
+                                            {{ carrinho.total_itens }}
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Nav Bar End -->
+
+    <!-- Floating Elements -->
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header" data-aos="fade-up">
+            <h1 class="page-title">
+                <i class="fas fa-history me-3"></i>
+                Meus Pedidos
+            </h1>
+            <p class="page-subtitle">Acompanhe o histórico completo dos seus pedidos</p>
+        </div>
+
+        {% if pedidos %}
+            <div class="orders-list">
+                {% for pedido in pedidos %}
+                <div class="order-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+                    <div class="order-card-header">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap">
+                            <div>
+                                <div class="order-id">Pedido #{{ pedido.id }}</div>
+                                <div class="order-date">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                                </div>
+                            </div>
+                            <span class="status-badge {{ pedido.get_badge_estado }}">
+                                {{ pedido.get_estado_display }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="order-card-body">
+                        <div class="row">
+                            <!-- Itens do Pedido -->
+                            <div class="col-md-7">
+                                <div class="items-section">
+                                    <h6 class="section-title">
+                                        <i class="fas fa-boxes me-2"></i>
+                                        Itens do Pedido
+                                    </h6>
+                                    <div class="item-list">
+                                        {% for item in pedido.carrinho.itens.all %}
+                                        <div class="item-row">
+                                            <div class="item-info">
+                                                <div class="item-name">{{ item.produto.nome }}</div>
+                                                <div>
+                                                    <span class="item-quantity">{{ item.quantidade }}x</span>
+                                                    <span class="item-category">{{ item.produto.get_categoria_display }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="item-price">KZ {{ item.subtotal|floatformat:2 }}</div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Resumo e Ações -->
+                            <div class="col-md-5">
+                                <div class="order-summary">
+                                    <h6 class="section-title mb-4">
+                                        <i class="fas fa-receipt me-2"></i>
+                                        Resumo do Pedido
+                                    </h6>
+                                    
+                                    <div class="summary-row">
+                                        <span>Subtotal:</span>
+                                        <strong>KZ {{ pedido.carrinho.subtotal|floatformat:2 }}</strong>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span>Taxa de Entrega:</span>
+                                        <strong>KZ {{ pedido.carrinho.taxa_entrega|floatformat:2 }}</strong>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span>Total:</span>
+                                        <strong class="text-success">KZ {{ pedido.carrinho.total|floatformat:2 }}</strong>
+                                    </div>
+                                    
+                                    <div class="text-center mt-4">
+                                        <a href="{% url 'detalhes_pedido' pedido.id %}" class="btn-details">
+                                            <i class="fas fa-eye me-1"></i>
+                                            Ver Detalhes Completos
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Estado Vazio -->
+            <div class="empty-state" data-aos="zoom-in">
+                <i class="fas fa-box-open"></i>
+                <h3>Nenhum pedido encontrado</h3>
+                <p class="text-muted mb-4">Você ainda não fez nenhum pedido em nossa loja.</p>
+                <a href="{% url 'lista_produtos' %}" class="btn-primary-custom pulse">
+                    <i class="fas fa-shopping-bag me-2"></i>
+                    Fazer Primeiro Pedido
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Inicializar AOS (Animate On Scroll)
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Back to top button
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.scrollY > 300) {
+                backToTop.classList.add('active');
+            } else {
+                backToTop.classList.remove('active');
+            }
+        });
+
+        // Back to top functionality
+        document.querySelector('.back-to-top').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Efeitos de hover nos cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.order-card, .order-summary');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

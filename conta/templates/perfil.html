@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+{% load static %}
+{% url 'login' as login_url %}
+{% url 'logout' as logout_url %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - Big Flavor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            --gradient-dark: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --gradient-hero: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+            --shadow-strong: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark-text) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .badge-cart {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* Profile Hero Section */
+        .profile-hero {
+            height: 60vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-top: 76px;
+        }
+
+        .profile-hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .profile-hero-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-hero);
+            z-index: 1;
+        }
+
+        .profile-hero-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: kenburns 20s infinite alternate;
+        }
+
+        @keyframes kenburns {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .profile-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+
+        .profile-hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            line-height: 1.1;
+            animation: fadeInUp 1s ease;
+        }
+
+        .profile-hero-title span {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            font-weight: 300;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        /* Profile Cards */
+        .profile-card {
+            background: white;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-strong);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .profile-card-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 30px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-card-body {
+            padding: 40px;
+        }
+
+        /* Info Cards */
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            height: 100%;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .info-card-header {
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-item {
+            padding: 18px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .info-value {
+            color: #6c757d;
+        }
+
+        /* Buttons */
+        .btn-action {
+            border: none;
+            border-radius: 15px;
+            padding: 15px 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-action:hover::before {
+            left: 0;
+        }
+
+        .btn-primary-action {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-success-action {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-warning-action {
+            background: var(--gradient-warning);
+            color: white;
+        }
+
+        .btn-info-action {
+            background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-danger-action {
+            background: var(--gradient-secondary);
+            color: white;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        /* Profile Avatar */
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: var(--shadow-strong);
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .avatar-container:hover .avatar-overlay {
+            opacity: 1;
+        }
+
+        .avatar-overlay i {
+            color: white;
+            font-size: 2rem;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-container:hover .avatar-overlay i {
+            transform: scale(1);
+        }
+
+        /* Stats Container */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* User Info Grid */
+        .user-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        /* Empty Field */
+        .empty-field {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Avatar Preview */
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .floating-1 {
+            width: 150px;
+            height: 150px;
+            top: 10%;
+            left: 5%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .floating-2 {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            right: 10%;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gradient-dark);
+            color: white;
+            padding: 80px 0 0;
+        }
+
+        .footer-contact h2,
+        .footer-link h2,
+        .footer-newsletter h2 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .footer-contact p {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .footer-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-link a {
+            display: block;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-newsletter .form {
+            display: flex;
+        }
+
+        .footer-newsletter .form-control {
+            border-radius: 50px 0 0 50px;
+            border: none;
+            padding: 15px 20px;
+        }
+
+        .footer-newsletter .btn-custom {
+            border-radius: 0 50px 50px 0;
+            padding: 15px 25px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .main-content,
+            .sidebar-content {
+                gap: 25px;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .user-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-hero-title {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .profile-hero {
+                height: 50vh;
+            }
+            
+            .profile-card-header {
+                padding: 25px;
+                font-size: 1.3rem;
+            }
+            
+            .profile-card-body {
+                padding: 30px;
+            }
+            
+            .content-grid {
+                gap: 20px;
+            }
+            
+            .main-content,
+            .sidebar-content {
+                gap: 20px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .profile-hero-title {
+                font-size: 2rem;
+            }
+            
+            .profile-hero {
+                height: 40vh;
+            }
+            
+            .profile-card-body {
+                padding: 25px;
+            }
+            
+            .info-card {
+                padding: 25px;
+            }
+            
+            .btn-action {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Nav Bar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
+                    </li>
+                    {% endif %}
+
+                    <!-- Elementos apenas para usuários NÃO logados -->
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'Index' %}" class="nav-link active">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'registro' %}" class="nav-link">Criar Conta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
+                    </li>
+
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
+                            
+                            <!-- Elementos apenas para usuários logados -->
+                            {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
+                            <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item position-relative">
+                        <a href="{% url 'ver_carrinho' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Carrinho
+                            {% if user.is_authenticated %}
+                                {% with user.carrinho_set.first as carrinho %}
+                                    {% if carrinho and carrinho.total_itens > 0 %}
+                                        <span class="badge-cart">
+                                            {{ carrinho.total_itens }}
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Nav Bar End -->
+
+    <!-- Profile Hero Section -->
+    <section class="profile-hero">
+        <div class="floating-element floating-1"></div>
+        <div class="floating-element floating-2"></div>
+        
+        <div class="profile-hero-background">
+            <img src="{% static 'img/profile-hero.jpg' %}" alt="Perfil Big Flavor">
+        </div>
+        
+        <div class="profile-hero-content">
+            <div class="row align-items-center">
+                <div class="col-md-8 text-md-start" data-aos="fade-right">
+                    <h1 class="profile-hero-title">Olá, <span>{{ usuario.nome }}</span></h1>
+                    <p class="profile-hero-subtitle">
+                        <i class="fas fa-calendar me-2"></i>
+                        Membro desde {{ usuario.data_criacao|date:"F Y" }}
+                    </p>
+                </div>
+                <div class="col-md-4 text-center" data-aos="fade-left" data-aos-delay="300">
+                    <div class="avatar-container">
+                        {% if usuario.foto_perfil %}
+                            <img src="{{ usuario.foto_perfil.url }}" alt="Avatar" class="profile-avatar" 
+                                 data-bs-toggle="modal" data-bs-target="#avatarModal">
+                        {% else %}
+                            <img src="{% static 'img/default-avatar.png' %}" alt="Avatar" class="profile-avatar"
+                                 data-bs-toggle="modal" data-bs-target="#avatarModal">
+                        {% endif %}
+                        <div class="avatar-overlay" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <small class="text-white d-block mt-2 opacity-75">Clique para alterar foto</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" data-aos="fade-down">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Conteúdo Principal com Grid -->
+        <div class="content-grid">
+            <!-- Coluna Principal -->
+            <div class="main-content">
+                <!-- Informações Pessoais -->
+                <div class="profile-card" data-aos="fade-up">
+                    <div class="profile-card-header">
+                        <i class="fas fa-user"></i>
+                        Informações Pessoais
+                    </div>
+                    <div class="profile-card-body">
+                        <div class="user-info-grid">
+                            <div class="info-item" data-aos="fade-right" data-aos-delay="100">
+                                <div class="info-label">Nome Completo</div>
+                                <div class="info-value">{{ usuario.nome }}</div>
+                            </div>
+                            
+                            <div class="info-item" data-aos="fade-left" data-aos-delay="200">
+                                <div class="info-label">E-mail</div>
+                                <div class="info-value">{{ usuario.email }}</div>
+                            </div>
+                            
+                            <div class="info-item" data-aos="fade-right" data-aos-delay="300">
+                                <div class="info-label">CPF</div>
+                                <div class="info-value">{{ usuario.cpf }}</div>
+                            </div>
+                            
+                            <div class="info-item" data-aos="fade-left" data-aos-delay="400">
+                                <div class="info-label">Telefone</div>
+                                <div class="info-value">
+                                    {% if usuario.telemovel %}
+                                        {{ usuario.telemovel }}
+                                    {% else %}
+                                        <span class="empty-field">Não informado</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="info-item" data-aos="fade-right" data-aos-delay="500">
+                                <div class="info-label">Data de Nascimento</div>
+                                <div class="info-value">
+                                    {% if usuario.data_nascimento %}
+                                        {{ usuario.data_nascimento|date:"d/m/Y" }}
+                                    {% else %}
+                                        <span class="empty-field">Não informada</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="info-item" data-aos="fade-left" data-aos-delay="600">
+                                <div class="info-label">Data de Registro</div>
+                                <div class="info-value">{{ usuario.data_criacao|date:"d/m/Y" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações de Endereço -->
+                <div class="profile-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="profile-card-header">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Informações de Endereço
+                    </div>
+                    <div class="profile-card-body">
+                        <div class="user-info-grid">
+                            <div class="info-item" data-aos="fade-right" data-aos-delay="300">
+                                <div class="info-label">Bairro</div>
+                                <div class="info-value">
+                                    {% if usuario.bairro %}
+                                        {{ usuario.bairro }}
+                                    {% else %}
+                                        <span class="empty-field">Não informado</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="info-item" data-aos="fade-left" data-aos-delay="400">
+                                <div class="info-label">Cidade</div>
+                                <div class="info-value">
+                                    {% if usuario.cidade %}
+                                        {{ usuario.cidade }}
+                                    {% else %}
+                                        <span class="empty-field">Não informada</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="info-item" data-aos="fade-right" data-aos-delay="500">
+                                <div class="info-label">Província</div>
+                                <div class="info-value">
+                                    {% if usuario.provincia %}
+                                        {{ usuario.provincia }}
+                                    {% else %}
+                                        <span class="empty-field">Não informada</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="info-item" data-aos="fade-left" data-aos-delay="600">
+                                <div class="info-label">Município</div>
+                                <div class="info-value">
+                                    {% if usuario.municipio %}
+                                        {{ usuario.municipio }}
+                                    {% else %}
+                                        <span class="empty-field">Não informado</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if not usuario.bairro and not usuario.cidade and not usuario.provincia and not usuario.municipio %}
+                        <div class="alert alert-info mt-4" data-aos="fade-up">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Complete suas informações de endereço para uma melhor experiência.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Estatísticas do Usuário -->
+                <div class="profile-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="profile-card-header">
+                        <i class="fas fa-chart-bar"></i>
+                        Suas Estatísticas
+                    </div>
+                    <div class="profile-card-body">
+                        <div class="stats-container">
+                            <div class="stat-card" data-aos="zoom-in" data-aos-delay="500">
+                                <div class="stat-value">{{ total_pedidos }}</div>
+                                <div class="stat-label">Pedidos Realizados</div>
+                            </div>
+                            <div class="stat-card" data-aos="zoom-in" data-aos-delay="600">
+                                <div class="stat-value">{{ pedidos_entregues }}</div>
+                                <div class="stat-label">Pedidos Entregues</div>
+                            </div>
+                            <div class="stat-card" data-aos="zoom-in" data-aos-delay="700">
+                                <div class="stat-value">€{{ total_gasto|floatformat:2 }}</div>
+                                <div class="stat-label">Total Gasto</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div class="profile-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="profile-card-header">
+                        <i class="fas fa-cog"></i>
+                        Ações Rápidas
+                    </div>
+                    <div class="profile-card-body">
+                        <div class="d-flex gap-3 flex-wrap justify-content-center">
+                            <a href="{% url 'editar_perfil' %}" class="btn-action btn-primary-action pulse" data-aos="fade-up" data-aos-delay="700">
+                                <i class="fas fa-edit"></i>
+                                Editar Perfil
+                            </a>
+                            <a href="{% url 'historico_pedidos' %}" class="btn-action btn-success-action" data-aos="fade-up" data-aos-delay="800">
+                                <i class="fas fa-history"></i>
+                                Histórico de Pedidos
+                            </a>
+                            <a href="{% url 'lista_produtos' %}" class="btn-action btn-warning-action" data-aos="fade-up" data-aos-delay="900">
+                                <i class="fas fa-shopping-bag"></i>
+                                Fazer Pedido
+                            </a>
+                            <button class="btn-action btn-info-action" onclick="window.print()" data-aos="fade-up" data-aos-delay="1000">
+                                <i class="fas fa-print"></i>
+                                Imprimir Perfil
+                            </button>
+                            <button class="btn-action btn-danger-action" data-bs-toggle="modal" data-bs-target="#deleteAccountModal" data-aos="fade-up" data-aos-delay="1100">
+                                <i class="fas fa-trash"></i>
+                                Excluir Conta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar-content">
+                <!-- Status da Conta -->
+                <div class="info-card" data-aos="fade-left" data-aos-delay="300">
+                    <div class="info-card-header">
+                        <i class="fas fa-user-check"></i>
+                        Status da Conta
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Status</div>
+                        <div class="info-value">
+                            {% if usuario.is_active %}
+                                <span class="badge bg-success">Ativa</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inativa</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Tipo de Conta</div>
+                        <div class="info-value">
+                            {% if usuario.is_superuser %}
+                                <span class="badge bg-danger">Superusuário</span>
+                            {% elif usuario.is_staff %}
+                                <span class="badge bg-warning">Equipe</span>
+                            {% else %}
+                                <span class="badge bg-primary">Cliente</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Último Login</div>
+                        <div class="info-value">
+                            {% if usuario.last_login %}
+                                {{ usuario.last_login|date:"d/m/Y H:i" }}
+                            {% else %}
+                                <span class="empty-field">Primeiro acesso</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Última Atualização</div>
+                        <div class="info-value">{{ usuario.data_atualizacao|date:"d/m/Y H:i" }}</div>
+                    </div>
+                </div>
+
+                <!-- Últimos Pedidos -->
+                <div class="info-card" data-aos="fade-left" data-aos-delay="500">
+                    <div class="info-card-header">
+                        <i class="fas fa-clock"></i>
+                        Últimos Pedidos
+                    </div>
+                    {% if ultimos_pedidos %}
+                        {% for pedido in ultimos_pedidos %}
+                        <div class="info-item" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:5 }}00">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Pedido #{{ pedido.id }}</strong>
+                                    <div class="small text-muted">{{ pedido.data_solicitacao|date:"d/m/Y" }}</div>
+                                </div>
+                                <span class="badge {% if pedido.estado == 'entregue' %}bg-success{% elif pedido.estado == 'cancelado' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ pedido.get_estado_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">Nenhum pedido realizado ainda.</p>
+                    {% endif %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'historico_pedidos' %}" class="btn-action btn-primary-action btn-sm">
+                            Ver Todos os Pedidos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Informações de Contacto -->
+                <div class="info-card" data-aos="fade-left" data-aos-delay="700">
+                    <div class="info-card-header">
+                        <i class="fas fa-headset"></i>
+                        Suporte ao Cliente
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Telefone</div>
+                        <div class="info-value">+351 123 456 789</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">E-mail</div>
+                        <div class="info-value">suporte@bigflavor.pt</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Horário</div>
+                        <div class="info-value">Seg-Sex: 9h-18h</div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'contacto' %}" class="btn-action btn-primary-action btn-sm">
+                            <i class="fas fa-envelope"></i>
+                            Contactar Suporte
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="footer-contact">
+                                <h2>Nosso Endereço</h2>
+                                <p><i class="fa fa-map-marker-alt"></i>123 Street, New York, USA</p>
+                                <p><i class="fa fa-phone-alt"></i>+012 345 67890</p>
+                                <p><i class="fa fa-envelope"></i>info@example.com</p>
+                                <div class="footer-social">
+                                    <a href=""><i class="fab fa-twitter"></i></a>
+                                    <a href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                    <a href=""><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="footer-link">
+                                <h2>Links Rápidos</h2>
+                                <a href="">Termos de Uso</a>
+                                <a href="">Política de Privacidade</a>
+                                <a href="">Cookies</a>
+                                <a href="">Ajuda</a>
+                                <a href="">FAQs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="footer-newsletter">
+                        <h2>Newsletter</h2>
+                        <p>Inscreva-se para receber nossas novidades e promoções exclusivas</p>
+                        <div class="form">
+                            <input class="form-control" placeholder="Seu Email">
+                            <button class="btn btn-custom">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>Copyright &copy; <a href="#">Big Flavor</a>, Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- Modal para Upload de Avatar -->
+    <div class="modal fade" id="avatarModal" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alterar Foto de Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'upload_avatar' %}" enctype="multipart/form-data" id="avatarForm">
+                        {% csrf_token %}
+                        <div class="text-center mb-4">
+                            <div class="avatar-container mb-3">
+                                {% if usuario.foto_perfil %}
+                                    <img id="avatarPreview" src="{{ usuario.foto_perfil.url }}" alt="Preview" class="profile-avatar">
+                                {% else %}
+                                    <img id="avatarPreview" src="{% static 'img/default-avatar.png' %}" alt="Preview" class="profile-avatar">
+                                {% endif %}
+                            </div>
+                            <p class="text-muted">Formatos suportados: JPG, PNG, GIF (Max: 5MB)</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="foto_perfil" class="form-label">Selecionar imagem</label>
+                            <input type="file" class="form-control" id="foto_perfil" name="foto_perfil" accept="image/*">
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            A imagem será redimensionada automaticamente para 300x300 pixels.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="avatarForm" class="btn btn-primary-action">
+                        <i class="fas fa-upload me-2"></i>
+                        Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Excluir Conta -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Excluir Conta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <h6 class="alert-heading">Atenção!</h6>
+                        <p class="mb-0">Esta ação é irreversível. Todos os seus dados serão permanentemente excluídos.</p>
+                    </div>
+                    
+                    <p><strong>O que será excluído:</strong></p>
+                    <ul>
+                        <li>Seus dados pessoais</li>
+                        <li>Histórico de pedidos</li>
+                        <li>Preferências e configurações</li>
+                        <li>Todos os dados associados à sua conta</li>
+                    </ul>
+                    
+                    <div class="mb-3">
+                        <label for="confirmDelete" class="form-label">
+                            Digite <strong>EXCLUIR CONTA</strong> para confirmar:
+                        </label>
+                        <input type="text" class="form-control" id="confirmDelete" placeholder="EXCLUIR CONTA">
+                    </div>
+                    
+                    <p class="text-muted small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Esta ação não pode ser desfeita. Certifique-se de fazer backup de qualquer informação importante.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Manter Conta</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-2"></i>
+                        Excluir Permanentemente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Inicializar AOS (Animate On Scroll)
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                document.querySelector('.navbar').classList.add('scrolled');
+            } else {
+                document.querySelector('.navbar').classList.remove('scrolled');
+            }
+            
+            // Back to top button
+            if (window.scrollY > 300) {
+                document.querySelector('.back-to-top').classList.add('active');
+            } else {
+                document.querySelector('.back-to-top').classList.remove('active');
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Hero background animation
+        const heroBackground = document.querySelector('.profile-hero-background img');
+        if (heroBackground) {
+            setInterval(() => {
+                heroBackground.style.animation = 'none';
+                setTimeout(() => {
+                    heroBackground.style.animation = 'kenburns 20s infinite alternate';
+                }, 10);
+            }, 20000);
+        }
+
+        // Preview da imagem do avatar
+        const avatarInput = document.getElementById('foto_perfil');
+        const avatarPreview = document.getElementById('avatarPreview');
+        
+        if (avatarInput && avatarPreview) {
+            avatarInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Validação para excluir conta
+        const confirmDeleteInput = document.getElementById('confirmDelete');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        
+        if (confirmDeleteInput && confirmDeleteBtn) {
+            confirmDeleteInput.addEventListener('input', function() {
+                if (this.value.toUpperCase() === 'EXCLUIR CONTA') {
+                    confirmDeleteBtn.disabled = false;
+                } else {
+                    confirmDeleteBtn.disabled = true;
+                }
+            });
+
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (confirm('Tem certeza absoluta que deseja excluir sua conta? Esta ação é PERMANENTE!')) {
+                    // Aqui você pode fazer uma requisição para excluir a conta
+                    window.location.href = "{% url 'excluir_conta' %}";
+                }
+            });
+        }
+
+        // Efeitos de hover nos cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.profile-card, .stat-card, .info-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

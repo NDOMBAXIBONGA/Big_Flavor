@@ -1,0 +1,20 @@
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('blog/', include("blog.urls")),
+    path('carinho/', include("carinho.urls")),
+    path('contacto/', include("contacto.urls")),
+    path('login/', include("conta.urls")),
+    path('register/', include("conta.urls")),
+    path("", include("index.urls")),
+    path('menu/', include("menu.urls")),
+    path('sobre/', include("sobre.urls")),
+]
+
+# Servir arquivos de mídia durante o desenvolvimento
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

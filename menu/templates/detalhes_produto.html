@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+{% load static %}
+{% url 'login' as login_url %}
+{% url 'logout' as logout_url %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ produto.nome }} - Big Flavor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            --gradient-dark: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --gradient-hero: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+            --shadow-strong: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark-text) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .badge-cart {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* Product Detail Styles */
+        .product-hero {
+            padding: 120px 0 60px;
+            background: var(--gradient-dark);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('{% static "img/pattern.png" %}') repeat;
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        .product-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb-item a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: white;
+        }
+
+        .breadcrumb-item.active {
+            color: white;
+        }
+
+        .product-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .product-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .product-detail-section {
+            padding: 80px 0;
+        }
+
+        .product-image-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: all 0.5s ease;
+        }
+
+        .product-image-container:hover {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-image-container:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-image-placeholder {
+            width: 100%;
+            height: 500px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 5rem;
+        }
+
+        .product-info {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            height: 100%;
+        }
+
+        .price-tag {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--success-color);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .product-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        .product-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--light-bg);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .meta-item i {
+            color: var(--secondary-color);
+        }
+
+        .stock-info {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stock-badge {
+            font-size: 1rem;
+            padding: 8px 15px;
+            border-radius: 50px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .btn-quantity {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-quantity:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-cart-action {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: none;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn-cart-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-cart-action:hover::before {
+            left: 0;
+        }
+
+        .btn-cart-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary-action {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-secondary-action {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .cart-item-info {
+            background: rgba(39, 174, 96, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .related-products {
+            padding: 80px 0;
+            background: var(--light-bg);
+        }
+
+        .section-header {
+            margin-bottom: 70px;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 5px;
+            background: var(--gradient-primary);
+            border-radius: 5px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+            margin-bottom: 30px;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .product-card-img {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .product-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-card-img img {
+            transform: scale(1.1);
+        }
+
+        .product-card-body {
+            padding: 25px;
+        }
+
+        .product-card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 10px;
+        }
+
+        .product-card-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+
+        .product-card-action {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .product-card-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: var(--gradient-dark);
+            color: white;
+            padding: 80px 0 0;
+        }
+
+        .footer-contact h2,
+        .footer-link h2,
+        .footer-newsletter h2 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .footer-contact p {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .footer-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-link a {
+            display: block;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-newsletter .form {
+            display: flex;
+        }
+
+        .footer-newsletter .form-control {
+            border-radius: 50px 0 0 50px;
+            border: none;
+            padding: 15px 20px;
+        }
+
+        .footer-newsletter .btn-custom {
+            border-radius: 0 50px 50px 0;
+            padding: 15px 25px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .footer-newsletter .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .floating-1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 5%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .floating-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .product-title {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-title {
+                font-size: 2.5rem;
+            }
+            
+            .product-detail-section {
+                padding: 60px 0;
+            }
+            
+            .product-image {
+                height: 400px;
+            }
+            
+            .product-image-placeholder {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-title {
+                font-size: 2rem;
+            }
+            
+            .price-tag {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+        /* Estilos para a seção hero corrigida */
+.hero-badge {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.badge-content {
+    background: var(--gradient-secondary);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+    animation: pulse 2s infinite;
+}
+
+.price-tag-mobile {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--success-color);
+    text-align: center;
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+/* Melhorias nos meta-items */
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.1);
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.meta-item:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+}
+
+.meta-item i {
+    color: var(--warning-color);
+}
+
+/* Responsividade melhorada */
+@media (max-width: 768px) {
+    .product-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .meta-item {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .hero-badge {
+        justify-content: center;
+        margin-top: 20px;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Nav Bar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
+                    </li>
+                    {% endif %}
+
+                    <!-- Elementos apenas para usuários NÃO logados -->
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'Index' %}" class="nav-link active">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'registro' %}" class="nav-link">Criar Conta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
+                    </li>
+
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
+                            
+                            <!-- Elementos apenas para usuários logados -->
+                            {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
+                            <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item position-relative">
+                        <a href="{% url 'ver_carrinho' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Carrinho
+                            {% if user.is_authenticated %}
+                                {% with user.carrinho_set.first as carrinho %}
+                                    {% if carrinho and carrinho.total_itens > 0 %}
+                                        <span class="badge-cart">
+                                            {{ carrinho.total_itens }}
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Nav Bar End -->
+
+    <!-- Product Hero Section -->
+<section class="product-hero">
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+    
+    <div class="container product-hero-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'lista_produtos' %}">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Voltar para Cardápio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">
+                    {% if produto.nome %}
+                        {{ produto.nome|truncatewords:3 }}
+                    {% else %}
+                        Produto
+                    {% endif %}
+                </li>
+            </ol>
+        </nav>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="product-title" data-aos="fade-up">
+                    {% if produto.nome %}
+                        {{ produto.nome }}
+                    {% else %}
+                        Nome do Produto
+                    {% endif %}
+                </h1>
+                
+                <p class="product-subtitle" data-aos="fade-up" data-aos-delay="200">
+                    {% if produto.descricao_curta %}
+                        {{ produto.descricao_curta }}
+                    {% else %}
+                        Descrição breve do produto...
+                    {% endif %}
+                </p>
+                
+                <div class="product-meta" data-aos="fade-up" data-aos-delay="400">
+                    <!-- Categoria -->
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span>
+                            {% if produto.categoria %}
+                                {{ produto.get_categoria_display }}
+                            {% else %}
+                                Sem categoria
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <!-- Avaliações -->
+                    <div class="meta-item">
+                        <i class="fas fa-star"></i>
+                        <span>
+                            {% if produto.avaliacao_media %}
+                                {{ produto.avaliacao_media }} ({{ produto.total_avaliacoes }} avaliações)
+                            {% else %}
+                                4.9 (128 avaliações)
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <!-- Tempo de Preparação -->
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>
+                            {% if produto.tempo_preparacao %}
+                                Preparação: {{ produto.tempo_preparacao }} min
+                            {% else %}
+                                Preparação: 15-20 min
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <!-- Dificuldade (opcional) -->
+                    {% if produto.dificuldade %}
+                    <div class="meta-item">
+                        <i class="fas fa-chef-hat"></i>
+                        <span>Dificuldade: {{ produto.get_dificuldade_display }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Preço na versão mobile -->
+                <div class="d-lg-none mt-4" data-aos="fade-up" data-aos-delay="600">
+                    <div class="price-tag-mobile">
+                        {% if produto.preco %}
+                            {{ produto.get_preco_formatado }}
+                        {% else %}
+                            Preço não disponível
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Coluna direita para elementos visuais (opcional) -->
+            <div class="col-lg-4 d-none d-lg-block" data-aos="fade-left" data-aos-delay="300">
+                <div class="hero-badge">
+                    <div class="badge-content">
+                        <i class="fas fa-fire"></i>
+                        <span>Mais Vendido</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail-section">
+        <div class="container">
+            <div class="row">
+                <!-- Product Image -->
+                <div class="col-lg-6 mb-5" data-aos="fade-right">
+                    <div class="product-image-container">
+                        {% if produto.imagem %}
+                            <img src="{{ produto.imagem.url }}" class="product-image" alt="{{ produto.nome }}">
+                        {% else %}
+                            <div class="product-image-placeholder">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="product-info">
+                        <span class="price-tag">{{ produto.get_preco_formatado }}</span>
+                        
+                        <div class="product-description">
+                            {% if produto.descricao %}
+                                {{ produto.descricao|linebreaks }}
+                            {% else %}
+                                {{ produto.descricao_curta }}
+                            {% endif %}
+                        </div>
+
+                        <!-- Stock Information -->
+                        <div class="stock-info">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <strong>Estoque disponível:</strong>
+                                    <span class="badge bg-secondary ms-2">
+                                        {% if produto.estoque %}
+                                            {{ produto.estoque }} unidades
+                                        {% else %}
+                                            Sem estoque
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    {% if produto.em_estoque %}
+                                        <span class="badge bg-success stock-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                            Em Estoque
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger stock-badge">
+                                            <i class="fas fa-times me-1"></i>
+                                            Indisponível
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cart Actions -->
+                        {% if user.is_authenticated %}
+                            {% if produto.em_estoque %}
+                                <div class="quantity-controls">
+                                    <label for="quantidade" class="form-label fw-bold">Quantidade:</label>
+                                    <button class="btn-quantity" id="decrease-qty" type="button">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" 
+                                           id="quantidade"
+                                           name="quantidade" 
+                                           value="1" 
+                                           min="1" 
+                                           max="{{ produto.estoque|default:1 }}"
+                                           class="form-control quantity-input"
+                                           required>
+                                    <button class="btn-quantity" id="increase-qty" type="button">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+
+                                <form method="post" action="{% url 'adicionar_ao_carrinho' produto.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantidade" id="hidden-quantidade" value="1">
+                                    <button type="submit" class="btn-cart-action btn-primary-action pulse">
+                                        <i class="fas fa-cart-plus me-2"></i>
+                                        Adicionar ao Carrinho
+                                    </button>
+                                </form>
+
+                                <!-- Se o produto já está no carrinho -->
+                                {% if item_carrinho %}
+                                    <div class="cart-item-info">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <i class="fas fa-info-circle text-primary me-1"></i>
+                                                Você tem {{ item_carrinho.quantidade }} unidade(s) no carrinho
+                                            </span>
+                                            <form method="post" action="{% url 'remover_do_carrinho' item_carrinho.pk %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                        onclick="return confirm('Remover {{ produto.nome }} do carrinho?')">
+                                                    <i class="fas fa-trash me-1"></i>
+                                                    Remover
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Este produto está temporariamente indisponível.
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Você precisa estar logado para adicionar produtos ao carrinho.
+                                <div class="mt-3">
+                                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary me-2">
+                                        <i class="fas fa-sign-in-alt me-1"></i>
+                                        Fazer Login
+                                    </a>
+                                    <a href="{% url 'registro' %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-user-plus me-1"></i>
+                                        Criar Conta
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Additional Info -->
+                        <div class="mt-4 pt-4 border-top">
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Adicionado em: 
+                                        {% if produto.data_criacao %}
+                                            {{ produto.data_criacao|date:"d/m/Y" }}
+                                        {% else %}
+                                            Data não disponível
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <small class="text-muted">
+                                        <i class="fas fa-sync me-1"></i>
+                                        Atualizado: 
+                                        {% if produto.data_atualizacao %}
+                                            {{ produto.data_atualizacao|date:"d/m/Y" }}
+                                        {% else %}
+                                            Data não disponível
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    {% if produtos_relacionados %}
+    <section class="related-products">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Produtos Relacionados</h2>
+                <p class="section-subtitle">Descubra outras delícias que podem te interessar</p>
+            </div>
+            
+            <div class="row">
+                {% for produto_rel in produtos_relacionados %}
+                <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:100 }}">
+                    <div class="product-card">
+                        <div class="product-card-img">
+                            {% if produto_rel.imagem %}
+                                <img src="{{ produto_rel.imagem.url }}" alt="{{ produto_rel.nome }}">
+                            {% else %}
+                                <div class="product-image-placeholder" style="height: 200px;">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="product-card-body">
+                            <h3 class="product-card-title">{{ produto_rel.nome|truncatewords:4 }}</h3>
+                            <div class="product-card-price">{{ produto_rel.get_preco_formatado }}</div>
+                            
+                            {% if produto_rel.em_estoque and user.is_authenticated %}
+                                <form method="post" action="{% url 'adicionar_ao_carrinho' produto_rel.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantidade" value="1">
+                                    <button type="submit" class="product-card-action">
+                                        <i class="fas fa-cart-plus me-1"></i>
+                                        Adicionar ao Carrinho
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a href="{% url 'detalhes_produto' produto_rel.pk %}" class="product-card-action">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Ver Detalhes
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="footer-contact">
+                                <h2>Nosso Endereço</h2>
+                                <p><i class="fa fa-map-marker-alt"></i>123 Street, New York, USA</p>
+                                <p><i class="fa fa-phone-alt"></i>+012 345 67890</p>
+                                <p><i class="fa fa-envelope"></i>info@example.com</p>
+                                <div class="footer-social">
+                                    <a href=""><i class="fab fa-twitter"></i></a>
+                                    <a href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                    <a href=""><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="footer-link">
+                                <h2>Links Rápidos</h2>
+                                <a href="">Termos de Uso</a>
+                                <a href="">Política de Privacidade</a>
+                                <a href="">Cookies</a>
+                                <a href="">Ajuda</a>
+                                <a href="">FAQs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="footer-newsletter">
+                        <h2>Newsletter</h2>
+                        <p>Inscreva-se para receber nossas novidades e promoções exclusivas</p>
+                        <div class="form">
+                            <input class="form-control" placeholder="Seu Email">
+                            <button class="btn btn-custom">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>Copyright &copy; <a href="#">Big Flavor</a>, Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script src="{% static "js/dp.js" %}"></script>
+    
+    <script>
+        // Inicializar AOS (Animate On Scroll)
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                document.querySelector('.navbar').classList.add('scrolled');
+            } else {
+                document.querySelector('.navbar').classList.remove('scrolled');
+            }
+            
+            // Back to top button
+            if (window.scrollY > 300) {
+                document.querySelector('.back-to-top').classList.add('active');
+            } else {
+                document.querySelector('.back-to-top').classList.remove('active');
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Quantity controls
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantidadeInput = document.getElementById('quantidade');
+            const hiddenQuantidade = document.getElementById('hidden-quantidade');
+            const decreaseBtn = document.getElementById('decrease-qty');
+            const increaseBtn = document.getElementById('increase-qty');
+            const estoqueMaximo = {{ produto.estoque|default:1 }};
+            
+            function updateQuantity(value) {
+                if (value < 1) value = 1;
+                if (value > estoqueMaximo) value = estoqueMaximo;
+                
+                quantidadeInput.value = value;
+                hiddenQuantidade.value = value;
+            }
+            
+            if (decreaseBtn) {
+                decreaseBtn.addEventListener('click', function() {
+                    updateQuantity(parseInt(quantidadeInput.value) - 1);
+                });
+            }
+            
+            if (increaseBtn) {
+                increaseBtn.addEventListener('click', function() {
+                    updateQuantity(parseInt(quantidadeInput.value) + 1);
+                });
+            }
+            
+            if (quantidadeInput) {
+                quantidadeInput.addEventListener('change', function() {
+                    updateQuantity(parseInt(this.value));
+                });
+            }
+        });
+    </script>
+</body>
+</html>

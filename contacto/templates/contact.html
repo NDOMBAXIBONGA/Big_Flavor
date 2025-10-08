@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+{% load static %}
+{% url 'login' as login_url %}
+{% url 'logout' as logout_url %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactar-Nós - Big Flavor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <link href="{% static "css/contactar.css" %}" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- Nav Bar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
+                    </li>
+                    {% endif %}
+
+                    <!-- Elementos apenas para usuários NÃO logados -->
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'Index' %}" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'registro' %}" class="nav-link">Criar Conta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contacto' %}" class="nav-link active">Contactar Nós</a>
+                    </li>
+
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
+                            
+                            <!-- Elementos apenas para usuários logados -->
+                            {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
+                            <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item position-relative">
+                        <a href="{% url 'ver_carrinho' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Carrinho
+                            {% if user.is_authenticated %}
+                                {% with user.carrinho_set.first as carrinho %}
+                                    {% if carrinho and carrinho.total_itens > 0 %}
+                                        <span class="badge-cart">
+                                            {{ carrinho.total_itens }}
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Nav Bar End -->
+
+    <!-- Contact Hero Section -->
+    <section class="contact-hero">
+        <div class="floating-element floating-1"></div>
+        <div class="floating-element floating-2"></div>
+        
+        <div class="contact-hero-background">
+            <img src="{% static 'img/contact-hero.jpg' %}" alt="Contactar Big Flavor">
+        </div>
+        
+        <div class="contact-hero-content">
+            <h1 class="contact-hero-title" data-aos="fade-up">Entre em <span>Contacto</span> Connosco</h1>
+            <p class="contact-hero-subtitle" data-aos="fade-up" data-aos-delay="200">Estamos aqui para tornar sua experiência ainda mais especial. Fale connosco!</p>
+        </div>
+    </section>
+
+    <!-- Contact Info Section -->
+    <section class="section">
+        <div class="container">
+            <div class="contact-info-section" data-aos="fade-up">
+                <div class="section-header">
+                    <h2 class="section-title">Informações de Contacto</h2>
+                    <p class="section-subtitle">Múltiplas formas de entrar em contacto connosco</p>
+                </div>
+                
+                <div class="contact-info-grid">
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="100">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>Endereço</h4>
+                            <p>123 Street, New York, USA</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="200">
+                        <div class="info-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>Telefone</h4>
+                            <p>+012 345 67890</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>Email</h4>
+                            <p>info@bigflavor.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="400">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>Horário</h4>
+                            <p>Seg-Sex: 08:00-22:00<br>Sáb-Dom: 09:00-23:00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8" data-aos="fade-right">
+                    <div class="contact-form-container">
+                        <h3 class="mb-4">Envie-nos uma Mensagem</h3>
+                        
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <form name="sentMessage" id="contactForm" novalidate="novalidate" method="post">
+                            {% csrf_token %}
+
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.non_field_errors }}
+                                </div>
+                            {% endif %}
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="{{ form.nome.id_for_label }}" class="form-label field-required">
+                                        {{ form.nome.label }}
+                                    </label>
+                                    {{ form.nome }}
+                                    {% if form.nome.errors %}
+                                        <div class="errorlist">
+                                            {{ form.nome.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label field-required">
+                                        {{ form.email.label }}
+                                    </label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="errorlist">
+                                            {{ form.email.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="{{ form.confirmar_email.id_for_label }}" class="form-label field-required">
+                                        {{ form.confirmar_email.label }}
+                                    </label>
+                                    {{ form.confirmar_email }}
+                                    {% if form.confirmar_email.errors %}
+                                        <div class="errorlist">
+                                            {{ form.confirmar_email.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.telemovel.id_for_label }}" class="form-label field-required">
+                                        {{ form.telemovel.label }}
+                                    </label>
+                                    {{ form.telemovel }}
+                                    {% if form.telemovel.errors %}
+                                        <div class="errorlist">
+                                            {{ form.telemovel.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">Formato: (+244) 900 000 000</div>
+                                </div>
+                            </div>
+                            
+                            <label for="{{ form.assunto.id_for_label }}" class="form-label field-required">
+                                {{ form.assunto.label }}
+                            </label>
+                            {{ form.assunto }}
+                            {% if form.assunto.errors %}
+                                <div class="errorlist">
+                                    {{ form.assunto.errors }}
+                                </div>
+                            {% endif %}
+                            
+                            <label for="{{ form.mensagem.id_for_label }}" class="form-label field-required">
+                                {{ form.mensagem.label }}
+                            </label>
+                            {{ form.mensagem }}
+                            <div class="char-count">
+                                <span id="charCount">0</span>/1000 caracteres
+                            </div>
+                            {% if form.mensagem.errors %}
+                                <div class="errorlist">
+                                    {{ form.mensagem.errors }}
+                                </div>
+                            {% endif %}
+                            
+                            <button type="submit" class="btn-custom mt-3">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                Enviar Mensagem
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                    
+                    <!-- CARD SIGA-NOS CORRIGIDO E VISÍVEL -->
+                    <div class="col-lg-4 contact-card social-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="contact-icon">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <h3>Siga-nos</h3>
+                        <p>Conecte-se connosco nas redes sociais e fique por dentro das novidades e promoções exclusivas!</p>
+                        <div class="contact-social">
+                            <a href="https://facebook.com/bigflavor" target="_blank" class="facebook" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://twitter.com/bigflavor" target="_blank" class="twitter" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://instagram.com/bigflavor" target="_blank" class="instagram" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://linkedin.com/company/bigflavor" target="_blank" class="linkedin" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section bg-light">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Perguntas Frequentes</h2>
+                <p class="section-subtitle">Encontre respostas para as questões mais comuns sobre nossos serviços</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="faq-item" data-aos="fade-up">
+                        <div class="faq-question">
+                            <span>Como faço para encomendar?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Pode fazer o seu pedido através do nosso site, selecionando os produtos desejados no cardápio e adicionando ao carrinho. Em seguida, proceda ao checkout e escolha a forma de entrega ou retirada.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+                        <div class="faq-question">
+                            <span>Quais são os horários de funcionamento?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Funcionamos de segunda a sexta das 08:00 às 22:00, e aos fins de semana das 09:00 às 23:00. Os pedidos online podem ser feitos a qualquer hora, mas as entregas são realizadas apenas durante o horário de funcionamento.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+                        <div class="faq-question">
+                            <span>Quais são as áreas de entrega?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Entregamos em toda a área metropolitana. O tempo de entrega varia conforme a localização, mas geralmente é entre 30-45 minutos. Durante o checkout, o sistema indicará se a sua área está coberta pelo nosso serviço de entrega.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="faq-question">
+                            <span>Como posso pagar o meu pedido?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Aceitamos diversas formas de pagamento: cartão de crédito/débito, MB Way, transferência bancária e dinheiro na entrega. Todas as transações online são processadas de forma segura através de sistemas de pagamento encriptados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="footer-contact">
+                                <h2>Nosso Endereço</h2>
+                                <p><i class="fa fa-map-marker-alt"></i>123 Street, New York, USA</p>
+                                <p><i class="fa fa-phone-alt"></i>+012 345 67890</p>
+                                <p><i class="fa fa-envelope"></i>info@bigflavor.com</p>
+                                <div class="footer-social">
+                                    <a href=""><i class="fab fa-twitter"></i></a>
+                                    <a href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                    <a href=""><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="footer-link">
+                                <h2>Links Rápidos</h2>
+                                <a href="{% url 'Index' %}">Home</a>
+                                <a href="{% url 'sobre' %}">Sobre Nós</a>
+                                <a href="{% url 'lista_produtos' %}">Cardápio</a>
+                                <a href="{% url 'contacto' %}">Contactar Nós</a>
+                                <a href="{% url 'lista_publicacoes' %}">Publicações</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="footer-newsletter">
+                        <h2>Newsletter</h2>
+                        <p>Inscreva-se na nossa newsletter para receber ofertas exclusivas e novidades sobre novos produtos.</p>
+                        <div class="form">
+                            <input class="form-control" placeholder="Seu Email">
+                            <button class="btn-custom">Inscrever</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; <a href="#">Big Flavor</a>, Todos os Direitos Reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script src="{% static "js/contacto.js" %}"></script>
+    
+</body>
+</html>

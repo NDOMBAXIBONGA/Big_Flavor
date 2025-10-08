@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+{% load static %}
+{% url 'login' as login_url %}
+{% url 'logout' as logout_url %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Big Flavor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <link href="{% static "css/logado.css" %}" rel="stylesheet">
+    
+</head>
+<body>
+
+    <!-- Nav Bar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link active" href="{% url 'dashboard' %}">Dashboard</a> 
+                    </li>
+                    {% endif %}
+
+                    <!-- Elementos apenas para usuários NÃO logados -->
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'Index' %}" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'registro' %}" class="nav-link">Criar Conta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
+                    </li>
+
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
+                            
+                            <!-- Elementos apenas para usuários logados -->
+                            {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
+                            <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item position-relative">
+                        <a href="{% url 'ver_carrinho' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Carrinho
+                            {% if user.is_authenticated %}
+                                {% with user.carrinho_set.first as carrinho %}
+                                    {% if carrinho and carrinho.total_itens > 0 %}
+                                        <span class="badge-cart">
+                                            {{ carrinho.total_itens }}
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Nav Bar End -->
+
+    <!-- Dashboard Hero Section -->
+    <section class="dashboard-hero">
+        <div class="floating-element floating-1"></div>
+        <div class="floating-element floating-2"></div>
+        
+        <div class="dashboard-background">
+            <img src="{% static 'img/dashboard-bg.jpg' %}" alt="Dashboard Big Flavor">
+        </div>
+        
+        <div class="dashboard-content">
+            <h1 class="welcome-title" data-aos="fade-up">Bem-vindo, <span>{{ request.user.first_name }}</span>!</h1>
+            <p class="welcome-subtitle" data-aos="fade-up" data-aos-delay="200">Sua jornada gastronômica personalizada começa aqui</p>
+            
+            <div class="dashboard-stats" data-aos="fade-up" data-aos-delay="400">
+                <div class="stat-item">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Pedidos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Favoritos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Recompensas</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Ações Rápidas</h2>
+                <p class="section-subtitle">Acesso rápido às funcionalidades mais utilizadas</p>
+            </div>
+            
+            <div class="quick-actions">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <h3>Fazer Pedido</h3>
+                            <p>Explore nosso cardápio e faça seu pedido em poucos cliques</p>
+                            <a href="{% url 'lista_produtos' %}" class="btn-action">Pedir Agora</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3>Histórico</h3>
+                            <p>Revise seus pedidos anteriores e refaça seus favoritos</p>
+                            <a href="{% url 'historico_pedidos' %}" class="btn-action">Ver Histórico</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <h3>Meu Perfil</h3>
+                            <p>Atualize suas informações pessoais e preferências</p>
+                            <a href="{% url 'perfil' %}" class="btn-action">Editar Perfil</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <h3>Recompensas</h3>
+                            <p>Confira suas recompensas e benefícios exclusivos</p>
+                            <a href="#" class="btn-action">Ver Recompensas</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Orders Section -->
+    <section class="dashboard-section bg-light">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Pedidos Recentes</h2>
+                <p class="section-subtitle">Acompanhe seus últimos pedidos e seus status</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">Pedido #BF20231201</div>
+                            <div class="order-status">Entregue</div>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-items">
+                                <div class="order-item">
+                                    <span>Big Flavor Supreme</span>
+                                    <span>€12.99</span>
+                                </div>
+                                <div class="order-item">
+                                    <span>Batatas Fritas</span>
+                                    <span>€4.50</span>
+                                </div>
+                                <div class="order-item">
+                                    <span>Refrigerante</span>
+                                    <span>€2.50</span>
+                                </div>
+                            </div>
+                            <div class="order-total">
+                                <span>Total</span>
+                                <span>€19.99</span>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <a href="#" class="btn-order btn-primary-order">Detalhes</a>
+                            <a href="#" class="btn-order btn-outline-order">Refazer Pedido</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">Pedido #BF20231128</div>
+                            <div class="order-status" style="background: var(--warning-color); color: white;">Preparando</div>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-items">
+                                <div class="order-item">
+                                    <span>Chicken Crispy</span>
+                                    <span>€11.99</span>
+                                </div>
+                                <div class="order-item">
+                                    <span>Onion Rings</span>
+                                    <span>€5.50</span>
+                                </div>
+                            </div>
+                            <div class="order-total">
+                                <span>Total</span>
+                                <span>€17.49</span>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <a href="#" class="btn-order btn-primary-order">Acompanhar</a>
+                            <a href="#" class="btn-order btn-outline-order">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="{% url 'historico_pedidos' %}" class="btn-action">Ver Todos os Pedidos</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations Section -->
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Recomendados para Você</h2>
+                <p class="section-subtitle">Baseado no seu histórico de pedidos e preferências</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="recommendation-card">
+                        <div class="recommendation-img">
+                            <img src="{% static 'img/menu-burger.jpg' %}" alt="Recomendação">
+                            <div class="recommendation-badge">Popular</div>
+                        </div>
+                        <div class="recommendation-content">
+                            <h3 class="recommendation-title">BBQ Bacon Club</h3>
+                            <div class="recommendation-price">€13.99</div>
+                            <p class="recommendation-description">Carne Angus, queijo, cebola caramelizada e nosso molho barbecue artesanal</p>
+                            <a href="#" class="btn-action pulse">Adicionar ao Carrinho</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="recommendation-card">
+                        <div class="recommendation-img">
+                            <img src="{% static 'img/menu-burger.jpg' %}" alt="Recomendação">
+                            <div class="recommendation-badge" style="background: var(--accent-color);">Novo</div>
+                        </div>
+                        <div class="recommendation-content">
+                            <h3 class="recommendation-title">Vegetariano Gourmet</h3>
+                            <div class="recommendation-price">€10.99</div>
+                            <p class="recommendation-description">Hambúrguer de lentilhas com abacate, rúcula e maionese de ervas</p>
+                            <a href="#" class="btn-action pulse">Adicionar ao Carrinho</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="recommendation-card">
+                        <div class="recommendation-img">
+                            <img src="{% static 'img/menu-burger.jpg' %}" alt="Recomendação">
+                            <div class="recommendation-badge" style="background: var(--gradient-secondary);">Promoção</div>
+                        </div>
+                        <div class="recommendation-content">
+                            <h3 class="recommendation-title">Combo Família</h3>
+                            <div class="recommendation-price">€29.99</div>
+                            <p class="recommendation-description">2 hambúrgueres, 2 porções de batatas, 2 refrigerantes e sobremesa</p>
+                            <a href="#" class="btn-action pulse">Adicionar ao Carrinho</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="footer-contact">
+                                <h2>Nosso Endereço</h2>
+                                <p><i class="fa fa-map-marker-alt"></i>123 Street, New York, USA</p>
+                                <p><i class="fa fa-phone-alt"></i>+012 345 67890</p>
+                                <p><i class="fa fa-envelope"></i>info@example.com</p>
+                                <div class="footer-social">
+                                    <a href=""><i class="fab fa-twitter"></i></a>
+                                    <a href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                    <a href=""><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="footer-link">
+                                <h2>Links Rápidos</h2>
+                                <a href="">Termos de Uso</a>
+                                <a href="">Política de Privacidade</a>
+                                <a href="">Cookies</a>
+                                <a href="">Ajuda</a>
+                                <a href="">FAQs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="footer-newsletter">
+                        <h2>Newsletter</h2>
+                        <p>Inscreva-se para receber nossas novidades e promoções exclusivas</p>
+                        <div class="form">
+                            <input class="form-control" placeholder="Seu Email">
+                            <button class="btn btn-custom">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>Copyright &copy; <a href="#">Big Flavor</a>, Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script src="{% static "js/logado.js" %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+{% load static %}
+{% url 'login' as login_url %}
+{% url 'logout' as logout_url %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ publicacao.titulo }} - Big Flavor Blog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            --gradient-dark: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --gradient-hero: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+            --shadow-strong: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark-text) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section - Cinematográfico */
+        .hero-section {
+            height: 70vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .hero-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-hero);
+            z-index: 1;
+        }
+
+        .hero-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: kenburns 20s infinite alternate;
+        }
+
+        @keyframes kenburns {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            line-height: 1.1;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-nav {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .breadcrumb-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .breadcrumb-item a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Publicação Header */
+        .publicacao-header {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-strong);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .publicacao-header:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .publicacao-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .publicacao-titulo {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 25px;
+            line-height: 1.2;
+            position: relative;
+        }
+
+        .publicacao-titulo::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .publicacao-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .meta-item:hover {
+            transform: translateY(-2px);
+            color: var(--secondary-color);
+        }
+
+        .meta-item i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .categoria-badge {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .categoria-badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(240, 147, 251, 0.6);
+        }
+
+        /* Publicação Imagem */
+        .publicacao-imagem {
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-strong);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .publicacao-imagem:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .publicacao-imagem::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .publicacao-imagem:hover::before {
+            opacity: 1;
+        }
+
+        .publicacao-imagem img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .publicacao-imagem:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Conteúdo */
+        .publicacao-conteudo {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #444;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .publicacao-conteudo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-primary);
+        }
+
+        .publicacao-conteudo img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .publicacao-conteudo img:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .publicacao-conteudo blockquote {
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 25px;
+            margin: 30px 0;
+            font-style: italic;
+            color: var(--dark-text);
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .publicacao-conteudo blockquote::before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--secondary-color);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            opacity: 0.3;
+        }
+
+        /* Interações */
+        .interacoes-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .interacoes-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .interacoes-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .btn-reacao {
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-reacao::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-reacao:hover::before {
+            left: 0;
+        }
+
+        .btn-like {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+
+        .btn-like:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-adorar {
+            background: linear-gradient(135deg, #ffd93d, #ffcd3c);
+            color: white;
+        }
+
+        .btn-adorar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 217, 61, 0.4);
+        }
+
+        .btn-outline-like {
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            background: transparent;
+        }
+
+        .btn-outline-adorar {
+            border: 2px solid #ffd93d;
+            color: #ffd93d;
+            background: transparent;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 2.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .star-rating label:hover {
+            transform: scale(1.2);
+            color: #ffc107;
+        }
+
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+
+        /* Comentários */
+        .comentarios-card {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .comentarios-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .comentarios-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 30px;
+            font-weight: 700;
+            font-size: 1.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comentarios-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><polygon points="1000,0 1000,100 0,100"></polygon></svg>');
+            background-size: cover;
+        }
+
+        .comentario-form {
+            padding: 40px;
+            border-bottom: 1px solid #eee;
+            background: var(--light-bg);
+        }
+
+        .comentario-item {
+            padding: 30px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .comentario-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .comentario-item:last-child {
+            border-bottom: none;
+        }
+
+        .comentario-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .comentario-item:hover::before {
+            opacity: 1;
+        }
+
+        .comentario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .comentario-autor {
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .comentario-data {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .btn-like-comentario {
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-like-comentario::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-like-comentario:hover::before {
+            left: 0;
+        }
+
+        /* Sidebar */
+        .sidebar-card {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .sidebar-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .sidebar-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 25px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><polygon points="1000,0 1000,100 0,100"></polygon></svg>');
+            background-size: cover;
+        }
+
+        .post-item {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .post-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(10px);
+        }
+
+        .post-item:last-child {
+            border-bottom: none;
+        }
+
+        .post-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-item:hover::before {
+            opacity: 1;
+        }
+
+        .post-item-titulo {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 8px;
+            line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+
+        .post-item:hover .post-item-titulo {
+            color: var(--secondary-color);
+        }
+
+        .post-item-meta {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .btn-voltar-topo {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-voltar-topo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-voltar-topo:hover::before {
+            left: 0;
+        }
+
+        .btn-voltar-topo:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gradient-dark);
+            color: white;
+            padding: 80px 0 0;
+            margin-top: 80px;
+        }
+
+        .footer-contact h2,
+        .footer-link h2,
+        .footer-newsletter h2 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .footer-contact p {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .footer-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-link a {
+            display: block;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-newsletter .form {
+            display: flex;
+        }
+
+        .footer-newsletter .form-control {
+            border-radius: 50px 0 0 50px;
+            border: none;
+            padding: 15px 20px;
+        }
+
+        .footer-newsletter .btn-custom {
+            border-radius: 0 50px 50px 0;
+            padding: 15px 25px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .floating-1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 5%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .floating-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .publicacao-titulo {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .publicacao-titulo {
+                font-size: 2rem;
+            }
+            
+            .publicacao-header,
+            .publicacao-conteudo {
+                padding: 30px;
+            }
+            
+            .publicacao-meta {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .publicacao-titulo {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Nav Bar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
+                    </li>
+                    {% endif %}
+
+                    <!-- Elementos apenas para usuários NÃO logados -->
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'Index' %}" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'registro' %}" class="nav-link">Criar Conta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
+                    </li>
+
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item active">Publicações</a></li>
+                            
+                            <!-- Elementos apenas para usuários logados -->
+                            {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
+                            <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item position-relative">
+                        <a href="{% url 'ver_carrinho' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart me-1"></i>
+                            Carrinho
+                            {% if user.is_authenticated %}
+                                {% with user.carrinho_set.first as carrinho %}
+                                    {% if carrinho and carrinho.total_itens > 0 %}
+                                        <span class="badge-cart">
+                                            {{ carrinho.total_itens }}
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Nav Bar End -->
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="floating-element floating-1"></div>
+        <div class="floating-element floating-2"></div>
+        
+        <div class="hero-background">
+            {% if publicacao.imagem_destaque %}
+            <img src="{{ publicacao.imagem_destaque.url }}" alt="{{ publicacao.titulo }}">
+            {% else %}
+            <img src="{% static 'img/blog-hero.jpg' %}" alt="Blog Big Flavor">
+            {% endif %}
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title" data-aos="fade-up">{{ publicacao.titulo }}</h1>
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">Uma história de sabores e experiências</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <!-- Conteúdo Principal -->
+            <div class="col-lg-8">
+                <!-- Breadcrumb -->
+                <nav class="breadcrumb-nav" data-aos="fade-up">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'lista_publicacoes' %}" class="text-decoration-none">
+                                <i class="fas fa-home me-1"></i>Blog
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'publicacoes_por_categoria' publicacao.categoria.id %}" class="text-decoration-none">
+                                {{ publicacao.categoria.nome }}
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active">{{ publicacao.titulo|truncatewords:4 }}</li>
+                    </ol>
+                </nav>
+
+                <!-- Cabeçalho da Publicação -->
+                <div class="publicacao-header" data-aos="fade-up">
+                    <h1 class="publicacao-titulo">{{ publicacao.titulo }}</h1>
+                    
+                    <div class="publicacao-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-user"></i>
+                            {{ publicacao.autor.first_name }} {{ publicacao.autor.last_name }}
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            {{ publicacao.data_publicacao|date:"d/m/Y H:i" }}
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-eye"></i>
+                            {{ publicacao.visualizacoes }} visualizações
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            {{ publicacao.tempo_leitura }} min de leitura
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="categoria-badge">
+                            {{ publicacao.categoria.nome }}
+                        </span>
+                        <div class="text-muted">
+                            <i class="fas fa-comment me-1"></i>{{ publicacao.total_comentarios }} comentários
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Imagem de Destaque -->
+                {% if publicacao.imagem_destaque %}
+                <div class="publicacao-imagem" data-aos="zoom-in">
+                    <img src="{{ publicacao.imagem_destaque.url }}" alt="{{ publicacao.titulo }}">
+                </div>
+                {% endif %}
+
+                <!-- Conteúdo -->
+                <div class="publicacao-conteudo" data-aos="fade-up">
+                    {{ publicacao.conteudo|linebreaks }}
+                </div>
+
+                <!-- Interações -->
+                <div class="interacoes-card" data-aos="fade-up">
+                    <h4 class="mb-4"><i class="fas fa-heart me-2"></i>Gostou desta publicação?</h4>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex flex-wrap">
+                                <form method="post" action="{% url 'like_publicacao' publicacao.id %}" class="me-2 mb-2">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn {% if user in publicacao.likes.all %}btn-like{% else %}btn-outline-like{% endif %} btn-reacao">
+                                        <i class="fas fa-heart me-2"></i>
+                                        Curtir ({{ publicacao.total_likes }})
+                                    </button>
+                                </form>
+                                
+                                <form method="post" action="{% url 'adorar_publicacao' publicacao.id %}" class="mb-2">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn {% if user in publicacao.adores.all %}btn-adorar{% else %}btn-outline-adorar{% endif %} btn-reacao">
+                                        <i class="fas fa-star me-2"></i>
+                                        Adorar ({{ publicacao.total_adores }})
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'avaliar_publicacao' publicacao.id %}">
+                                {% csrf_token %}
+                                <label class="form-label fw-bold">Avalie esta publicação:</label>
+                                <div class="star-rating">
+                                    {% for i in "54321" %}
+                                    <input type="radio" id="star{{ i }}" name="nota" value="{{ i }}" 
+                                           {% if avaliacao_usuario and avaliacao_usuario.nota == i|add:0 %}checked{% endif %}>
+                                    <label for="star{{ i }}">⭐</label>
+                                    {% endfor %}
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-2">
+                                    <i class="fas fa-star me-2"></i>Avaliar
+                                </button>
+                            </form>
+                            {% else %}
+                            <p class="text-muted">
+                                <a href="{% url 'login' %}?next={{ request.path }}" class="text-decoration-none">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Faça login para avaliar
+                                </a>
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comentários -->
+                <div class="comentarios-card" data-aos="fade-up">
+                    <div class="comentarios-header">
+                        <i class="fas fa-comments me-2"></i>
+                        Comentários 
+                        <span class="badge bg-light text-dark ms-2">{{ publicacao.total_comentarios }}</span>
+                    </div>
+
+                    <!-- Formulário de Comentário -->
+                    <div class="comentario-form">
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'adicionar_comentario' publicacao.id %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Deixe seu comentário:</label>
+                                <textarea name="texto" class="form-control" rows="4" 
+                                        placeholder="Compartilhe seus pensamentos..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Enviar Comentário
+                            </button>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary ms-2">
+                                <i class="fas fa-sign-in-alt me-2"></i>Fazer Login para Comentar
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Lista de Comentários -->
+                    <div class="comentarios-list">
+                        {% if comentarios %}
+                            {% for comentario in comentarios %}
+                            <div class="comentario-item" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                                <div class="comentario-header">
+                                    <div class="flex-grow-1">
+                                        <div class="comentario-autor">
+                                            {{ comentario.autor.email }}
+                                        </div>
+                                        <div class="comentario-data">
+                                            <i class="fas fa-clock me-1"></i>
+                                            {{ comentario.data_criacao|date:"d/m/Y H:i" }}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Botão de Like para Comentário -->
+                                    <div>
+                                        {% if user.is_authenticated %}
+                                        <form method="post" action="{% url 'like_comentario' comentario.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-like-comentario {% if user in comentario.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                                                <i class="fas fa-heart me-1"></i>
+                                                {{ comentario.likes.count }}
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <span class="btn btn-like-comentario btn-outline-secondary">
+                                            <i class="fas fa-heart me-1"></i>
+                                            {{ comentario.likes.count }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="comentario-texto">
+                                    {{ comentario.texto|linebreaks }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-comments"></i>
+                                <h5>Nenhum comentário ainda</h5>
+                                <p>Seja o primeiro a compartilhar seus pensamentos!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Publicações Relacionadas -->
+                <div class="sidebar-card" data-aos="fade-left" data-aos-delay="100">
+                    <div class="sidebar-header">
+                        <i class="fas fa-link me-2"></i>Relacionadas
+                    </div>
+                    <div class="card-body p-0">
+                        {% for relacionada in postagens_relacionadas %}
+                        <a href="{% url 'detalhes_publicacao' relacionada.id %}" class="post-item text-decoration-none d-block">
+                            <div class="post-item-titulo">{{ relacionada.titulo }}</div>
+                            <div class="post-item-meta">
+                                <i class="fas fa-calendar me-1"></i>{{ relacionada.data_publicacao|date:"d/m/Y" }}
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="empty-state py-4">
+                            <i class="fas fa-info-circle"></i>
+                            <p class="mb-0">Nenhuma publicação relacionada</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Publicações Recentes -->
+                <div class="sidebar-card" data-aos="fade-left" data-aos-delay="200">
+                    <div class="sidebar-header">
+                        <i class="fas fa-clock me-2"></i>Recentes
+                    </div>
+                    <div class="card-body p-0">
+                        {% for recente in postagens_recentes %}
+                        <a href="{% url 'detalhes_publicacao' recente.id %}" class="post-item text-decoration-none d-block">
+                            <div class="post-item-titulo">{{ recente.titulo }}</div>
+                            <div class="post-item-meta">
+                                <i class="fas fa-eye me-1"></i>{{ recente.visualizacoes }} visualizações
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="empty-state py-4">
+                            <i class="fas fa-info-circle"></i>
+                            <p class="mb-0">Nenhuma publicação recente</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Mais Comentadas -->
+                <div class="sidebar-card" data-aos="fade-left" data-aos-delay="300">
+                    <div class="sidebar-header">
+                        <i class="fas fa-comment me-2"></i>Mais Comentadas
+                    </div>
+                    <div class="card-body p-0">
+                        {% for comentada in postagens_mais_comentadas %}
+                        <a href="{% url 'detalhes_publicacao' comentada.id %}" class="post-item text-decoration-none d-block">
+                            <div class="post-item-titulo">{{ comentada.titulo }}</div>
+                            <div class="post-item-meta">
+                                <i class="fas fa-comment me-1"></i>{{ comentada.total_comentarios }} comentários
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="empty-state py-4">
+                            <i class="fas fa-info-circle"></i>
+                            <p class="mb-0">Nenhuma publicação comentada</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Voltar ao Topo -->
+                <div class="sidebar-card" data-aos="fade-left" data-aos-delay="400">
+                    <div class="card-body text-center">
+                        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn btn-voltar-topo">
+                            <i class="fas fa-arrow-up me-2"></i>Voltar ao Topo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="footer-contact">
+                                <h2>Nosso Endereço</h2>
+                                <p><i class="fa fa-map-marker-alt"></i>123 Street, New York, USA</p>
+                                <p><i class="fa fa-phone-alt"></i>+012 345 67890</p>
+                                <p><i class="fa fa-envelope"></i>info@example.com</p>
+                                <div class="footer-social">
+                                    <a href=""><i class="fab fa-twitter"></i></a>
+                                    <a href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a href=""><i class="fab fa-youtube"></i></a>
+                                    <a href=""><i class="fab fa-instagram"></i></a>
+                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="footer-link">
+                                <h2>Links Rápidos</h2>
+                                <a href="">Termos de Uso</a>
+                                <a href="">Política de Privacidade</a>
+                                <a href="">Cookies</a>
+                                <a href="">Ajuda</a>
+                                <a href="">FAQs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="footer-newsletter">
+                        <h2>Newsletter</h2>
+                        <p>Inscreva-se para receber nossas novidades e promoções exclusivas</p>
+                        <div class="form">
+                            <input class="form-control" placeholder="Seu Email">
+                            <button class="btn btn-custom">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>Copyright &copy; <a href="#">Big Flavor</a>, Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Inicializar AOS (Animate On Scroll)
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Back to top button
+        const backToTopButton = document.querySelector('.back-to-top');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.add('active');
+            } else {
+                backToTopButton.classList.remove('active');
+            }
+        });
+
+        backToTopButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Sistema de estrelas interativo
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star-rating input[type="radio"]');
+            stars.forEach(star => {
+                star.addEventListener('change', function() {
+                    const labels = this.parentElement.querySelectorAll('label');
+                    labels.forEach(label => label.style.color = '#ddd');
+                    
+                    let current = this;
+                    while (current = current.previousElementSibling) {
+                        current.checked = true;
+                    }
+                    
+                    this.checked = true;
+                    const checkedStars = this.parentElement.querySelectorAll('input[type="radio"]:checked');
+                    checkedStars.forEach(star => {
+                        star.nextElementSibling.style.color = '#ffc107';
+                    });
+                });
+            });
+        });
+
+        // Hero background animation
+        const heroBackground = document.querySelector('.hero-background img');
+        if (heroBackground) {
+            setInterval(() => {
+                heroBackground.style.animation = 'none';
+                setTimeout(() => {
+                    heroBackground.style.animation = 'kenburns 20s infinite alternate';
+                }, 10);
+            }, 20000);
+        }
+    </script>
+</body>
+</html>
