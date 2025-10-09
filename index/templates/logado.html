@@ -101,6 +101,41 @@
     </nav>
     <!-- Nav Bar End -->
 
+    <!-- CONTEÚDO PRINCIPAL COM REDIRECIONAMENTO -->
+    <main>
+        {% if user.is_authenticated %}
+            {% if user.is_staff or user.is_superuser %}
+                <!-- REDIRECIONAMENTO PARA STAFF/SUPERUSER -->
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.location.href = "{% url 'admin:index' %}";
+                        }, 500);
+                    };
+                </script>
+                <div style="text-align: center; padding: 50px;">
+                    <h2>🔧 Acesso de Administrador</h2>
+                    <p>Redirecionando para a área administrativa...</p>
+                    <p><a href="{% url 'admin:index' %}">Clique aqui se não for redirecionado</a></p>
+                </div>
+            {% else %}
+                <!-- CONTEÚDO NORMAL PARA USUÁRIOS COMUNS -->
+                <div class="user-content">
+                    <h1>Bem-vindo, {{ user.username }}!</h1>
+                    <p>Você está logado como usuário regular.</p>
+                    <!-- Seu conteúdo normal aqui -->
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- CONTEÚDO PARA VISITANTES NÃO LOGADOS -->
+            <div class="public-content">
+                <h1>Bem-vindo à nossa loja</h1>
+                <p>Faça login para continuar.</p>
+                <a href="{% url 'login' %}">Fazer Login</a>
+            </div>
+        {% endif %}
+    </main>
+
     <!-- Dashboard Hero Section -->
     <section class="dashboard-hero">
         <div class="floating-element floating-1"></div>
@@ -385,3 +420,4 @@
 
 </body>
 </html>
+    
