@@ -1,0 +1,42 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 19/09/2020 16:59
+  	*/
+
+@font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.4923ae431935.eot");
+  src: url("./Flaticon.4923ae431935.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.e28947048e76.woff2") format("woff2"),
+       url("./Flaticon.66b50d4f9cc4.woff") format("woff"),
+       url("./Flaticon.ed5cc4ee0202.ttf") format("truetype"),
+       url("./Flaticon.593432e2777f.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.593432e2777f.svg#Flaticon") format("svg");
+  }
+}
+
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
+  font-family: Flaticon;
+        font-size: 20px;
+font-style: normal;
+margin-left: 20px;
+}
+
+.flaticon-burger:before { content: "\f100"; }
+.flaticon-fast-food:before { content: "\f101"; }
+.flaticon-snack:before { content: "\f102"; }
+.flaticon-cocktail:before { content: "\f103"; }
+.flaticon-vegetable:before { content: "\f104"; }
+.flaticon-meat:before { content: "\f105"; }
+.flaticon-medal:before { content: "\f106"; }
+.flaticon-fruits-and-vegetables:before { content: "\f107"; }
+.flaticon-cooking:before { content: "\f108"; }
+.flaticon-courier:before { content: "\f109"; }
