@@ -1,4 +1,4 @@
- // Inicializar AOS (Animate On Scroll)
+// Inicializar AOS (Animate On Scroll)
         AOS.init({
             duration: 1000,
             once: true,
@@ -34,33 +34,35 @@
             });
         });
 
-        // Efeitos de hover suaves
+        // Sistema de estrelas interativo
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.post-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
+            const stars = document.querySelectorAll('.star-rating input[type="radio"]');
+            stars.forEach(star => {
+                star.addEventListener('change', function() {
+                    const labels = this.parentElement.querySelectorAll('label');
+                    labels.forEach(label => label.style.color = '#ddd');
+                    
+                    let current = this;
+                    while (current = current.previousElementSibling) {
+                        current.checked = true;
+                    }
+                    
+                    this.checked = true;
+                    const checkedStars = this.parentElement.querySelectorAll('input[type="radio"]:checked');
+                    checkedStars.forEach(star => {
+                        star.nextElementSibling.style.color = '#ffc107';
+                    });
                 });
             });
         });
 
-    // Back to Top Simplificado - Coloque no final do seu arquivo JS
-const backToTop = document.querySelector('.back-to-top');
-
-if (backToTop) {
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            backToTop.classList.add('active');
-        } else {
-            backToTop.classList.remove('active');
+        // Hero background animation
+        const heroBackground = document.querySelector('.hero-background img');
+        if (heroBackground) {
+            setInterval(() => {
+                heroBackground.style.animation = 'none';
+                setTimeout(() => {
+                    heroBackground.style.animation = 'kenburns 20s infinite alternate';
+                }, 10);
+            }, 20000);
         }
-    });
-    
-    backToTop.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-}
