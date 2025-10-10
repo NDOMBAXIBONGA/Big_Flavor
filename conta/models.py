@@ -1,11 +1,7 @@
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.core.validators import MinLengthValidator
-from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
-import re
+
 
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, nome, cpf, password=None, **extra_fields):
@@ -40,7 +36,7 @@ class UsuarioManager(BaseUserManager):
         return self.create_user(email, nome, cpf, password, **extra_fields)
 
 
-class Usuario(AbstractBaseUser, PermissionsMixin):
+class Usuario(AbstractUser):
     # Dados básicos
     email = models.EmailField('E-mail', unique=True, max_length=100)
     nome = models.CharField('Nome Completo', max_length=100)
