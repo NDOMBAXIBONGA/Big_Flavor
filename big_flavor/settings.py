@@ -33,7 +33,14 @@ SECRET_KEY = config('SECRET_KEY', default='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI
 DEBUG = config('DEBUG', default=False, cast=bool)
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# settings.py
+if DEBUG:
+    ALLOWED_HOSTS = ['*']  # Permite todos hosts em desenvolvimento
+else:
+    ALLOWED_HOSTS = [
+        'big-flovar.up.railway.app',
+        '.railway.app',
+    ]
 
 AUTH_USER_MODEL = 'conta.Usuario'
 
@@ -184,3 +191,10 @@ LOGIN_URL = '/conta/login/'  # URL de login
 # Configurações para upload de vídeos
 MAX_VIDEO_SIZE = 100 * 1024 * 1024  # 100MB
 ALLOWED_VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg']
+
+# settings.py
+CSRF_TRUSTED_ORIGINS = [
+    'https://big-flovar.up.railway.app',
+    'https://*.railway.app',
+    # Adicione outros domínios se necessário
+]
