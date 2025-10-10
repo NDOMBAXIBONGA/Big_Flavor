@@ -191,11 +191,11 @@
                                         {{ produto.get_status_display }}
                                     </span>
                                 </div>
-                                
+
                                 <!-- Image -->
                                 <div class="product-image-container">
                                     {% if produto.imagem %}
-                                        <img src="{{ produto.imagem.url }}" class="product-image" alt="{{ produto.nome }}">
+                                        <img src="{{ produto.get_imagem_url }}" class="product-image" alt="{{ produto.nome }}">
                                     {% else %}
                                         <div class="product-placeholder">
                                             <i class="fas fa-image"></i>

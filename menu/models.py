@@ -5,7 +5,7 @@ from decimal import Decimal
 
 class Produto(models.Model):
     CATEGORIA_CHOICES = [
-        ('hamburguer', 'hamburguer'),
+        ('hamburguer', 'Hambúrguer'),
         ('Lanches', 'Lanches'),
         ('Bebidas', 'Bebidas'),
     ]
@@ -52,17 +52,12 @@ class Produto(models.Model):
         null=True,
         help_text='Formatos suportados: JPG, PNG, GIF'
     )
+    
     ordem = models.PositiveIntegerField(
         default=0,
         verbose_name='Ordem de Exibição',
         help_text='Define a ordem de exibição dos produtos (menor número aparece primeiro)'
     )
-
-    def get_imagem_url(self):
-        """Retorna a URL da imagem ou uma imagem padrão"""
-        if self.imagem and hasattr(self.imagem, 'url'):
-            return self.imagem.url
-        return '/static/images/sem-imagem.jpg'  # Imagem padrão
     
     estoque = models.PositiveIntegerField(
         default=0,
@@ -86,13 +81,27 @@ class Produto(models.Model):
         verbose_name='Última Atualização'
     )
 
-    class Meta:
-        ordering = ['ordem', 'nome']  # Ordena por ordem e depois por nome
-    
+    # CORREÇÃO: Apenas UMA classe Meta
     class Meta:
         verbose_name = 'Produto'
         verbose_name_plural = 'Produtos'
-        ordering = ['-data_criacao']
+        ordering = ['ordem', 'nome']  # Ordena por ordem e depois por nome
+    
+    def get_imagem_url(self):
+        """Retorna a URL da imagem ou uma imagem padrão"""
+        try:
+            if self.imagem and self.imagem.name:
+                print(f"DEBUG get_imagem_url:")
+                print(f"  - Nome do arquivo: {self.imagem.name}")
+                print(f"  - URL completa: {self.imagem.url}")
+                print(f"  - Caminho físico: {self.imagem.path}")
+                return self.imagem.url
+            else:
+                print(f"DEBUG: Sem imagem válida")
+        except Exception as e:
+            print(f"DEBUG: Erro - {e}")
+        
+        return '/static/img/big.jpg'
     
     def __str__(self):
         return self.nome
