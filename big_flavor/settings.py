@@ -31,6 +31,7 @@ SECRET_KEY = config('SECRET_KEY', default='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
