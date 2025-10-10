@@ -12,11 +12,12 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('perfil/', views.perfil, name='perfil'),
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
-    path('perfil/upload-avatar/', views.upload_avatar, name='upload_avatar'),
-    path('perfil/excluir-conta/', views.excluir_conta, name='excluir_conta'),
+    path('perfil/avatar/upload/', views.upload_avatar, name='upload_avatar'),
+    path('perfil/avatar/remover/', views.remover_avatar, name='remover_avatar'),
+    path('perfil/excluir/', views.excluir_conta, name='excluir_conta'),
     
     # API
-    path('api/municipios/', views.get_municipios, name='get_municipios'),
+    #path('api/municipios/', views.get_municipios, name='get_municipios'),
     
     # Password reset (opcional)
     path('password-reset/', 

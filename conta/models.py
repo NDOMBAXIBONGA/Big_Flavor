@@ -1,19 +1,40 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
-import uuid
 
-class Usuario(AbstractUser):
-    # TORNAR username OPCIONAL no banco, mas manter no modelo
-    username = models.CharField(
-        'Nome de usuário',
-        max_length=150,
-        unique=True,
-        blank=True,
-        null=True,  # Permite NULL no banco
-        default=None  # Valor padrão
-    )
-    
+class UsuarioManager(BaseUserManager):
+    def create_user(self, email, nome, cpf, password=None, **extra_fields):
+        if not email:
+            raise ValueError('O usuário deve ter um endereço de email')
+        if not nome:
+            raise ValueError('O usuário deve ter um nome completo')
+        if not cpf:
+            raise ValueError('O usuário deve ter um CPF')
+        
+        email = self.normalize_email(email)
+        user = self.model(
+            email=email,
+            nome=nome,
+            cpf=cpf,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, nome, cpf, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superusuário deve ter is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superusuário deve ter is_superuser=True.')
+
+        return self.create_user(email, nome, cpf, password, **extra_fields)
+
+class Usuario(AbstractBaseUser, PermissionsMixin):
     # Campos personalizados
     email = models.EmailField('E-mail', unique=True, max_length=100)
     nome = models.CharField('Nome Completo', max_length=100)
@@ -34,13 +55,25 @@ class Usuario(AbstractUser):
         null=True
     )
     
+    # Campos de controle do usuário (OBRIGATÓRIOS)
+    is_staff = models.BooleanField('Membro da equipe', default=False)
+    is_active = models.BooleanField('Ativo', default=True)
+    
     # Datas
     data_criacao = models.DateTimeField('Data de Criação', default=timezone.now)
     data_atualizacao = models.DateTimeField('Data de Atualização', auto_now=True)
+    last_login = models.DateTimeField('Último login', blank=True, null=True)
+    date_joined = models.DateTimeField('Data de registro', default=timezone.now)
     
-    # CONFIGURAÇÕES CORRIGIDAS
-    USERNAME_FIELD = 'email'  # Login com email
-    REQUIRED_FIELDS = ['nome', 'cpf']  # REMOVA username daqui
+    # ADICIONE ESTES CAMPOS QUE ESTAVAM FALTANDO
+    first_name = models.CharField('Primeiro nome', max_length=150, blank=True)
+    last_name = models.CharField('Sobrenome', max_length=150, blank=True)
+    
+    objects = UsuarioManager()
+    
+    # CONFIGURAÇÕES CORRETAS
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['nome', 'cpf']
     
     class Meta:
         verbose_name = 'Usuário'
@@ -58,25 +91,7 @@ class Usuario(AbstractUser):
         return self.nome.split(' ')[0] if self.nome else ''
     
     def save(self, *args, **kwargs):
-        """GARANTE que sempre tenha um username antes de salvar"""
-        if not self.username:
-            # Gera username único baseado no email
-            base_username = self.email.split('@')[0]
-            username = base_username
-            counter = 1
-            
-            # Verifica se username já existe
-            while Usuario.objects.filter(username=username).exclude(pk=self.pk).exists():
-                username = f"{base_username}{counter}"
-                counter += 1
-                if counter > 100:  # Prevenção de loop infinito
-                    username = f"{base_username}_{uuid.uuid4().hex[:8]}"
-                    break
-            
-            self.username = username
-        
-        # Garante que o email esteja em lowercase
+        """Garante que o email esteja em lowercase"""
         if self.email:
             self.email = self.email.lower()
-            
         super().save(*args, **kwargs)
