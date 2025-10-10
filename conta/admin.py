@@ -1,28 +1,39 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
 from .models import Usuario
 
-class CustomUserAdmin(UserAdmin):  # ← Corrigido: herda de UserAdmin
-    list_display = ('email', 'nome', 'telemovel', 'cpf', 'data_nascimento', 'bairro', 'cidade', 'provincia', 'municipio', 'is_staff', 'is_active', 'data_criacao')
-    list_filter = ('is_staff', 'is_active')
-    search_fields = ('email', 'nome')
+@admin.register(Usuario)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('email', 'username', 'nome', 'telemovel', 'cpf', 'is_staff', 'is_active')
+    list_filter = ('is_staff', 'is_active', 'data_criacao', 'cidade')
+    search_fields = ('email', 'username', 'nome', 'cpf', 'telemovel')
     ordering = ('email',)
-    readonly_fields = ('data_criacao', 'data_atualizacao', 'last_login')
+    readonly_fields = ('data_criacao', 'data_atualizacao', 'last_login', 'date_joined')
     
-    # Fieldsets devem incluir campos base do User
+    # Fieldsets corretos para AbstractUser
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Informações Pessoais', {'fields': ('nome', 'telemovel', 'cpf', 'data_nascimento', 'bairro', 'cidade', 'provincia', 'municipio')}),
-        ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Datas', {'fields': ('last_login', 'data_criacao', 'data_atualizacao')}),
-    )
-    
-    # IMPORTANTE: Definir add_fieldsets para formulário de criação
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'nome', 'telemovel', 'cpf', 'data_nascimento'),
+        (None, {'fields': ('username', 'email', 'password')}),
+        (_('Informações Pessoais'), {
+            'fields': ('nome', 'telemovel', 'cpf', 'data_nascimento', 'foto_perfil')
+        }),
+        (_('Endereço'), {
+            'fields': ('bairro', 'cidade', 'provincia', 'municipio')
+        }),
+        (_('Permissões'), {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+        (_('Datas Importantes'), {
+            'fields': ('last_login', 'date_joined', 'data_criacao', 'data_atualizacao')
         }),
     )
 
-admin.site.register(Usuario, CustomUserAdmin)
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'nome', 'cpf', 'password1', 'password2', 'telemovel', 'data_nascimento'),
+        }),
+    )
+    
+    # Agora filter_horizontal funcionará
+    filter_horizontal = ('groups', 'user_permissions',)
