@@ -5,13 +5,14 @@ from .models import Usuario
 
 @admin.register(Usuario)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'username', 'nome', 'telemovel', 'cpf', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_active', 'data_criacao', 'cidade')
-    search_fields = ('email', 'username', 'nome', 'cpf', 'telemovel')
+    # List view
+    list_display = ('email', 'username', 'nome', 'telemovel', 'is_staff', 'is_active')
+    list_filter = ('is_staff', 'is_active', 'data_criacao')
+    search_fields = ('email', 'username', 'nome', 'cpf')
     ordering = ('email',)
-    readonly_fields = ('data_criacao', 'data_atualizacao', 'last_login', 'date_joined')
+    readonly_fields = ('last_login', 'date_joined', 'data_criacao', 'data_atualizacao')
     
-    # Fieldsets corretos para AbstractUser
+    # Form view - EDITAR
     fieldsets = (
         (None, {'fields': ('username', 'email', 'password')}),
         (_('Informações Pessoais'), {
@@ -21,19 +22,20 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('bairro', 'cidade', 'provincia', 'municipio')
         }),
         (_('Permissões'), {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')
         }),
         (_('Datas Importantes'), {
             'fields': ('last_login', 'date_joined', 'data_criacao', 'data_atualizacao')
         }),
     )
 
+    # Add form - CRIAR
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'nome', 'cpf', 'password1', 'password2', 'telemovel', 'data_nascimento'),
+            'fields': ('email', 'username', 'nome', 'cpf', 'password1', 'password2'),
         }),
     )
     
-    # Agora filter_horizontal funcionará
+    # Filter horizontal
     filter_horizontal = ('groups', 'user_permissions',)
