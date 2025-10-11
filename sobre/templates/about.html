@@ -100,16 +100,6 @@
     </nav>
     <!-- Nav Bar End -->
 
-    <!-- Admin Badge para Staff -->
-    {% if request.user.is_staff %}
-    <div class="admin-badge">
-        <a href="{% url 'upload_video_historia' %}" class="btn btn-admin">
-            <i class="fas fa-video me-1"></i>
-            Gerenciar Vídeos
-        </a>
-    </div>
-    {% endif %}
-
     <!-- Hero Section -->
     <section class="about-hero">
         <div class="floating-element floating-1"></div>
