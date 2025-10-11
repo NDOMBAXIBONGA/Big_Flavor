@@ -86,17 +86,13 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 os.environ.setdefault("PGDATABASE", "liftoff_dev")
 os.environ.setdefault("PGUSER", "Ndombaxi")
 os.environ.setdefault("PGPASSWORD", "4EuqnLh0aAvuBURNK4lPKesib2IcYnO6scD_Mxacp2UAxdH_RwRwz3sDX5AjBrNEnAE")
-os.environ.setdefault("PGHOST", "localhost")
+os.environ.setdefault("PGHOST", "127.0.0.1")
 os.environ.setdefault("PGPORT", "5432")
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
