@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+
+import sys
+
 import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
@@ -80,18 +83,32 @@ TEMPLATES = [
 WSGI_APPLICATION = 'big_flavor.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# Detecta se está no Railway
+def is_railway():
+    return 'RAILWAY_ENVIRONMENT' in os.environ or 'RAILWAY_STATIC_URL' in os.environ
 
-# Configuração padrão (SQLite só se não tiver DATABASE_URL)
-if 'DATABASE_URL' in os.environ:
-    # PRODUÇÃO (Railway) - usa PostgreSQL
+# Detecta se está em teste
+def is_test():
+    return 'test' in sys.argv or 'TEST' in os.environ
+
+# Configuração de Database
+if is_railway():
+    # PRODUÇÃO (Railway) - PostgreSQL
+    import dj_database_url
     DATABASES = {
         'default': dj_database_url.config(
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=not DEBUG
+            ssl_require=True
         )
+    }
+elif is_test():
+    # TESTES - SQLite em memória (rápido)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
 else:
     # DESENVOLVIMENTO LOCAL - SQLite
@@ -101,14 +118,6 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
-# Garanta que o PostgreSQL é o engine principal
-if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3' and 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=not DEBUG
-    )
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
