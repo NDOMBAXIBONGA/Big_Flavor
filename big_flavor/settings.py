@@ -11,9 +11,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
-
-import sys
-
 import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
@@ -83,41 +80,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'big_flavor.wsgi.application'
 
 
-# Detecta se está no Railway
-def is_railway():
-    return 'RAILWAY_ENVIRONMENT' in os.environ or 'RAILWAY_STATIC_URL' in os.environ
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Detecta se está em teste
-def is_test():
-    return 'test' in sys.argv or 'TEST' in os.environ
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',  # Database padrão
+        'USER': 'postgres',
+        'PASSWORD': 'AAO1009767',  # Senha que você definiu
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
 
-# Configuração de Database
-if is_railway():
-    # PRODUÇÃO (Railway) - PostgreSQL
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True
-        )
-    }
-elif is_test():
-    # TESTES - SQLite em memória (rápido)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
-        }
-    }
-else:
-    # DESENVOLVIMENTO LOCAL - SQLite
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+# Se existir DATABASE_URL no ambiente (Railway), use PostgreSQL
+if os.environ.get('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
