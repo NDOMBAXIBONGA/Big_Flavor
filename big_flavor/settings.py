@@ -81,26 +81,33 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-os.environ.setdefault("PGDATABASE", "liftoff_dev")
-os.environ.setdefault("PGUSER", "Ndombaxi")
-os.environ.setdefault("PGPASSWORD", "4EuqnLh0aAvuBURNK4lPKesib2IcYnO6scD_Mxacp2UAxdH_RwRwz3sDX5AjBrNEnAE")
-os.environ.setdefault("PGHOST", "127.0.0.1")
-os.environ.setdefault("PGPORT", "5432")
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Configuração padrão (SQLite só se não tiver DATABASE_URL)
+if 'DATABASE_URL' in os.environ:
+    # PRODUÇÃO (Railway) - usa PostgreSQL
+    DATABASES = {
+        'default': dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=not DEBUG
+        )
     }
-}
+else:
+    # DESENVOLVIMENTO LOCAL - SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
-# Se existir DATABASE_URL no ambiente (Railway), use PostgreSQL
-if os.environ.get('DATABASE_URL'):
+# Garanta que o PostgreSQL é o engine principal
+if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3' and 'DATABASE_URL' in os.environ:
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=600,
         conn_health_checks=True,
+        ssl_require=not DEBUG
     )
 
 # Password validation
