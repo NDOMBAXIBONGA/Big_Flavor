@@ -26,7 +26,32 @@ SECRET_KEY = 'django-insecure-chave-temporaria-dev'
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # Ou especifique seu domínio depois
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1', 
+    'big-flovar.up.railway.app',  # SEU DOMÍNIO RAILWAY
+    '.railway.app',  # Todos subdomínios Railway
+]
+
+# CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://big-flovar.up.railway.app',
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+]
+
+# Se estiver usando HTTPS (Railway usa)
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# CORS settings (se estiver fazendo requisições de outros domínios)
+CORS_ALLOWED_ORIGINS = [
+    "https://big-flovar.up.railway.app",
+    "https://*.railway.app",
+]
+
+# Ou permitir todos (apenas para desenvolvimento)
+CORS_ALLOW_ALL_ORIGINS = True  # Cuidado em produção!
 
 
 # Application definition
