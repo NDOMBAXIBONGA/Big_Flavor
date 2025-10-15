@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': 'postgres',  # Database padrão
         'USER': 'postgres',
         'PASSWORD': 'AAO1009767',  # Senha que você definiu
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
