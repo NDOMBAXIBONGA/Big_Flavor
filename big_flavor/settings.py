@@ -114,11 +114,11 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('railway'),  # Database padrão
-        'USER': os.environ.get('postgres'),
-        'PASSWORD': os.environ.get('VicChUbxflWNwzYQyCXRQfNAcLltyYzG'),  # Senha que você definiu
-        'HOST': os.environ.get('postgres.railway.internal'),
-        'PORT': os.environ.get('5432'),
+        'NAME': 'postgres',  # Database padrão
+        'USER': 'postgres',
+        'PASSWORD': 'AAO1009767',  # Senha que você definiu
+        'HOST': 'postgres.railway.internal',
+        'PORT': '5432',
     }
 }
 
