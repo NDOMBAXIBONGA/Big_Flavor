@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv()  # Carrega variáveis do .env
+#from dotenv import load_dotenv
+#load_dotenv()  # Carrega variáveis do .env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,8 +120,8 @@ if os.getenv('RAILWAY'):
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.environ['railway'],
             'USER': os.environ['postgres'],
-            'PASSWORD': os.environ['VicChUbxflWNwzYQyCXRQfNAcLltyYzG'],
-            'HOST': os.environ['postgres.railway.internal'],
+            'PASSWORD': os.environ['yoSxyWrVnfnKYvRhciKaUXOSYpOOPtAO'],
+            'HOST': os.environ['postgres-e6tk.railway.internal'],
             'PORT': os.environ['5432'],
         }
     }
@@ -134,14 +134,6 @@ else:
         }
     }
 
-DATABASE_URL = os.environ['DATABASE_URL']
-DATABASES = {
-    'default': dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
