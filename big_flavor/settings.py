@@ -111,23 +111,23 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# settings.py
+# settings.py - VERSÃO COMPLETA
+import os
 
-# Debug
-print("DATABASE_URL:", os.getenv('DATABASE_URL'))
-print("PGHOST:", os.getenv('PGHOST'))
-
-# Solução principal - use DATABASE_URL
-if 'DATABASE_URL' in os.environ:
+if os.getenv('RAILWAY'):
+    # PRODUÇÃO (Railway)
     DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ['railway'],
+            'USER': os.environ['postgres'],
+            'PASSWORD': os.environ['VicChUbxflWNwzYQyCXRQfNAcLltyYzG'],
+            'HOST': os.environ['postgres.railway.internal'],
+            'PORT': os.environ['5432'],
+        }
     }
 else:
-    # Fallback para desenvolvimento
+    # DESENVOLVIMENTO (Local)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
