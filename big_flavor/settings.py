@@ -111,24 +111,29 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',  # Database padrão
-        'USER': 'postgres',
-        'PASSWORD': 'AAO1009767',  # Senha que você definiu
-        'HOST': 'postgres.railway.internal',
-        'PORT': '5432',
-    }
-}
+# settings.py
 
-# Para Railway - sobrescreve com DATABASE_URL se existir
+# Debug
+print("DATABASE_URL:", os.getenv('DATABASE_URL'))
+print("PGHOST:", os.getenv('PGHOST'))
+
+# Solução principal - use DATABASE_URL
 if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True
-    )
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    # Fallback para desenvolvimento
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
