@@ -117,7 +117,7 @@ DATABASES = {
         'NAME': 'postgres',  # Database padrão
         'USER': 'postgres',
         'PASSWORD': 'AAO1009767',  # Senha que você definiu
-        'HOST': 'localhost',
+        'HOST': 'url-externa-do-railway',
         'PORT': '5432',
     }
 }
