@@ -106,7 +106,7 @@ if os.getenv('RAILWAY_ENVIRONMENT'):
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('PGDATABASE', 'railway'),
         'USER': os.getenv('PGUSER', 'postgres'),
-        'PASSWORD': os.getenv('PGPASSWORD', 'yoSxyWrVnfnKYvRhciKaUXOSYpOOPtAO'),
+        'PASSWORD': os.getenv('PGPASSWORD', 'AAO1009767'),
         'HOST': os.getenv('PGHOST', 'postgres-e6tk.railway.internal'),
         'PORT': os.getenv('PGPORT', '5432'),
     }
