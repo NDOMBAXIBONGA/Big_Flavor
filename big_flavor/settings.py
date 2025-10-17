@@ -107,7 +107,7 @@ if os.getenv('RAILWAY_ENVIRONMENT'):
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'railway',
-        'USER': 'postgres',
+        'USER': 'all',
         'PASSWORD': 'AAO1009767',
         'HOST': 'localhost',
         'PORT': '5432',
