@@ -17,7 +17,7 @@ urlpatterns = [
     path('perfil/excluir/', views.excluir_conta, name='excluir_conta'),
     
     # API
-    #path('api/municipios/', views.get_municipios, name='get_municipios'),
+    path('get-municipios/', views.get_municipios, name='get_municipios'),
     
     # Password reset (opcional)
     path('password-reset/', 
