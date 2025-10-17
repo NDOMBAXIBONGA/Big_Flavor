@@ -102,15 +102,15 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 if os.getenv('RAILWAY_ENVIRONMENT'):
     # Produção no Railway
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ['railway'],
-            'USER': os.environ['postgres'],
-            'PASSWORD': os.environ['yoSxyWrVnfnKYvRhciKaUXOSYpOOPtAO'],
-            'HOST': os.environ['postgres-e6tk.railway.internal'],
-            'PORT': os.environ['5432'],
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('PGDATABASE', 'railway'),
+        'USER': os.getenv('PGUSER', 'postgres'),
+        'PASSWORD': os.getenv('PGPASSWORD', 'yoSxyWrVnfnKYvRhciKaUXOSYpOOPtAO'),
+        'HOST': os.getenv('PGHOST', 'localhost'),
+        'PORT': os.getenv('PGPORT', '5432'),
     }
+}
 else:
     # Desenvolvimento local
     DATABASES = {
