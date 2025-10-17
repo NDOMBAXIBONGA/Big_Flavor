@@ -101,34 +101,13 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 
 # settings.py
 
-if os.getenv('RAILWAY_ENVIRONMENT'):
-    # Produção no Railway
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'all',
-        'PASSWORD': 'AAO1009767',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
-else:
-    # Desenvolvimento local
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'db.sqlite3',
-        }
-    }
-
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(
+DATABASES = {
+    'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
+        conn_max_age=600,  # Conexões ficam abertas por 10 minutos
         conn_health_checks=True,
     )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
