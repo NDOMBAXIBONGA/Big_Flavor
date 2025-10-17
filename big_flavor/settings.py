@@ -29,18 +29,7 @@ SECRET_KEY = 'django-insecure-wi6^$av$*s)g5ll$k36&ol4ue(+bn6=w)d7$tcsz6@#k(9qba!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'big-flovar.up.railway.app',
-    '.railway.app',
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://big-flovar.up.railway.app',
-    'https://big-flovar.railway.app',
-    'https://*.railway.app',
-]
+ALLOWED_HOSTS = ['*']
 
 # settings.py
 AUTH_USER_MODEL = 'conta.Usuario'
