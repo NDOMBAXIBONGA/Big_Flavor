@@ -125,6 +125,16 @@
         </div>
     </section>
 
+    <!-- Admin Badge para Staff -->
+    {% if request.user.is_staff %}
+    <div class="admin-badge">
+        <a href="{% url 'upload_video_historia' %}" class="btn btn-admin">
+            <i class="fas fa-video me-1"></i>
+            Gerenciar Vídeos
+        </a>
+    </div>
+    {% endif %}
+
     <!-- About Hero Section -->
     <section id="about" class="about-hero">
         <div class="floating-element floating-1"></div>
@@ -165,7 +175,7 @@
                             </button>
                         {% else %}
                             <!-- Fallback -->
-                            <img src="" alt="Nossa História">
+                            <img src="{% static 'img/about-story.jpg' %}" alt="Nossa História">
                             <button type="button" class="btn-play" data-bs-toggle="modal" data-bs-target="#videoModal" 
                                     data-video-url="https://www.youtube.com/embed/DWRcNpR6Kdc" 
                                     data-video-type="youtube"
