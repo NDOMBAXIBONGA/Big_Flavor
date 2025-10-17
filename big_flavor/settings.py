@@ -104,11 +104,11 @@ if os.getenv('RAILWAY_ENVIRONMENT'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ['PGDATABASE'],
-            'USER': os.environ['PGUSER'],
-            'PASSWORD': os.environ['PGPASSWORD'],
-            'HOST': os.environ['PGHOST'],
-            'PORT': os.environ['PGPORT'],
+            'NAME': os.environ['railway'],
+            'USER': os.environ['postgres'],
+            'PASSWORD': os.environ['yoSxyWrVnfnKYvRhciKaUXOSYpOOPtAO'],
+            'HOST': os.environ['postgres-e6tk.railway.internal'],
+            'PORT': os.environ['5432'],
         }
     }
 else:
