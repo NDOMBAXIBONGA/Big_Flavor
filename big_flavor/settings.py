@@ -101,26 +101,35 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 
 # settings.py
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# Set default values for the environment variables if they’re not already set
-os.environ.setdefault("PGDATABASE", "liftoff_dev")
-os.environ.setdefault("PGUSER", "all")
-os.environ.setdefault("PGPASSWORD", "AAO1009767")
-os.environ.setdefault("PGHOST", "localhost")
-os.environ.setdefault("PGPORT", "5432")
-
-DATABASES = {
+if os.getenv('RAILWAY_ENVIRONMENT'):
+    # Produção no Railway
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
+        'NAME': 'railway',
+        'USER': 'all',
+        'PASSWORD': 'AAO1009767',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+else:
+    # Desenvolvimento local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'db.sqlite3',
+        }
+    }
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
