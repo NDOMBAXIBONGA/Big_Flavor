@@ -107,7 +107,7 @@ if os.getenv('RAILWAY_ENVIRONMENT'):
         'NAME': os.getenv('PGDATABASE', 'railway'),
         'USER': os.getenv('PGUSER', 'postgres'),
         'PASSWORD': os.getenv('PGPASSWORD', 'yoSxyWrVnfnKYvRhciKaUXOSYpOOPtAO'),
-        'HOST': os.getenv('PGHOST', 'localhost'),
+        'HOST': os.getenv('PGHOST', 'postgres-e6tk.railway.internal'),
         'PORT': os.getenv('PGPORT', '5432'),
     }
 }
