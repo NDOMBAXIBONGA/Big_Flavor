@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn big_flavor.wsgi --log-file -
+web: python manage.py migrate && gunicorn big_flavor.wsgi --bind 0.0.0.0:$PORT
