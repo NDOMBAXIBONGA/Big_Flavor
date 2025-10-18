@@ -41,12 +41,15 @@
         }
 
         .navbar {
-            padding: 15px 0;
-            transition: all 0.5s ease;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95) !important;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        }
+    padding: 12px 15px;
+    transition: all 0.5s ease;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+}
 
         .navbar.scrolled {
             padding: 10px 0;
@@ -740,3 +743,234 @@
                 font-size: 1.8rem;
             }
         }
+
+        /* Correção Específica para o Problema do Mobile */
+.hero-section {
+    height: 100vh;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 20px 15px;
+    margin-top: 0 !important;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    width: 100%;
+    padding: 0 15px;
+}
+
+.hero-title {
+    font-size: clamp(2.2rem, 8vw, 4.5rem);
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.hero-title span {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 4vw, 1.5rem);
+    margin-bottom: 40px;
+    font-weight: 300;
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding: 0 10px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0 10px;
+}
+
+.btn-hero {
+    padding: 14px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    min-width: 160px;
+    white-space: nowrap;
+}
+
+/* Correções específicas para mobile */
+@media (max-width: 768px) {
+    .hero-section {
+        height: 100vh;
+        min-height: 100vh;
+        padding: 60px 12px 20px;
+        margin-top: 0;
+    }
+    
+    .hero-content {
+        padding: 0 10px;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+        line-height: 1.1;
+        margin-bottom: 15px;
+        padding: 0 5px;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+        line-height: 1.3;
+        margin-bottom: 30px;
+        padding: 0 15px;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+    
+    .btn-hero {
+        width: 100%;
+        max-width: 280px;
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 50px 10px 15px;
+        height: 100vh;
+        min-height: 100vh;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.1;
+        margin-bottom: 12px;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        line-height: 1.3;
+        margin-bottom: 25px;
+        padding: 0 10px;
+    }
+    
+    .hero-buttons {
+        max-width: 260px;
+        gap: 10px;
+    }
+    
+    .btn-hero {
+        padding: 11px 20px;
+        font-size: 0.95rem;
+        max-width: 260px;
+    }
+}
+
+@media (max-width: 400px) {
+    .hero-section {
+        padding: 40px 8px 10px;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+        padding: 0 8px;
+    }
+    
+    .hero-buttons {
+        max-width: 240px;
+    }
+    
+    .btn-hero {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+        max-width: 240px;
+    }
+}
+
+/* Garantir que não há margens ou paddings conflitantes */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.container-fluid, .container {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Prevenir overflow horizontal */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Correção específica para o texto quebrado */
+.hero-subtitle {
+    text-align: center;
+}
+
+/* Garantir que o background cobre toda a área */
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+}
+
+.hero-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-hero);
+    z-index: 1;
+}
+
+.hero-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
