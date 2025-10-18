@@ -1246,17 +1246,15 @@
 
         /* Correção Específica para o Problema do Mobile */
 .hero-section {
-    height: 100vh;
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
-    padding: 20px 15px;
-    margin-top: 0 !important;
+    height: 60vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-top: 80px;
 }
 
 .hero-content {
