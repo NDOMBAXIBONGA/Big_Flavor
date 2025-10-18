@@ -688,6 +688,16 @@
         .footer-newsletter .btn-custom {
             border-radius: 0 50px 50px 0;
             padding: 15px 25px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .footer-newsletter .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .copyright {

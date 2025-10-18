@@ -1,3 +1,5 @@
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
@@ -5,22 +7,10 @@ from django.contrib import messages
 from django.http import JsonResponse
 import os
 
-from .forms import RegistroUsuarioForm, LoginForm, ContactForm, EditarPerfilForm, AvatarForm
+from .forms import RegistroUsuarioForm, LoginForm, EditarPerfilForm, AvatarForm
 from .models import Usuario
 
 User = get_user_model()
-
-# Views públicas
-def contact_page(request):
-    contact_form = ContactForm(request.POST or None)
-    context = {
-        "title": "Contact Page",
-        "content": "Bem vindo a Contact Page",
-        "form": contact_form	
-    }
-    if contact_form.is_valid():
-        print(contact_form.cleaned_data)
-    return render(request, "contact/view.html", context)
 
 def registro_usuario(request):
     if request.user.is_authenticated:
@@ -152,3 +142,49 @@ def excluir_conta(request):
         messages.success(request, 'Sua conta foi excluída com sucesso.')
         return redirect('/')
     return redirect('perfil')
+
+def get_municipios(request):
+    """View para retornar municípios baseados na província selecionada"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            provincia_id = data.get('provincia_id')
+            
+            MUNICIPIOS_POR_PROVINCIA = {
+                'huila': [
+                    {'id': 'caconda', 'nome': 'Caconda'},
+                    {'id': 'cacula', 'nome': 'Cacula'},
+                    {'id': 'caluquembe', 'nome': 'Caluquembe'},
+                    {'id': 'cuvango', 'nome': 'Cuvango'},
+                    {'id': 'chibia', 'nome': 'Chibia'},
+                    {'id': 'chicomba', 'nome': 'Chicomba'},
+                    {'id': 'chipindo', 'nome': 'Chipindo'},
+                    {'id': 'gambos', 'nome': 'Gambos'},
+                    {'id': 'humpata', 'nome': 'Humpata'},
+                    {'id': 'jamba', 'nome': 'Jamba'},
+                    {'id': 'lubango', 'nome': 'Lubango'},
+                    {'id': 'matala', 'nome': 'Matala'},
+                    {'id': 'quilengues', 'nome': 'Quilengues'},
+                    {'id': 'quipungo', 'nome': 'Quipungo'}
+                ],
+                'luanda': [
+                    {'id': 'belas', 'nome': 'Belas'},
+                    {'id': 'cacuaco', 'nome': 'Cacuaco'},
+                    {'id': 'cazenga', 'nome': 'Cazenga'},
+                    {'id': 'icolo_e_bengo', 'nome': 'Icolo e Bengo'},
+                    {'id': 'luanda', 'nome': 'Luanda'},
+                    {'id': 'quilamba_quiaxi', 'nome': 'Quilamba Quiaxi'},
+                    {'id': 'kilamba_kiaxi', 'nome': 'Kilamba Kiaxi'},
+                    {'id': 'talatona', 'nome': 'Talatona'},
+                    {'id': 'viana', 'nome': 'Viana'}
+                ],
+                # ... outras províncias
+            }
+            
+            municipios = MUNICIPIOS_POR_PROVINCIA.get(provincia_id, [])
+            return JsonResponse({'municipios': municipios})
+            
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Dados inválidos'}, status=400)
+    
+    return JsonResponse({'error': 'Método não permitido'}, status=405)

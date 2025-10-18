@@ -422,7 +422,62 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="{% static "js/reg.js" %}"></script>
-    
+    <script>
+        function carregarMunicipios() {
+            const provinciaSelect = document.getElementById('provincia-select');
+            const municipioSelect = document.getElementById('municipio-select');
+            const provinciaId = provinciaSelect.value;
+            
+            if (provinciaId) {
+                // Faz requisição AJAX
+                fetch('{% url "get_municipios" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'provincia_id': provinciaId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Limpa options anteriores
+                    municipioSelect.innerHTML = '';
+                    
+                    // Adiciona nova opção padrão
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Selecione o município';
+                    municipioSelect.appendChild(defaultOption);
+                    
+                    // Adiciona os municípios
+                    data.municipios.forEach(municipio => {
+                        const option = document.createElement('option');
+                        option.value = municipio.id;
+                        option.textContent = municipio.nome;
+                        municipioSelect.appendChild(option);
+                    });
+                    
+                    // Habilita o select
+                    municipioSelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+            } else {
+                // Reseta o select de municípios
+                municipioSelect.innerHTML = '<option value="">Selecione primeiro a província</option>';
+                municipioSelect.disabled = true;
+            }
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            const provinciaSelect = document.getElementById('provincia-select');
+            provinciaSelect.addEventListener('change', carregarMunicipios);
+        });
+    </script>
     
 </body>
 </html>
