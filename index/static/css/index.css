@@ -1260,9 +1260,10 @@
 
 .hero-content {
     position: relative;
-            z-index: 2;
-            max-width: 800px;
-            padding: 0 20px;
+    z-index: 2;
+    max-width: 800px;
+    width: 100%;
+    padding: 0 15px;
 }
 
 .hero-title {
