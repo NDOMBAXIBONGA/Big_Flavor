@@ -696,7 +696,7 @@ body {
 }
 
 /* Correção Específica para o Problema do Mobile */
-.navbar-section {
+.order-header-section {
     height: 100vh;
     min-height: 100vh;
     position: relative;
@@ -710,7 +710,7 @@ body {
     margin-top: 0 !important;
 }
 
-.navbar-content {
+.order-header-content {
     position: relative;
     z-index: 2;
     max-width: 800px;
@@ -718,7 +718,7 @@ body {
     padding: 0 15px;
 }
 
-.navbar-title {
+.order-header-title {
     font-size: clamp(2.2rem, 8vw, 4.5rem);
     font-weight: 800;
     margin-bottom: 20px;
@@ -729,7 +729,7 @@ body {
     hyphens: auto;
 }
 
-.navbar-title span {
+.order-header-title span {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -737,7 +737,7 @@ body {
     display: inline-block;
 }
 
-.navbar-subtitle {
+.order-header-subtitle {
     font-size: clamp(1rem, 4vw, 1.5rem);
     margin-bottom: 40px;
     font-weight: 300;
@@ -747,7 +747,7 @@ body {
     padding: 0 10px;
 }
 
-.navbar-buttons {
+.order-header-buttons {
     display: flex;
     gap: 15px;
     justify-content: center;
@@ -770,32 +770,32 @@ body {
 
 /* Correções específicas para mobile */
 @media (max-width: 768px) {
-    .navbar-section {
+    .order-header-section {
         height: 100vh;
         min-height: 100vh;
         padding: 60px 12px 20px;
         margin-top: 0;
     }
     
-    .navbar-content {
+    .order-header-content {
         padding: 0 10px;
     }
     
-    .navbar-title {
+    .order-header-title {
         font-size: 2.5rem;
         line-height: 1.1;
         margin-bottom: 15px;
         padding: 0 5px;
     }
     
-    .navbar-subtitle {
+    .order-header-subtitle {
         font-size: 1.1rem;
         line-height: 1.3;
         margin-bottom: 30px;
         padding: 0 15px;
     }
     
-    .navbar-buttons {
+    .order-header-buttons {
         flex-direction: column;
         align-items: center;
         gap: 12px;
@@ -813,26 +813,26 @@ body {
 }
 
 @media (max-width: 576px) {
-    .navbar-section {
+    .order-header-section {
         padding: 50px 10px 15px;
         height: 100vh;
         min-height: 100vh;
     }
     
-    .navbar-title {
+    .order-header-title {
         font-size: 2rem;
         line-height: 1.1;
         margin-bottom: 12px;
     }
     
-    .navbar-subtitle {
+    .order-header-subtitle {
         font-size: 1rem;
         line-height: 1.3;
         margin-bottom: 25px;
         padding: 0 10px;
     }
     
-    .navbar-buttons {
+    .order-header-buttons {
         max-width: 260px;
         gap: 10px;
     }
@@ -845,22 +845,22 @@ body {
 }
 
 @media (max-width: 400px) {
-    .navbar-section {
+    .order-header-section {
         padding: 40px 8px 10px;
     }
     
-    .navbar-title {
+    .order-header-title {
         font-size: 1.8rem;
         margin-bottom: 10px;
     }
     
-    .navbar-subtitle {
+    .order-header-subtitle {
         font-size: 0.9rem;
         margin-bottom: 20px;
         padding: 0 8px;
     }
     
-    .navbar-buttons {
+    .order-header-buttons {
         max-width: 240px;
     }
     
@@ -895,12 +895,12 @@ html, body {
 }
 
 /* Correção específica para o texto quebrado */
-.navbar-subtitle {
+.order-header-subtitle {
     text-align: center;
 }
 
 /* Garantir que o background cobre toda a área */
-.navbarn-background {
+.order-header-background {
     position: absolute;
     top: 0;
     left: 0;
@@ -909,7 +909,7 @@ html, body {
     z-index: -2;
 }
 
-.navbar-background::before {
+.order-header-background::before {
     content: '';
     position: absolute;
     top: 0;
@@ -920,7 +920,7 @@ html, body {
     z-index: 1;
 }
 
-.navbar-background img {
+.order-header-background img {
     width: 100%;
     height: 100%;
     object-fit: cover;
