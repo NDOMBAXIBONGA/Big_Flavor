@@ -32,7 +32,7 @@ class ItemCarrinhoInline(admin.TabularInline):
     fields = ('produto', 'quantidade', 'subtotal', 'data_adicao')
     
     def subtotal(self, obj):
-        return f"€{obj.subtotal:.2f}"
+        return f"KZ {obj.subtotal:.2f}"
     subtotal.short_description = 'Subtotal'
 
 @admin.register(ItemCarrinho)
@@ -54,7 +54,7 @@ class ItemCarrinhoAdmin(admin.ModelAdmin):
     )
     
     def subtotal_display(self, obj):
-        return f"€{obj.subtotal:.2f}"
+        return f"KZ {obj.subtotal:.2f}"
     subtotal_display.short_description = 'Subtotal'
     
     def get_queryset(self, request):
@@ -76,11 +76,11 @@ class ItemCarrinhoPedidoInline(admin.TabularInline):
         return qs
     
     def preco_unitario(self, obj):
-        return f"€{obj.produto.preco:.2f}"
+        return f"KZ {obj.produto.preco:.2f}"
     preco_unitario.short_description = 'Preço Unitário'
     
     def subtotal_display(self, obj):
-        return f"€{obj.subtotal:.2f}"
+        return f"KZ {obj.subtotal:.2f}"
     subtotal_display.short_description = 'Subtotal'
     
     def has_add_permission(self, request, obj):
@@ -113,15 +113,15 @@ class CarrinhoAdmin(admin.ModelAdmin):
     )
     
     def subtotal_display(self, obj):
-        return f"€{obj.subtotal:.2f}"
+        return f"KZ {obj.subtotal:.2f}"
     subtotal_display.short_description = 'Subtotal'
     
     def taxa_entrega_display(self, obj):
-        return f"€{obj.taxa_entrega:.2f}"
+        return f"KZ {obj.taxa_entrega:.2f}"
     taxa_entrega_display.short_description = 'Taxa de Entrega'
     
     def total_display(self, obj):
-        return f"€{obj.total:.2f}"
+        return f"KZ {obj.total:.2f}"
     total_display.short_description = 'Total'
     
     def get_queryset(self, request):
@@ -129,7 +129,7 @@ class CarrinhoAdmin(admin.ModelAdmin):
 
 @admin.register(PedidoEntrega)
 class PedidoEntregaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'carrinho_usuario', 'estado', 'total_pedido', 'data_solicitacao', 'notificado_admin')
+    list_display = ('id','carrinho_usuario', 'estado', 'total_pedido', 'data_solicitacao', 'notificado_admin')
     list_filter = ('estado', 'data_solicitacao', 'notificado_admin')
     search_fields = ('carrinho__usuario__email', 'carrinho__usuario__nome', 'endereco_entrega')
     readonly_fields = ('data_solicitacao', 'data_atualizacao', 'total_pedido_display', 'resumo_itens', 'lista_itens_detalhada')
@@ -159,7 +159,7 @@ class PedidoEntregaAdmin(admin.ModelAdmin):
     carrinho_usuario.admin_order_field = 'carrinho__usuario__email'
     
     def total_pedido(self, obj):
-        return f"€{obj.carrinho.total:.2f}"
+        return f"KZ {obj.carrinho.total:.2f}"
     total_pedido.short_description = 'Total'
     
     def total_pedido_display(self, obj):
@@ -173,9 +173,9 @@ class PedidoEntregaAdmin(admin.ModelAdmin):
                     <strong style="font-size: 20px;">Total Final:</strong>
                 </div>
                 <div style="font-size: 18px; text-align: right;">
-                    €{carrinho.subtotal:.2f}<br>
-                    €{carrinho.taxa_entrega:.2f}<br>
-                    <strong style="font-size: 20px; color: #28a745;">€{carrinho.total:.2f}</strong>
+                    KZ {carrinho.subtotal:.2f}<br>
+                    KZ {carrinho.taxa_entrega:.2f}<br>
+                    <strong style="font-size: 20px; color: #28a745;">KZ {carrinho.total:.2f}</strong>
                 </div>
             </div>
         </div>
@@ -199,11 +199,11 @@ class PedidoEntregaAdmin(admin.ModelAdmin):
                         <span style="background: #007bff; color: black; padding: 2px 8px; border-radius: 12px; font-size: 18px;">
                             {item.quantidade}x
                         </span><br>
-                        <small style="font-size: 18px; color: black;">€{item.subtotal:.2f}</small>
+                        <small style="font-size: 18px; color: black;">KZ {item.subtotal:.2f}</small>
                     </div>
                 </div>
                 <div style="font-size: 17px; color: #28a745; margin-top: 5px;">
-                    €{item.produto.preco:.2f} cada
+                    KZ {item.produto.preco:.2f} cada
                 </div>
             </div>
             """
@@ -250,10 +250,10 @@ class PedidoEntregaAdmin(admin.ModelAdmin):
                     </span>
                 </td>
                 <td style="font-size: 17px; padding: 10px; text-align: right; border-bottom: 1px solid #dee2e6;">
-                    €{item.produto.preco:.2f}
+                    KZ {item.produto.preco:.2f}
                 </td>
                 <td style="font-size: 17px; padding: 10px; text-align: right; border-bottom: 1px solid #dee2e6;">
-                    <strong>€{item.subtotal:.2f}</strong>
+                    <strong>KZ {item.subtotal:.2f}</strong>
                 </td>
             </tr>
             '''
@@ -268,7 +268,7 @@ class PedidoEntregaAdmin(admin.ModelAdmin):
                             <strong>Subtotal:</strong>
                         </td>
                         <td style="font-size: 20px; padding: 12px; text-align: right; border-top: 2px solid #dee2e6;">
-                            <strong>€{obj.carrinho.subtotal:.2f}</strong>
+                            <strong>KZ {obj.carrinho.subtotal:.2f}</strong>
                         </td>
                     </tr>
                     <tr style="background: #e9ecef;">
@@ -277,7 +277,7 @@ class PedidoEntregaAdmin(admin.ModelAdmin):
                             <strong>Taxa de Entrega:</strong>
                         </td>
                         <td style="font-size: 20px; padding: 12px; text-align: right;">
-                            <strong>€{obj.carrinho.taxa_entrega:.2f}</strong>
+                            <strong>KZ {obj.carrinho.taxa_entrega:.2f}</strong>
                         </td>
                     </tr>
                     <tr style="background: #28a745; color: white;">
@@ -286,7 +286,7 @@ class PedidoEntregaAdmin(admin.ModelAdmin):
                             <strong style="font-size: 16px;">TOTAL:</strong>
                         </td>
                         <td style="font-size: 20px; padding: 15px; text-align: right; border-top: 2px solid #1e7e34;">
-                            <strong style="font-size: 16px;">€{obj.carrinho.total:.2f}</strong>
+                            <strong style="font-size: 16px;">KZ {obj.carrinho.total:.2f}</strong>
                         </td>
                     </tr>
                 </tfoot>

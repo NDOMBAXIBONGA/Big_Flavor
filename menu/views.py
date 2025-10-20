@@ -1,9 +1,11 @@
+from carinho.models import Carrinho, ItemCarrinho  # Importar modelos do carrinho
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Produto, Favorito
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.contrib import messages
 from django.db.models import Q
-from .models import Produto
 from .forms import ProdutoForm, ProdutoSearchForm
 
 class ProdutoListView(ListView):
@@ -109,12 +111,6 @@ def toggle_produto_status(request, pk):
     produto.save()
     return redirect('lista_produtos')
 
-# Funcao para associar os Produtos no Carinho
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from carinho.models import Carrinho, ItemCarrinho  # Importar modelos do carrinho
-from .models import Produto
-
 def lista_produtos(request):
     produtos = Produto.objects.filter(status='ativo').order_by('-data_criacao')
     
@@ -159,3 +155,51 @@ def detalhes_produto(request, pk):
         'produtos_relacionados': produtos_relacionados,
     }
     return render(request, 'detalhes_produto.html', context)
+
+@login_required
+def adicionar_favorito(request, produto_id):
+    produto = get_object_or_404(Produto, id=produto_id)
+    
+    # Verificar se já é favorito
+    favorito, created = Favorito.objects.get_or_create(
+        usuario=request.user,
+        produto=produto
+    )
+    
+    if created:
+        messages.success(request, f"{produto.nome} adicionado aos favoritos!")
+    else:
+        messages.info(request, f"{produto.nome} já está nos seus favoritos!")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'lista_produtos'))
+
+@login_required
+def remover_favorito(request, produto_id):
+    produto = get_object_or_404(Produto, id=produto_id)
+    
+    try:
+        favorito = Favorito.objects.get(usuario=request.user, produto=produto)
+        favorito.delete()
+        messages.success(request, f"{produto.nome} removido dos favoritos!")
+    except Favorito.DoesNotExist:
+        messages.error(request, "Este produto não estava nos seus favoritos!")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'lista_produtos'))
+
+@login_required
+def lista_favoritos(request):
+    favoritos = Favorito.objects.filter(
+        usuario=request.user
+    ).select_related('produto')
+    
+    # Usando property do model
+    disponiveis_count = sum(1 for fav in favoritos if fav.produto_em_estoque)
+    
+    context = {
+        'favoritos': favoritos,
+        'total_favoritos': favoritos.count(),
+        'disponiveis_count': disponiveis_count,
+        'categorias_count': favoritos.values('produto__categoria').distinct().count(),
+    }
+    
+    return render(request, 'meu_favorito.html', context)

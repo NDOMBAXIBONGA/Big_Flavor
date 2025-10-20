@@ -761,6 +761,7 @@
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
                             <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
+                            <li><a href="{% url 'lista_favoritos' %}" class="dropdown-item">Meus Favoritos</a></li>
                             {% endif %}
                         </ul>
                     </li>

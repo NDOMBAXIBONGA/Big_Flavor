@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator
@@ -122,3 +123,19 @@ class Produto(models.Model):
             'esgotado': 'bg-danger'
         }
         return status_classes.get(self.status, 'bg-secondary')
+
+# models.py
+class Favorito(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    produto = models.ForeignKey('menu.Produto', on_delete=models.CASCADE)
+    data_adicao = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['usuario', 'produto']
+    
+    @property
+    def produto_em_estoque(self):
+        return self.produto.em_estoque
+    
+    def __str__(self):
+        return f"{self.usuario.username} - {self.produto.nome}"

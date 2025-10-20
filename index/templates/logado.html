@@ -73,6 +73,7 @@
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
                             <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
+                            <li><a href="{% url 'lista_favoritos' %}" class="dropdown-item">Meus Favoritos</a></li>
                             {% endif %}
                         </ul>
                     </li>
@@ -151,17 +152,17 @@
             
             <div class="dashboard-stats" data-aos="fade-up" data-aos-delay="400">
                 <div class="stat-item">
-                    <div class="stat-number">12</div>
+                    <div class="stat-number">{{ total_pedidos|default:0 }}</div>
                     <div class="stat-label">Pedidos</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">5</div>
+                    <div class="stat-number">{{ total_favoritos|default:0 }}</div>
                     <div class="stat-label">Favoritos</div>
                 </div>
-                <div class="stat-item">
+                <!--<div class="stat-item">
                     <div class="stat-number">3</div>
                     <div class="stat-label">Recompensas</div>
-                </div>
+                </div>-->
             </div>
         </div>
     </section>
@@ -212,8 +213,9 @@
                                 <i class="fas fa-gift"></i>
                             </div>
                             <h3>Recompensas</h3>
-                            <p>Confira suas recompensas e benefícios exclusivos</p>
-                            <a href="#" class="btn-action">Ver Recompensas</a>
+                            <!--<p>Confira suas recompensas e benefícios exclusivos</p>-->
+                            <p>Brevemente</p>
+                            <a href="#" class="btn-action">Brevemente</a>
                         </div>
                     </div>
                 </div>

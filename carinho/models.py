@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings  # Importar settings
+from django.conf import settings
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 
@@ -10,9 +10,8 @@ class Carrinho(models.Model):
         ('cancelado', 'Cancelado'),
     ]
     
-    # CORREÇÃO: Usar settings.AUTH_USER_MODEL em vez de User diretamente
     usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  # ✅ Correção aqui
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Cliente'
     )
@@ -62,8 +61,7 @@ class Carrinho(models.Model):
         self.save()
 
     def __str__(self):
-        # Use email em vez de username
-        return f"Carrinho #{self.id} - {self.usuario.email}"
+        return f"Carrinho #{self.id} - {self.usuario.nome}"
 
 class ItemCarrinho(models.Model):
     carrinho = models.ForeignKey(
@@ -72,10 +70,8 @@ class ItemCarrinho(models.Model):
         related_name='itens'
     )
     
-    # CORREÇÃO: Referência correta ao modelo Produto
-    # Supondo que o modelo Produto está na app 'produtos'
     produto = models.ForeignKey(
-        'menu.Produto',  # 'app.Model' - menu é o nome da app, Produto é o modelo
+        'menu.Produto',
         on_delete=models.CASCADE
     )
     
@@ -91,10 +87,10 @@ class ItemCarrinho(models.Model):
     class Meta:
         verbose_name = 'Item do Carrinho'
         verbose_name_plural = 'Itens do Carrinho'
-        ordering = ['-data_adicao']  # Ordenar por data de adição
+        ordering = ['-data_adicao']
     
     def admin_display(self):
-        return f"{self.quantidade}x {self.produto.nome} - €{self.subtotal:.2f}"
+        return f"{self.quantidade}x {self.produto.nome} - KZ {self.subtotal:.2f}"
         
     def __str__(self):
         return f"{self.quantidade}x {self.produto.nome}"
@@ -117,6 +113,15 @@ class PedidoEntrega(models.Model):
         Carrinho,
         on_delete=models.CASCADE,
         related_name='pedido_entrega'
+    )
+    
+    # ADICIONAR: Campo para número do pedido
+    numero_pedido = models.CharField(
+        max_length=20,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name='Número do Pedido'
     )
     
     endereco_entrega = models.TextField(
@@ -155,6 +160,15 @@ class PedidoEntrega(models.Model):
         verbose_name_plural = 'Pedidos de Entrega'
         ordering = ['-data_solicitacao']
     
+    def save(self, *args, **kwargs):
+        if not self.numero_pedido:
+            # Contar quantos pedidos o cliente já tem e adicionar +1
+            ultimo_numero = PedidoEntrega.objects.filter(
+                carrinho__usuario=self.carrinho.usuario
+            ).count()
+            self.numero_pedido = f"P{self.carrinho.usuario.id:04d}-{(ultimo_numero + 1):04d}"
+        super().save(*args, **kwargs)
+    
     def itens_count(self):
         return self.carrinho.itens.count()
     itens_count.short_description = 'Nº de Itens'
@@ -163,8 +177,10 @@ class PedidoEntrega(models.Model):
         return "\n".join([f"• {item.quantidade}x {item.produto.nome}" for item in self.carrinho.itens.all()])
     
     def __str__(self):
-        # Use email em vez de username
-        return f"Pedido #{self.id} - {self.carrinho.usuario.email}"
+        # Usar o número do pedido se existir, caso contrário usar ID
+        if self.numero_pedido:
+            return f"Pedido {self.numero_pedido} - {self.carrinho.usuario.nome}"
+        return f"Pedido #{self.id} - {self.carrinho.usuario.nome}"
     
     def get_badge_estado(self):
         estado_classes = {
