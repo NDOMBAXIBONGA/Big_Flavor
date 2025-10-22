@@ -21,7 +21,7 @@ def obter_carrinho(request):
 @login_required
 def ver_carrinho(request):
     """Visualizar carrinho do usuário"""
-    carrinho = obter_carrinho(request)
+    carrinho = Carrinho.obter_carrinho_aberto(request.user)
     itens = carrinho.itens.all()
     
     context = {
@@ -33,6 +33,7 @@ def ver_carrinho(request):
 @login_required
 def adicionar_ao_carrinho(request, produto_id):
     """Adiciona produto ao carrinho"""
+    carrinho = Carrinho.obter_carrinho_aberto(request.user)
     produto = get_object_or_404(Produto, id=produto_id, status='ativo')
     
     if not produto.em_estoque():
@@ -117,9 +118,8 @@ def limpar_carrinho(request):
 @login_required
 def solicitar_entrega(request):
     """Solicita entrega do pedido"""
-    carrinho = obter_carrinho(request)
+    carrinho = Carrinho.obter_carrinho_aberto(request.user)
     
-    # Verificar se o carrinho tem itens
     if not carrinho.itens.exists():
         messages.error(request, 'Seu carrinho está vazio.')
         return redirect('ver_carrinho')
@@ -137,6 +137,10 @@ def solicitar_entrega(request):
                 # Criar pedido de entrega
                 pedido = form.save(commit=False)
                 pedido.carrinho = carrinho
+                
+                # Gerar número único antes de salvar
+                pedido.numero_pedido = gerar_numero_pedido_unico()
+                
                 pedido.save()
                 
                 # Fechar carrinho
@@ -155,6 +159,17 @@ def solicitar_entrega(request):
         'carrinho': carrinho,
     }
     return render(request, 'solicitar_entrega.html', context)
+
+def gerar_numero_pedido_unico():
+    """Gera um número de pedido único"""
+    import uuid
+    from django.utils import timezone
+    
+    # Opção 1: UUID (mais seguro)
+    return f"PED-{uuid.uuid4().hex[:8].upper()}"
+    
+    # Opção 2: Timestamp + random
+    # return f"PED-{int(timezone.now().timestamp())}-{random.randint(1000, 9999)}"
 
 @login_required
 def detalhes_pedido(request, pedido_id):

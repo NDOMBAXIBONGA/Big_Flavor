@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from django.db import IntegrityError
+
 
 class Carrinho(models.Model):
     ESTADO_CHOICES = [
@@ -37,6 +39,33 @@ class Carrinho(models.Model):
         verbose_name = 'Carrinho'
         verbose_name_plural = 'Carrinhos'
         ordering = ['-data_criacao']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['usuario', 'estado'],
+                condition=models.Q(estado='aberto'),
+                name='carrinho_aberto_unico_por_usuario'
+            )
+        ]
+    
+    @classmethod
+    def obter_carrinho_aberto(cls, usuario):
+        """
+        Método para obter o carrinho aberto do usuário
+        Sempre retorna um carrinho aberto, sem erros de duplicação
+        """
+        try:
+            # Tenta encontrar um carrinho aberto existente
+            return cls.objects.get(usuario=usuario, estado='aberto')
+        except cls.DoesNotExist:
+            # Se não existe, cria um novo
+            try:
+                return cls.objects.create(usuario=usuario, estado='aberto')
+            except IntegrityError:
+                # Em caso de race condition, busca novamente
+                return cls.objects.get(usuario=usuario, estado='aberto')
+        except cls.MultipleObjectsReturned:
+            # Caso raro de múltiplos carrinhos, pega o mais recente
+            return cls.objects.filter(usuario=usuario, estado='aberto').latest('data_criacao')
     
     @property
     def total_itens(self):
@@ -59,6 +88,15 @@ class Carrinho(models.Model):
     def fechar_carrinho(self):
         self.estado = 'fechado'
         self.save()
+    
+    def reabrir_carrinho(self):
+        """Reabre um carrinho fechado, verificando constraints"""
+        try:
+            self.estado = 'aberto'
+            self.save()
+        except IntegrityError:
+            # Se já existe um carrinho aberto, levanta erro
+            raise ValueError("Já existe um carrinho aberto para este usuário")
 
     def __str__(self):
         return f"Carrinho #{self.id} - {self.usuario.nome}"

@@ -1,6 +1,5 @@
 from django import forms
 from .models import ItemCarrinho, PedidoEntrega
-from menu.models import Produto
 
 class AdicionarAoCarrinhoForm(forms.ModelForm):
     quantidade = forms.IntegerField(
