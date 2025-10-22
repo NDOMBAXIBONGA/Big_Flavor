@@ -49,6 +49,7 @@ class RegistroUsuarioForm(forms.ModelForm):
         ('', 'Selecione uma província'),
         ('huila', 'Huíla'),
         ('luanda', 'Luanda'),
+        ('benguela', 'Benguela'),
         # ... outras províncias
     ]
     
