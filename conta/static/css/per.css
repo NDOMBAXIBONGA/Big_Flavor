@@ -1032,3 +1032,296 @@ html, body {
     height: 100%;
     object-fit: cover;
 }
+
+/* Últimos Pedidos Styles */
+.info-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+    transition: all 0.4s ease;
+    height: 100%;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.info-card-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+.info-card-header::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: 3px;
+}
+
+.info-card-header i {
+    color: var(--secondary-color);
+    font-size: 1.3rem;
+}
+
+.info-item {
+    margin-bottom: 20px;
+}
+
+.pedido-item {
+    background: var(--light-bg);
+    border-radius: 15px;
+    padding: 20px;
+    border-left: 4px solid var(--secondary-color);
+    transition: all 0.3s ease;
+}
+
+.pedido-item:hover {
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateX(5px);
+}
+
+.pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.pedido-info strong {
+    font-size: 1.1rem;
+    color: var(--dark-text);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.pedido-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.pedido-meta small {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.pedido-meta i {
+    margin-right: 4px;
+    opacity: 0.7;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pendente {
+    background: var(--gradient-warning);
+    color: white;
+}
+
+.status-preparacao {
+    background: var(--gradient-secondary);
+    color: white;
+}
+
+.status-pronto {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.status-entregue {
+    background: var(--gradient-success);
+    color: white;
+}
+
+.status-cancelado {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    color: white;
+}
+
+.pedido-itens {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.pedido-itens small {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.pedido-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.btn-outline-success {
+    border: 2px solid var(--success-color);
+    color: var(--success-color);
+    background: transparent;
+}
+
+.btn-outline-success:hover {
+    background: var(--success-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+/* Separador entre pedidos */
+.info-card hr {
+    margin: 20px 0;
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+}
+
+/* Estado vazio */
+.empty-state {
+    padding: 40px 20px;
+}
+
+.empty-state i {
+    opacity: 0.5;
+    margin-bottom: 15px;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+/* Botão de ação */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary-action {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.btn-primary-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+/* Animações específicas */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.pedido-item[data-aos="fade-up"] {
+    animation: slideInRight 0.6s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .info-card {
+        padding: 20px;
+    }
+    
+    .pedido-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .pedido-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .pedido-actions {
+        justify-content: center;
+    }
+    
+    .btn-sm {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .info-card-header {
+        font-size: 1.3rem;
+    }
+    
+    .pedido-item {
+        padding: 15px;
+    }
+    
+    .pedido-info strong {
+        font-size: 1rem;
+    }
+}

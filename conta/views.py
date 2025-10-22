@@ -1,3 +1,5 @@
+from carinho.models import PedidoEntrega
+from django.utils import timezone
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -82,8 +84,40 @@ def dashboard(request):
 @login_required
 def perfil(request):
     usuario = request.user
-    # Adicione aqui lógica para estatísticas se necessário
-    return render(request, 'perfil.html', {'usuario': usuario})
+    
+    # Últimos pedidos do usuário (últimos 5 pedidos)
+    ultimos_pedidos = PedidoEntrega.objects.filter(
+        carrinho__usuario=usuario
+    ).select_related('carrinho').prefetch_related('carrinho__itens__produto').order_by('-data_solicitacao')[:3]
+    
+    # Estatísticas do usuário
+    total_pedidos = PedidoEntrega.objects.filter(
+        carrinho__usuario=usuario
+    ).count()
+    
+    pedidos_entregues = PedidoEntrega.objects.filter(
+        carrinho__usuario=usuario,
+        estado='entregue'
+    ).count()
+    
+    # Calcular total gasto
+    total_gasto = 0
+    for pedido in ultimos_pedidos:
+        if hasattr(pedido.carrinho, 'total'):
+            total_gasto += pedido.carrinho.total
+        else:
+            # Fallback: calcular manualmente
+            total_gasto += sum(item.subtotal for item in pedido.carrinho.itens.all())
+    
+    context = {
+        'usuario': usuario,  # Já inclui o usuário aqui
+        'ultimos_pedidos': ultimos_pedidos,
+        'total_pedidos': total_pedidos,
+        'pedidos_entregues': pedidos_entregues,
+        'total_gasto': total_gasto,
+    }
+    
+    return render(request, 'perfil.html', context)  # Remove o segundo dicionário
 
 @login_required
 def editar_perfil(request):

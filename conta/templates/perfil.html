@@ -285,7 +285,7 @@
                                 <div class="stat-label">Pedidos Entregues</div>
                             </div>
                             <div class="stat-card" data-aos="zoom-in" data-aos-delay="700">
-                                <div class="stat-value">€{{ total_gasto|floatformat:2 }}</div>
+                                <div class="stat-value">KZ {{ total_gasto|floatformat:2 }}</div>
                                 <div class="stat-label">Total Gasto</div>
                             </div>
                         </div>
@@ -374,31 +374,94 @@
                 <!-- Últimos Pedidos -->
                 <div class="info-card" data-aos="fade-left" data-aos-delay="500">
                     <div class="info-card-header">
-                        <i class="fas fa-clock"></i>
+                        <i class="fas fa-history"></i>
                         Últimos Pedidos
                     </div>
+                    
                     {% if ultimos_pedidos %}
                         {% for pedido in ultimos_pedidos %}
-                        <div class="info-item" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:5 }}00">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>Pedido #{{ pedido.id }}</strong>
-                                    <div class="small text-muted">{{ pedido.data_solicitacao|date:"d/m/Y" }}</div>
+                        <div class="info-item pedido-item" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:5 }}00">
+                            <div class="pedido-header">
+                                <div class="pedido-info">
+                                    <strong>
+                                        {% if pedido.numero_pedido %}
+                                            Pedido #{{ pedido.numero_pedido }}
+                                        {% else %}
+                                            Pedido #{{ pedido.id }}
+                                        {% endif %}
+                                    </strong>
+                                    <div class="pedido-meta">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="fas fa-euro-sign me-1"></i>
+                                            {% if pedido.carrinho.total %}
+                                                {{ pedido.carrinho.total|floatformat:2 }}
+                                            {% else %}
+                                                {{ pedido.carrinho.subtotal|floatformat:2 }}
+                                            {% endif %}
+                                        </small>
+                                    </div>
                                 </div>
-                                <span class="badge {% if pedido.estado == 'entregue' %}bg-success{% elif pedido.estado == 'cancelado' %}bg-danger{% else %}bg-warning{% endif %}">
+                                <span class="badge status-{{ pedido.estado }}">
                                     {{ pedido.get_estado_display }}
                                 </span>
                             </div>
+                            
+                            <!-- Itens do pedido (opcional) -->
+                            <div class="pedido-itens">
+                                {% for item in pedido.carrinho.itens.all|slice:":2" %}
+                                <small class="text-muted">
+                                    {{ item.quantidade }}x {{ item.produto.nome }}
+                                    {% if not forloop.last %} • {% endif %}
+                                </small>
+                                {% endfor %}
+                                {% if pedido.carrinho.itens.count > 2 %}
+                                <small class="text-muted">+{{ pedido.carrinho.itens.count|add:"-2" }} outros itens</small>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Ações do pedido -->
+                            <div class="pedido-actions mt-2">
+                                <a href="{% url 'detalhes_pedido' pedido.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Detalhes
+                                </a>
+                                {% if pedido.estado == 'entregue' %}
+                                <a href="{% url 'refazer_pedido' pedido.id %}" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-redo me-1"></i>
+                                    Refazer
+                                </a>
+                                {% endif %}
+                            </div>
                         </div>
+                        
+                        {% if not forloop.last %}
+                        <hr class="my-2">
+                        {% endif %}
+                        
                         {% endfor %}
                     {% else %}
-                        <p class="text-muted text-center py-3">Nenhum pedido realizado ainda.</p>
+                        <div class="empty-state text-center py-4">
+                            <i class="fas fa-shopping-bag fa-2x text-muted mb-3"></i>
+                            <p class="text-muted mb-2">Nenhum pedido realizado ainda.</p>
+                            <a href="{% url 'lista_produtos' %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-utensils me-1"></i>
+                                Fazer Primeiro Pedido
+                            </a>
+                        </div>
                     {% endif %}
+                    
+                    {% if ultimos_pedidos %}
                     <div class="text-center mt-3">
                         <a href="{% url 'historico_pedidos' %}" class="btn-action btn-primary-action btn-sm">
+                            <i class="fas fa-list me-1"></i>
                             Ver Todos os Pedidos
                         </a>
                     </div>
+                    {% endif %}
                 </div>
 
                 <!-- Informações de Contacto -->
@@ -567,10 +630,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Manter Conta</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                        <i class="fas fa-trash me-2"></i>
-                        Excluir Permanentemente
-                    </button>
+                    <a href="{% url 'excluir_conta' %}" class="btn btn-danger" id="confirmDeleteBtn" data-aos="fade-up" data-aos-delay="900">
+                                <i class="fas fa-shopping-bag"></i>
+                                Excluir Permanentemente
+                    </a>
                 </div>
             </div>
         </div>
