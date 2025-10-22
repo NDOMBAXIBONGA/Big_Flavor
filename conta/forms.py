@@ -96,6 +96,7 @@ class RegistroUsuarioForm(forms.ModelForm):
         label='Província'
     )
     
+    # CORREÇÃO: Inicializar com TODOS os municípios ou vazio
     municipio = forms.ChoiceField(
         choices=[('', 'Selecione primeiro a província')],
         required=True,
@@ -107,10 +108,23 @@ class RegistroUsuarioForm(forms.ModelForm):
         label='Município'
     )
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # CORREÇÃO: Atualizar choices baseado na província selecionada
+        if 'provincia' in self.data:
+            try:
+                provincia_id = self.data.get('provincia')
+                if provincia_id in self.MUNICIPIOS_POR_PROVINCIA:
+                    self.fields['municipio'].choices = self.MUNICIPIOS_POR_PROVINCIA[provincia_id]
+                    self.fields['municipio'].widget.attrs.pop('disabled', None)
+            except (ValueError, TypeError):
+                pass  # Manter choices padrão se houver erro
+    
     def get_municipios_choices(self, provincia_id):
         """Retorna choices válidos para a província"""
         return self.MUNICIPIOS_POR_PROVINCIA.get(provincia_id, [('', 'Província inválida')])
-
+        
     def clean_provincia(self):
         provincia = self.cleaned_data.get('provincia')
         provincias_validas = [code for code, name in self.PROVINCIAS if code]
@@ -119,17 +133,35 @@ class RegistroUsuarioForm(forms.ModelForm):
             raise ValidationError('Província inválida.')
         
         return provincia
-
+    
     def clean_municipio(self):
         municipio = self.cleaned_data.get('municipio')
         provincia = self.cleaned_data.get('provincia')
         
+        # CORREÇÃO: Verificar se a província é válida primeiro
+        if not provincia:
+            raise ValidationError('Selecione uma província antes do município.')
+        
         if provincia and municipio:
             municipios_validos = [code for code, name in self.get_municipios_choices(provincia) if code]
+            
             if municipio not in municipios_validos:
                 raise ValidationError('Município inválido para a província selecionada.')
         
         return municipio
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        provincia = cleaned_data.get('provincia')
+        municipio = cleaned_data.get('municipio')
+        
+        # CORREÇÃO: Validação cruzada adicional
+        if provincia and municipio:
+            municipios_validos = [code for code, name in self.MUNICIPIOS_POR_PROVINCIA.get(provincia, []) if code]
+            if municipio not in municipios_validos:
+                self.add_error('municipio', 'Município inválido para a província selecionada.')
+        
+        return cleaned_data
     
     def clean_telemovel(self):
         telemovel = self.cleaned_data.get('telemovel')
