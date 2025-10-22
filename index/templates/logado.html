@@ -143,7 +143,7 @@
         <div class="floating-element floating-2"></div>
         
         <div class="dashboard-background">
-            <img src="" alt="Dashboard Big Flavor">
+            <img src="{% static "img/big.jpg" %}" alt="Dashboard Big Flavor">
         </div>
         
         <div class="dashboard-content">
@@ -376,50 +376,89 @@
             </div>
             
             <div class="row">
-                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                {% for produto in produtos_recomendados %}
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:1 }}00">
                     <div class="recommendation-card">
                         <div class="recommendation-img">
-                            <img src="{% static 'img/menu-burger.jpg' %}" alt="Recomendação">
-                            <div class="recommendation-badge">Popular</div>
+                            {% if produto.imagem %}
+                                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                            {% else %}
+                                <div class="recommendation-placeholder">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Badges dinâmicas -->
+                            <div class="recommendation-badge badge-{{ forloop.counter }}">
+                                {% if forloop.first %}
+                                    Popular
+                                {% elif forloop.counter == 2 %}
+                                    Em Alta
+                                {% else %}
+                                    Recomendado
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Botão de favorito -->
+                            {% if user.is_authenticated %}
+                            <div class="recommendation-favorite">
+                                <form method="post" action="{% url 'adicionar_favorito' produto.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-favorite-recommendation" title="Adicionar aos favoritos">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
                         </div>
+                        
                         <div class="recommendation-content">
-                            <h3 class="recommendation-title">BBQ Bacon Club</h3>
-                            <div class="recommendation-price">€13.99</div>
-                            <p class="recommendation-description">Carne Angus, queijo, cebola caramelizada e nosso molho barbecue artesanal</p>
-                            <a href="#" class="btn-action pulse">Adicionar ao Carrinho</a>
+                            <h3 class="recommendation-title">{{ produto.nome }}</h3>
+                            <div class="recommendation-price">{{ produto.get_preco_formatado }}</div>
+                            
+                            <p class="recommendation-description">
+                                {{ produto.descricao_curta|default:produto.descricao|truncatewords:15 }}
+                            </p>
+                            
+                            <div class="recommendation-meta">
+                                <div class="recommendation-rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                                <div class="recommendation-category">
+                                    <i class="fas fa-tag"></i>
+                                    <span>{{ produto.get_categoria_display }}</span>
+                                </div>
+                            </div>
+                            
+                            {% if produto.em_estoque %}
+                                <form method="post" action="{% url 'adicionar_ao_carrinho' produto.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantidade" value="1">
+                                    <button type="submit" class="btn-action pulse">
+                                        <i class="fas fa-cart-plus me-2"></i>
+                                        Adicionar ao Carrinho
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button class="btn-action btn-disabled" disabled>
+                                    <i class="fas fa-times me-2"></i>
+                                    Indisponível
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="recommendation-card">
-                        <div class="recommendation-img">
-                            <img src="{% static 'img/menu-burger.jpg' %}" alt="Recomendação">
-                            <div class="recommendation-badge" style="background: var(--accent-color);">Novo</div>
-                        </div>
-                        <div class="recommendation-content">
-                            <h3 class="recommendation-title">Vegetariano Gourmet</h3>
-                            <div class="recommendation-price">€10.99</div>
-                            <p class="recommendation-description">Hambúrguer de lentilhas com abacate, rúcula e maionese de ervas</p>
-                            <a href="#" class="btn-action pulse">Adicionar ao Carrinho</a>
-                        </div>
+                {% empty %}
+                <!-- Fallback quando não há produtos recomendados -->
+                <div class="col-12 text-center">
+                    <div class="empty-recommendations">
+                        <i class="fas fa-utensils fa-3x text-muted mb-3"></i>
+                        <h4>Carregando recomendações...</h4>
+                        <p class="text-muted">Em breve teremos sugestões personalizadas para você!</p>
                     </div>
                 </div>
-                
-                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="recommendation-card">
-                        <div class="recommendation-img">
-                            <img src="{% static 'img/menu-burger.jpg' %}" alt="Recomendação">
-                            <div class="recommendation-badge" style="background: var(--gradient-secondary);">Promoção</div>
-                        </div>
-                        <div class="recommendation-content">
-                            <h3 class="recommendation-title">Combo Família</h3>
-                            <div class="recommendation-price">€29.99</div>
-                            <p class="recommendation-description">2 hambúrgueres, 2 porções de batatas, 2 refrigerantes e sobremesa</p>
-                            <a href="#" class="btn-action pulse">Adicionar ao Carrinho</a>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
