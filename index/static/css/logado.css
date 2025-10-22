@@ -966,3 +966,90 @@ html, body {
     height: 100%;
     object-fit: cover;
 }
+
+/* Estilos para a timeline do pedido em andamento */
+.order-card-active {
+    border: 2px solid var(--secondary-color);
+    position: relative;
+}
+
+.order-card-active::before {
+    content: 'EM ANDAMENTO';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: var(--secondary-color);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.order-timeline {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    position: relative;
+    padding: 0 10px;
+}
+
+.order-timeline::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.timeline-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e9ecef;
+    margin-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+.timeline-item.active .timeline-dot {
+    background: var(--success-color);
+    transform: scale(1.3);
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+}
+
+.timeline-item span {
+    font-size: 0.7rem;
+    text-align: center;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.timeline-item.active span {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.order-meta {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.empty-orders {
+    background: white;
+    border-radius: 15px;
+    padding: 50px 30px;
+    box-shadow: var(--shadow);
+}

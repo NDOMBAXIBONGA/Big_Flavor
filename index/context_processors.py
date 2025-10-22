@@ -2,6 +2,8 @@
 from carinho.models import PedidoEntrega
 from sobre.models import VideoHistoria
 from menu.models import Favorito
+from django.utils import timezone
+from datetime import timedelta
 
 def videos_context(request):
     # Vídeo principal marcado como principal=True
@@ -38,10 +40,24 @@ def dashboard_stats(request):
         
         # Recompensas (exemplo - você pode ajustar a lógica)
         total_recompensas = 3  # Ou sua lógica específica
+
+         # PEDIDO EM ANDAMENTO MAIS RECENTE
+        pedido_andamento = PedidoEntrega.objects.filter(
+            carrinho__usuario=request.user,
+            estado__in=['pendente', 'confirmado', 'preparacao', 'despachado']
+        ).select_related('carrinho').prefetch_related('carrinho__itens__produto').order_by('-data_solicitacao').first()
+        
+        # PEDIDOS RECENTES FINALIZADOS (excluindo o em andamento)
+        pedidos_recentes = PedidoEntrega.objects.filter(
+            carrinho__usuario=request.user,
+            data_solicitacao__gte=timezone.now() - timedelta(days=30)
+        ).exclude(estado__in=['pendente', 'confirmado', 'preparacao', 'despachado']).select_related('carrinho').prefetch_related('carrinho__itens__produto').order_by('-data_solicitacao')[:3]
         
         return {
             'total_pedidos': total_pedidos,
             'total_favoritos': total_favoritos,
             'total_recompensas': total_recompensas,
+            'pedidos_recentes': pedidos_recentes,
+            'pedido_andamento': pedido_andamento,
         }
     return {}

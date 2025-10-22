@@ -232,72 +232,138 @@
             </div>
             
             <div class="row">
+                <!-- Pedido em Andamento (APENAS O MAIS RECENTE) -->
+                {% if pedido_andamento %}
                 <div class="col-lg-6" data-aos="fade-right">
-                    <div class="order-card">
+                    <div class="order-card order-card-active">
                         <div class="order-header">
-                            <div class="order-id">Pedido #BF20231201</div>
-                            <div class="order-status">Entregue</div>
+                            <div class="order-id">Pedido #{{ pedido_andamento.numero_pedido|default:pedido_andamento.id }}</div>
+                            <div class="order-status status-{{ pedido_andamento.estado }}">
+                                {{ pedido_andamento.get_estado_display }}
+                            </div>
                         </div>
                         <div class="order-body">
+                            <div class="order-timeline">
+                                <div class="timeline-item {% if pedido_andamento.estado == 'pendente' %}active{% endif %}">
+                                    <div class="timeline-dot"></div>
+                                    <span>Pedido Recebido</span>
+                                </div>
+                                <div class="timeline-item {% if pedido_andamento.estado == 'confirmado' %}active{% endif %}">
+                                    <div class="timeline-dot"></div>
+                                    <span>Confirmado</span>
+                                </div>
+                                <div class="timeline-item {% if pedido_andamento.estado == 'preparacao' %}active{% endif %}">
+                                    <div class="timeline-dot"></div>
+                                    <span>Em Preparação</span>
+                                </div>
+                                <div class="timeline-item {% if pedido_andamento.estado == 'despachado' %}active{% endif %}">
+                                    <div class="timeline-dot"></div>
+                                    <span>Despachado</span>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <span>Entregue</span>
+                                </div>
+                            </div>
+                            
                             <div class="order-items">
+                                {% for item in pedido_andamento.carrinho.itens.all %}
                                 <div class="order-item">
-                                    <span>Big Flavor Supreme</span>
-                                    <span>€12.99</span>
+                                    <span>{{ item.produto.nome }} ({{ item.quantidade }}x)</span>
+                                    <span>KZ {{ item.subtotal }}</span>
                                 </div>
-                                <div class="order-item">
-                                    <span>Batatas Fritas</span>
-                                    <span>€4.50</span>
-                                </div>
-                                <div class="order-item">
-                                    <span>Refrigerante</span>
-                                    <span>€2.50</span>
-                                </div>
+                                {% endfor %}
                             </div>
                             <div class="order-total">
                                 <span>Total</span>
-                                <span>€19.99</span>
+                                <span>KZ {{ pedido_andamento.carrinho.total }}</span>
                             </div>
                         </div>
                         <div class="order-actions">
-                            <a href="#" class="btn-order btn-primary-order">Detalhes</a>
-                            <a href="#" class="btn-order btn-outline-order">Refazer Pedido</a>
+                            <a href="{% url 'detalhes_pedido' pedido_andamento.id %}" class="btn-order btn-primary-order">
+                                Acompanhar Pedido
+                            </a>
+                            {% if pedido_andamento.estado in 'pendente,confirmado' %}
+                                <form method="post" action="{% url 'cancelar_pedido' pedido_andamento.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-order btn-outline-order" 
+                                            onclick="return confirm('Tem certeza que deseja cancelar este pedido?')">
+                                        Cancelar
+                                    </button>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+                {% endif %}
                 
+                <!-- Últimos Pedidos Finalizados -->
+                {% for pedido in pedidos_recentes %}
                 <div class="col-lg-6" data-aos="fade-left">
                     <div class="order-card">
                         <div class="order-header">
-                            <div class="order-id">Pedido #BF20231128</div>
-                            <div class="order-status" style="background: var(--warning-color); color: white;">Preparando</div>
+                            <div class="order-id">Pedido #{{ pedido.numero_pedido|default:pedido.id }}</div>
+                            <div class="order-status status-{{ pedido.estado }}">
+                                {{ pedido.get_estado_display }}
+                            </div>
                         </div>
                         <div class="order-body">
+                            <div class="order-meta">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                                </small>
+                            </div>
                             <div class="order-items">
+                                {% for item in pedido.carrinho.itens.all %}
                                 <div class="order-item">
-                                    <span>Chicken Crispy</span>
-                                    <span>€11.99</span>
+                                    <span>{{ item.produto.nome }} ({{ item.quantidade }}x)</span>
+                                    <span>KZ {{ item.subtotal }}</span>
                                 </div>
-                                <div class="order-item">
-                                    <span>Onion Rings</span>
-                                    <span>€5.50</span>
-                                </div>
+                                {% endfor %}
                             </div>
                             <div class="order-total">
                                 <span>Total</span>
-                                <span>€17.49</span>
+                                <span>KZ {{ pedido.carrinho.total }}</span>
                             </div>
                         </div>
                         <div class="order-actions">
-                            <a href="#" class="btn-order btn-primary-order">Acompanhar</a>
-                            <a href="#" class="btn-order btn-outline-order">Cancelar</a>
+                            <a href="{% url 'detalhes_pedido' pedido.id %}" class="btn-order btn-primary-order">
+                                Ver Detalhes
+                            </a>
+                            {% if pedido.estado == 'entregue' %}
+                                <a href="{% url 'refazer_pedido' pedido.id %}" class="btn-order btn-outline-order">
+                                    Refazer Pedido
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+                {% endfor %}
+                
+                <!-- Estado quando não há pedidos -->
+                {% if not pedido_andamento and not pedidos_recentes %}
+                <div class="col-12" data-aos="fade-up">
+                    <div class="empty-orders text-center py-5">
+                        <div class="empty-icon mb-4">
+                            <i class="fas fa-shopping-bag fa-4x text-muted"></i>
+                        </div>
+                        <h3 class="mb-3">Nenhum pedido realizado</h3>
+                        <p class="text-muted mb-4">Você ainda não fez nenhum pedido. Explore nosso cardápio e faça seu primeiro pedido!</p>
+                        <a href="{% url 'lista_produtos' %}" class="btn-action">
+                            <i class="fas fa-utensils me-2"></i>
+                            Explorar Cardápio
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             
+            {% if pedidos_recentes or pedido_andamento %}
             <div class="text-center mt-5" data-aos="fade-up">
                 <a href="{% url 'historico_pedidos' %}" class="btn-action">Ver Todos os Pedidos</a>
             </div>
+            {% endif %}
         </div>
     </section>
 

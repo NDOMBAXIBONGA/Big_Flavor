@@ -314,3 +314,28 @@ def alterar_estado_pedido(request, pedido_id):
             messages.error(request, 'Estado inválido.')
     
     return redirect('detalhes_pedido', pedido_id=pedido.id)
+
+@login_required
+def refazer_pedido(request, pedido_id):
+    pedido_original = get_object_or_404(
+        PedidoEntrega, 
+        id=pedido_id, 
+        carrinho__usuario=request.user
+    )
+    
+    # Cria um novo carrinho baseado no pedido original
+    novo_carrinho = Carrinho.objects.create(
+        usuario=request.user,
+        estado='aberto'
+    )
+    
+    # Copia os itens do pedido original para o novo carrinho
+    for item in pedido_original.carrinho.itens.all():
+        ItemCarrinho.objects.create(
+            carrinho=novo_carrinho,
+            produto=item.produto,
+            quantidade=item.quantidade
+        )
+    
+    messages.success(request, "Itens do pedido adicionados ao carrinho!")
+    return redirect('ver_carrinho')
