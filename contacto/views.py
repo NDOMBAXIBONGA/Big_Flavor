@@ -1,5 +1,4 @@
 from django.views.decorators.cache import cache_page
-from celery import shared_task
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -178,8 +177,3 @@ Data: {contacto.data_envio}
 @cache_page(60 * 15)  # Cache de 15 minutos
 def contacto_sucesso(request):
     return render(request, 'sucesso.html')
-
-@shared_task
-def enviar_email_contacto(contacto_id):
-    contacto = Contacto.objects.get(id=contacto_id)
-    # código do email...
