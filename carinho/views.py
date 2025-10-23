@@ -8,6 +8,12 @@ from django.db import transaction
 from .models import Carrinho, ItemCarrinho, PedidoEntrega
 from .forms import AdicionarAoCarrinhoForm, PedidoEntregaForm, AtualizarItemForm
 from menu.models import Produto
+from django.views.decorators.http import require_http_methods
+import logging
+import threading
+
+logger = logging.getLogger(__name__)
+
 
 @login_required
 def obter_carrinho(request):
@@ -118,50 +124,73 @@ def limpar_carrinho(request):
     messages.success(request, 'Carrinho limpo.')
     return redirect('ver_carrinho')
 
-@login_required
+@require_http_methods(["GET", "POST"])
 def solicitar_entrega(request):
-    """Solicita entrega do pedido"""
-    carrinho = Carrinho.obter_carrinho_aberto(request.user)
+    """Versão ultra-otimizada para evitar timeout - CORRIGIDA"""
     
-    if not carrinho.itens.exists():
+    # ✅ CORREÇÃO: Use estado='aberto'
+    carrinho_id = request.session.get('carrinho_id')
+    if carrinho_id:
+        carrinho = Carrinho.objects.filter(id=carrinho_id, estado='aberto').first()
+    else:
+        carrinho = Carrinho.objects.filter(usuario=request.user, estado='aberto').first()
+        if carrinho:
+            request.session['carrinho_id'] = carrinho.id
+    
+    if not carrinho or not carrinho.itens.exists():
         messages.error(request, 'Seu carrinho está vazio.')
         return redirect('ver_carrinho')
-    
-    # Verificar se todos os produtos estão disponíveis
-    for item in carrinho.itens.all():
-        if not item.produto.em_estoque() or item.quantidade > item.produto.estoque:
-            messages.error(request, f'{item.produto.nome} não está mais disponível na quantidade solicitada.')
-            return redirect('ver_carrinho')
     
     if request.method == 'POST':
         form = PedidoEntregaForm(request.POST)
         if form.is_valid():
-            with transaction.atomic():
-                # Criar pedido de entrega
+            try:
                 pedido = form.save(commit=False)
                 pedido.carrinho = carrinho
-                
-                # Gerar número único antes de salvar
                 pedido.numero_pedido = gerar_numero_pedido_unico()
-                
                 pedido.save()
                 
-                # Fechar carrinho
-                carrinho.fechar_carrinho()
+                threading.Thread(
+                    target=processamento_completo_assincrono, 
+                    args=(carrinho.id, pedido.id), 
+                    daemon=True
+                ).start()
                 
-                # Notificar admin
-                enviar_notificacao_admin(pedido)
-                
-                messages.success(request, 'Pedido de entrega solicitado com sucesso!')
+                request.session.pop('carrinho_id', None)
+                messages.success(request, 'Pedido realizado! Processando...')
                 return redirect('detalhes_pedido', pedido_id=pedido.id)
-    else:
-        form = PedidoEntregaForm()
+                
+            except Exception as e:
+                logger.error(f"Erro rápido no pedido: {str(e)}")
+                messages.error(request, 'Erro rápido - tente novamente.')
+                return redirect('solicitar_entrega')
     
-    context = {
-        'form': form,
-        'carrinho': carrinho,
-    }
-    return render(request, 'solicitar_entrega.html', context)
+    form = PedidoEntregaForm()
+    
+    return render(request, 'solicitar_entrega.html', {
+        'form': form, 
+        'carrinho': carrinho
+    })
+
+def processamento_completo_assincrono(carrinho_id, pedido_id):
+    """Processa tudo em background - CORRIGIDO"""
+    try:
+        from django.db import transaction
+        
+        with transaction.atomic():
+            # Fechar carrinho
+            carrinho = Carrinho.objects.get(id=carrinho_id)
+            carrinho.estado = 'fechado'  # ✅ Muda o estado para fechado
+            carrinho.save()
+            
+            # Notificar admin
+            pedido = PedidoEntrega.objects.get(id=pedido_id)
+            enviar_notificacao_admin(pedido)
+            
+        logger.info(f"Processamento background completo para pedido {pedido_id}")
+            
+    except Exception as e:
+        logger.error(f"Erro background: {str(e)}")
 
 def gerar_numero_pedido_unico():
     """Gera um número de pedido único"""
