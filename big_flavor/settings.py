@@ -145,6 +145,20 @@ CACHES = {
     }
 }
 
+# No Railway, use a variável de ambiente REDIS_URL
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'IGNORE_EXCEPTIONS': True,  # Importante para não quebrar o app
+        }
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
