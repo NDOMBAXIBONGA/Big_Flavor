@@ -2,8 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from decimal import Decimal
-from django.db import IntegrityError
-
+from django.db import IntegrityError, transaction
 
 class Carrinho(models.Model):
     ESTADO_CHOICES = [
@@ -50,22 +49,33 @@ class Carrinho(models.Model):
     @classmethod
     def obter_carrinho_aberto(cls, usuario):
         """
-        Método para obter o carrinho aberto do usuário
-        Sempre retorna um carrinho aberto, sem erros de duplicação
+        Método simplificado e seguro para obter carrinho aberto
         """
         try:
-            # Tenta encontrar um carrinho aberto existente
             return cls.objects.get(usuario=usuario, estado='aberto')
         except cls.DoesNotExist:
-            # Se não existe, cria um novo
             try:
                 return cls.objects.create(usuario=usuario, estado='aberto')
             except IntegrityError:
-                # Em caso de race condition, busca novamente
                 return cls.objects.get(usuario=usuario, estado='aberto')
         except cls.MultipleObjectsReturned:
-            # Caso raro de múltiplos carrinhos, pega o mais recente
-            return cls.objects.filter(usuario=usuario, estado='aberto').latest('data_criacao')
+            carrinhos = cls.objects.filter(
+                usuario=usuario, 
+                estado='aberto'
+            ).order_by('-data_criacao')
+            
+            carrinho_principal = carrinhos.first()
+            carrinhos.exclude(id=carrinho_principal.id).update(estado='fechado')
+            
+            return carrinho_principal
+    
+    def __str__(self):
+        """CORRIGIDO: User padrão não tem campo 'nome'"""
+        nome_usuario = (
+            f"{self.usuario.first_name} {self.usuario.last_name}".strip()
+            or self.usuario.username
+        )
+        return f"Carrinho #{self.id} - {nome_usuario}"
     
     @property
     def total_itens(self):
@@ -88,18 +98,6 @@ class Carrinho(models.Model):
     def fechar_carrinho(self):
         self.estado = 'fechado'
         self.save()
-    
-    def reabrir_carrinho(self):
-        """Reabre um carrinho fechado, verificando constraints"""
-        try:
-            self.estado = 'aberto'
-            self.save()
-        except IntegrityError:
-            # Se já existe um carrinho aberto, levanta erro
-            raise ValueError("Já existe um carrinho aberto para este usuário")
-
-    def __str__(self):
-        return f"Carrinho #{self.id} - {self.usuario.nome}"
 
 class ItemCarrinho(models.Model):
     carrinho = models.ForeignKey(
@@ -126,10 +124,8 @@ class ItemCarrinho(models.Model):
         verbose_name = 'Item do Carrinho'
         verbose_name_plural = 'Itens do Carrinho'
         ordering = ['-data_adicao']
+        unique_together = ['carrinho', 'produto']
     
-    def admin_display(self):
-        return f"{self.quantidade}x {self.produto.nome} - KZ {self.subtotal:.2f}"
-        
     def __str__(self):
         return f"{self.quantidade}x {self.produto.nome}"
     
@@ -153,7 +149,6 @@ class PedidoEntrega(models.Model):
         related_name='pedido_entrega'
     )
     
-    # ADICIONAR: Campo para número do pedido
     numero_pedido = models.CharField(
         max_length=20,
         unique=True,
@@ -198,35 +193,17 @@ class PedidoEntrega(models.Model):
         verbose_name_plural = 'Pedidos de Entrega'
         ordering = ['-data_solicitacao']
     
+    def __str__(self):
+        """CORRIGIDO: User padrão não tem campo 'nome'"""
+        nome_usuario = (
+            f"{self.carrinho.usuario.first_name} {self.carrinho.usuario.last_name}".strip()
+            or self.carrinho.usuario.username
+        )
+        if self.numero_pedido:
+            return f"Pedido {self.numero_pedido} - {nome_usuario}"
+        return f"Pedido #{self.id} - {nome_usuario}"
+    
     def save(self, *args, **kwargs):
         if not self.numero_pedido:
-            # Contar quantos pedidos o cliente já tem e adicionar +1
-            ultimo_numero = PedidoEntrega.objects.filter(
-                carrinho__usuario=self.carrinho.usuario
-            ).count()
-            self.numero_pedido = f"P{self.carrinho.usuario.id:04d}-{(ultimo_numero + 1):04d}"
+            self.numero_pedido = f"P{self.carrinho.usuario.id:04d}-{self.carrinho.id:04d}"
         super().save(*args, **kwargs)
-    
-    def itens_count(self):
-        return self.carrinho.itens.count()
-    itens_count.short_description = 'Nº de Itens'
-    
-    def listar_itens(self):
-        return "\n".join([f"• {item.quantidade}x {item.produto.nome}" for item in self.carrinho.itens.all()])
-    
-    def __str__(self):
-        # Usar o número do pedido se existir, caso contrário usar ID
-        if self.numero_pedido:
-            return f"Pedido {self.numero_pedido} - {self.carrinho.usuario.nome}"
-        return f"Pedido #{self.id} - {self.carrinho.usuario.nome}"
-    
-    def get_badge_estado(self):
-        estado_classes = {
-            'pendente': 'bg-warning',
-            'confirmado': 'bg-info',
-            'preparacao': 'bg-primary',
-            'despachado': 'bg-secondary',
-            'entregue': 'bg-success',
-            'cancelado': 'bg-danger',
-        }
-        return estado_classes.get(self.estado, 'bg-secondary')

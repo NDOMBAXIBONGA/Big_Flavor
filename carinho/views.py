@@ -32,48 +32,51 @@ def ver_carrinho(request):
 
 @login_required
 def adicionar_ao_carrinho(request, produto_id):
-    """Adiciona produto ao carrinho"""
-    carrinho = Carrinho.obter_carrinho_aberto(request.user)
-    produto = get_object_or_404(Produto, id=produto_id, status='ativo')
-    
-    if not produto.em_estoque():
-        messages.error(request, 'Produto indisponível no momento.')
-        return redirect('lista_produtos')
-    
-    carrinho = obter_carrinho(request)
-    
-    if request.method == 'POST':
-        form = AdicionarAoCarrinhoForm(request.POST)
-        if form.is_valid():
-            quantidade = form.cleaned_data['quantidade']
-            
-            # Verificar se há estoque suficiente
-            if quantidade > produto.estoque:
-                messages.error(request, f'Estoque insuficiente. Disponível: {produto.estoque}')
-                return redirect('detalhes_produto', pk=produto_id)
-            
-            # Adicionar ou atualizar item no carrinho
-            item, created = ItemCarrinho.objects.get_or_create(
-                carrinho=carrinho,
-                produto=produto,
-                defaults={'quantidade': quantidade}
-            )
-            
-            if not created:
-                nova_quantidade = item.quantidade + quantidade
-                if nova_quantidade > produto.estoque:
-                    messages.error(request, f'Quantidade excede estoque disponível.')
+    """Adiciona produto ao carrinho - VERSÃO CORRIGIDA"""
+    try:
+        # Use apenas UMA abordagem
+        carrinho = Carrinho.obter_carrinho_aberto(request.user)
+        produto = get_object_or_404(Produto, id=produto_id, status='ativo')
+        
+        if not produto.em_estoque():
+            messages.error(request, 'Produto indisponível no momento.')
+            return redirect('lista_produtos')
+        
+        if request.method == 'POST':
+            form = AdicionarAoCarrinhoForm(request.POST)
+            if form.is_valid():
+                quantidade = form.cleaned_data['quantidade']
+                
+                # Verificar estoque
+                if quantidade > produto.estoque:
+                    messages.error(request, f'Estoque insuficiente. Disponível: {produto.estoque}')
                     return redirect('detalhes_produto', pk=produto_id)
-                item.quantidade = nova_quantidade
-                item.save()
-                messages.success(request, f'Quantidade de {produto.nome} atualizada no carrinho.')
-            else:
-                messages.success(request, f'{produto.nome} adicionado ao carrinho!')
-            
-            return redirect('ver_carrinho')
-    
-    # Se for GET, redireciona para detalhes do produto
-    return redirect('detalhes_produto', pk=produto_id)
+                
+                # Adicionar ou atualizar item
+                item, created = ItemCarrinho.objects.get_or_create(
+                    carrinho=carrinho,
+                    produto=produto,
+                    defaults={'quantidade': quantidade}
+                )
+                
+                if not created:
+                    nova_quantidade = item.quantidade + quantidade
+                    if nova_quantidade > produto.estoque:
+                        messages.error(request, 'Quantidade excede estoque disponível.')
+                        return redirect('detalhes_produto', pk=produto_id)
+                    item.quantidade = nova_quantidade
+                    item.save()
+                    messages.success(request, f'Quantidade de {produto.nome} atualizada.')
+                else:
+                    messages.success(request, f'{produto.nome} adicionado ao carrinho!')
+                
+                return redirect('ver_carrinho')
+        
+        return redirect('detalhes_produto', pk=produto_id)
+        
+    except Exception as e:
+        messages.error(request, f'Erro ao adicionar produto: {str(e)}')
+        return redirect('lista_produtos')
 
 @login_required
 def atualizar_item_carrinho(request, item_id):
