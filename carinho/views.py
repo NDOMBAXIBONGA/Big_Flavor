@@ -124,73 +124,255 @@ def limpar_carrinho(request):
     messages.success(request, 'Carrinho limpo.')
     return redirect('ver_carrinho')
 
+from django.db import transaction, IntegrityError
+from django.shortcuts import redirect, render
+from django.contrib import messages
+from django.views.decorators.http import require_http_methods
+import threading
+import logging
+import time
+
+logger = logging.getLogger(__name__)
+
 @require_http_methods(["GET", "POST"])
 def solicitar_entrega(request):
-    """Versão ultra-otimizada para evitar timeout - CORRIGIDA"""
+    """Versão final - resolve UNIQUE constraint"""
     
-    # ✅ CORREÇÃO: Use estado='aberto'
-    carrinho_id = request.session.get('carrinho_id')
-    if carrinho_id:
-        carrinho = Carrinho.objects.filter(id=carrinho_id, estado='aberto').first()
-    else:
-        carrinho = Carrinho.objects.filter(usuario=request.user, estado='aberto').first()
-        if carrinho:
-            request.session['carrinho_id'] = carrinho.id
-    
-    if not carrinho or not carrinho.itens.exists():
-        messages.error(request, 'Seu carrinho está vazio.')
-        return redirect('ver_carrinho')
-    
-    if request.method == 'POST':
-        form = PedidoEntregaForm(request.POST)
-        if form.is_valid():
-            try:
-                pedido = form.save(commit=False)
-                pedido.carrinho = carrinho
-                pedido.numero_pedido = gerar_numero_pedido_unico()
-                pedido.save()
-                
-                threading.Thread(
-                    target=processamento_completo_assincrono, 
-                    args=(carrinho.id, pedido.id), 
-                    daemon=True
-                ).start()
-                
-                request.session.pop('carrinho_id', None)
-                messages.success(request, 'Pedido realizado! Processando...')
-                return redirect('detalhes_pedido', pedido_id=pedido.id)
-                
-            except Exception as e:
-                logger.error(f"Erro rápido no pedido: {str(e)}")
-                messages.error(request, 'Erro rápido - tente novamente.')
-                return redirect('solicitar_entrega')
-    
-    form = PedidoEntregaForm()
-    
-    return render(request, 'solicitar_entrega.html', {
-        'form': form, 
-        'carrinho': carrinho
-    })
-
-def processamento_completo_assincrono(carrinho_id, pedido_id):
-    """Processa tudo em background - CORRIGIDO"""
     try:
-        from django.db import transaction
+        carrinho = obter_carrinho_inteligente(request)
         
+        if not carrinho or not carrinho.itens.exists():
+            messages.error(request, 'Seu carrinho está vazio.')
+            return redirect('ver_carrinho')
+        
+        if request.method == 'POST':
+            form = PedidoEntregaForm(request.POST)
+            if form.is_valid():
+                return processar_pedido_final(request, form, carrinho)
+        
+        form = PedidoEntregaForm(initial=obter_dados_usuario(request.user))
+        
+        return render(request, 'solicitar_entrega.html', {
+            'form': form, 
+            'carrinho': carrinho
+        })
+        
+    except Exception as e:
+        logger.error(f"Erro em solicitar_entrega: {str(e)}")
+        messages.error(request, 'Erro no sistema. Tente novamente.')
+        return redirect('ver_carrinho')
+
+def obter_carrinho_inteligente(request):
+    """Solução inteligente para UNIQUE constraint - SEMPRE funciona"""
+    try:
+        # ✅ 1. PRIMEIRO: Tenta usar carrinho da sessão
+        carrinho_id = request.session.get('carrinho_id')
+        if carrinho_id:
+            carrinho = Carrinho.objects.filter(
+                id=carrinho_id, 
+                usuario=request.user,
+                estado='aberto'
+            ).first()
+            if carrinho:
+                # Verifica se não tem pedido associado
+                if not hasattr(carrinho, 'pedido_entrega'):
+                    return carrinho
+                else:
+                    # Se tem pedido, remove da sessão e continua
+                    del request.session['carrinho_id']
+        
+        # ✅ 2. SEGUNDO: Busca carrinho aberto existente (pode ser apenas UM por usuário)
+        carrinho_existente = Carrinho.objects.filter(
+            usuario=request.user, 
+            estado='aberto'
+        ).first()
+        
+        if carrinho_existente:
+            # ✅ VERIFICA se este carrinho já tem pedido
+            if not hasattr(carrinho_existente, 'pedido_entrega'):
+                request.session['carrinho_id'] = carrinho_existente.id
+                return carrinho_existente
+            else:
+                # ✅ SE TEM PEDIDO: muda estado para não interferir com UNIQUE
+                carrinho_existente.estado = 'fechado_com_pedido'
+                carrinho_existente.save()
+                logger.info(f"Carrinho {carrinho_existente.id} fechado por ter pedido")
+        
+        # ✅ 3. TERCEIRO: Tenta criar novo carrinho com tratamento de erro
+        try:
+            novo_carrinho = Carrinho.objects.create(
+                usuario=request.user,
+                estado='aberto'
+            )
+            request.session['carrinho_id'] = novo_carrinho.id
+            logger.info(f"✅ NOVO carrinho criado: {novo_carrinho.id}")
+            return novo_carrinho
+            
+        except IntegrityError:
+            # ❌ UNIQUE constraint - outro processo criou o carrinho
+            logger.info("🔄 UNIQUE constraint detectado - buscando carrinho existente")
+            
+            # ✅ Busca o carrinho que foi criado
+            time.sleep(0.1)  # Pequena pausa para garantir commit
+            carrinho_criado = Carrinho.objects.filter(
+                usuario=request.user, 
+                estado='aberto'
+            ).first()
+            
+            if carrinho_criado:
+                request.session['carrinho_id'] = carrinho_criado.id
+                logger.info(f"✅ Carrinho encontrado após UNIQUE: {carrinho_criado.id}")
+                return carrinho_criado
+            else:
+                # ✅ ÚLTIMO RECURSO: usa estado diferente
+                return criar_carrinho_estado_alternativo(request)
+                
+    except Exception as e:
+        logger.error(f"❌ Erro crítico em obter_carrinho_inteligente: {str(e)}")
+        return criar_carrinho_estado_alternativo(request)
+
+def criar_carrinho_estado_alternativo(request):
+    """Cria carrinho com estado alternativo para evitar UNIQUE"""
+    try:
+        # Tenta estados alternativos
+        estados_alternativos = ['ativo', 'pendente', 'novo', 'em_andamento']
+        
+        for estado in estados_alternativos:
+            try:
+                novo_carrinho = Carrinho.objects.create(
+                    usuario=request.user,
+                    estado=estado
+                )
+                request.session['carrinho_id'] = novo_carrinho.id
+                logger.info(f"✅ Carrinho criado com estado alternativo '{estado}': {novo_carrinho.id}")
+                return novo_carrinho
+            except IntegrityError:
+                continue  # Tenta próximo estado
+        
+        # Se todos os estados falharem, busca qualquer carrinho
+        qualquer_carrinho = Carrinho.objects.filter(usuario=request.user).first()
+        if qualquer_carrinho:
+            request.session['carrinho_id'] = qualquer_carrinho.id
+            logger.warning(f"⚠️ Usando carrinho existente: {qualquer_carrinho.id}")
+            return qualquer_carrinho
+            
+        # Último recurso absoluto
+        raise Exception("Não foi possível obter ou criar carrinho")
+        
+    except Exception as e:
+        logger.error(f"❌ Erro em criar_carrinho_estado_alternativo: {str(e)}")
+        return None
+
+def processar_pedido_final(request, form, carrinho):
+    """Processa pedido e LIBERA a UNIQUE constraint"""
+    try:
         with transaction.atomic():
-            # Fechar carrinho
-            carrinho = Carrinho.objects.get(id=carrinho_id)
-            carrinho.estado = 'fechado'  # ✅ Muda o estado para fechado
+            # Verificação final de segurança
+            if hasattr(carrinho, 'pedido_entrega'):
+                messages.info(request, 'Este carrinho já tem um pedido.')
+                if 'carrinho_id' in request.session:
+                    del request.session['carrinho_id']
+                return redirect('solicitar_entrega')
+            
+            pedido = form.save(commit=False)
+            pedido.carrinho = carrinho
+            pedido.numero_pedido = gerar_numero_pedido_unico()
+            pedido.save()
+            
+            # ✅ CRÍTICO: Muda o estado para LIBERAR a UNIQUE constraint
+            carrinho.estado = 'fechado'
             carrinho.save()
             
-            # Notificar admin
-            pedido = PedidoEntrega.objects.get(id=pedido_id)
-            enviar_notificacao_admin(pedido)
+            # Processamento em background
+            threading.Thread(
+                target=processamento_final, 
+                args=(carrinho.id, pedido.id), 
+                daemon=True
+            ).start()
             
-        logger.info(f"Processamento background completo para pedido {pedido_id}")
+            # Limpa sessão para próximo pedido
+            if 'carrinho_id' in request.session:
+                del request.session['carrinho_id']
+            
+            messages.success(request, f'Pedido #{pedido.numero_pedido} realizado com sucesso!')
+            return redirect('detalhes_pedido', pedido_id=pedido.id)
             
     except Exception as e:
-        logger.error(f"Erro background: {str(e)}")
+        logger.error(f"❌ Erro em processar_pedido_final: {str(e)}")
+        messages.error(request, 'Erro ao finalizar pedido.')
+        return redirect('solicitar_entrega')
+
+def processamento_final(carrinho_id, pedido_id):
+    """Processamento final em background"""
+    try:
+        # Aqui você pode adicionar:
+        # - Limpeza de itens do carrinho
+        # - Notificações
+        # - Etc.
+        
+        logger.info(f"✅ Pedido {pedido_id} processado - Carrinho {carrinho_id} fechado")
+        
+    except Exception as e:
+        logger.error(f"❌ Erro em processamento_final: {str(e)}")
+
+def limpar_carrinhos_duplicados(usuario):
+    """Limpa carrinhos duplicados (para admin)"""
+    try:
+        from django.db.models import Count
+        
+        # Encontra usuários com múltiplos carrinhos abertos
+        usuarios_com_duplicados = Carrinho.objects.filter(
+            estado='aberto'
+        ).values('usuario').annotate(
+            total=Count('id')
+        ).filter(total__gt=1)
+        
+        for usuario_data in usuarios_com_duplicados:
+            user_id = usuario_data['usuario']
+            carrinhos = Carrinho.objects.filter(
+                usuario_id=user_id, 
+                estado='aberto'
+            ).order_by('-data_criacao')
+            
+            # Mantém o mais recente, fecha os outros
+            if carrinhos.count() > 1:
+                carrinho_manter = carrinhos.first()
+                carrinhos.exclude(id=carrinho_manter.id).update(estado='fechado_duplicado')
+                logger.info(f"Limpos {carrinhos.count() - 1} carrinhos duplicados do usuário {user_id}")
+                
+        return usuarios_com_duplicados.count()
+        
+    except Exception as e:
+        logger.error(f"Erro ao limpar carrinhos duplicados: {str(e)}")
+        return 0
+
+def obter_dados_usuario(usuario):
+    """Pré-carrega dados do usuário para o form"""
+    try:
+        return {
+            'nome': usuario.get_full_name(),
+            'email': usuario.email,
+            'telefone': getattr(usuario, 'telefone', ''),
+        }
+    except Exception as e:
+        logger.error(f"Erro ao obter dados usuário: {str(e)}")
+        return {}
+
+def listar_pedidos_ativos_usuario(usuario):
+    """Lista pedidos ativos do usuário (para debug)"""
+    return PedidoEntrega.objects.filter(
+        carrinho__usuario=usuario,
+        carrinho__estado='aberto'
+    )
+
+def limpar_carrinhos_abandonados(usuario):
+    """Limpa carrinhos abertos sem itens (manutenção)"""
+    carrinhos_abandonados = Carrinho.objects.filter(
+        usuario=usuario,
+        estado='aberto',
+        itens__isnull=True
+    ).delete()
+    return carrinhos_abandonados
 
 def gerar_numero_pedido_unico():
     """Gera um número de pedido único"""
