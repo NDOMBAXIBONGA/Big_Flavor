@@ -78,9 +78,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #'django.middleware.cache.UpdateCacheMiddleware',  # ← Adicione mas devo comentar em Desenvolvimento
+    'django.middleware.cache.UpdateCacheMiddleware',  # ← Adicione mas devo comentar em Desenvolvimento
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.cache.FetchFromCacheMiddleware',  # ← Adicione mas devo comentar em Desenvolvimento
+    'django.middleware.cache.FetchFromCacheMiddleware',  # ← Adicione mas devo comentar em Desenvolvimento
     'django.middleware.csrf.CsrfViewMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -100,7 +100,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True, # Devo comentar antes de fazer a atualizacao no servidor
+#        'APP_DIRS': True, # Devo comentar antes de fazer a atualizacao no servidor
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -110,13 +110,13 @@ TEMPLATES = [
                 'index.context_processors.videos_context',
                 'index.context_processors.dashboard_stats'
             ],
-#            'loaders': [
-#                # Cache de templates em produção mas devo comentar em Desenvolvimento
-#                ('django.template.loaders.cached.Loader', [
-#                    'django.template.loaders.filesystem.Loader',
-#                    'django.template.loaders.app_directories.Loader',
-#                ]),
-#            ],
+            'loaders': [
+                # Cache de templates em produção mas devo comentar em Desenvolvimento
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
+            ],
         },
     },
 ]
@@ -243,7 +243,7 @@ AUTH_USER_MODEL = 'conta.Usuario'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage' # Devo comentar em Desenvolvimento
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage' # Devo comentar em Desenvolvimento
 
 # Media files
 MEDIA_URL = '/media/'
