@@ -2,6 +2,7 @@ import os
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.cache import cache
 import re
 from django.core.validators import MinLengthValidator
 from .models import Usuario
@@ -178,7 +179,16 @@ class RegistroUsuarioForm(forms.ModelForm):
             cpf_limpo = re.sub(r'\D', '', cpf)
             if len(cpf_limpo) != 11:
                 raise ValidationError('CPF deve ter 11 dígitos')
-            if Usuario.objects.filter(cpf=cpf_limpo).exists():
+            
+            # Cache para verificar CPF existente
+            cache_key = f"cpf_exists_{cpf_limpo}"
+            cpf_exists = cache.get(cache_key)
+            
+            if cpf_exists is None:
+                cpf_exists = Usuario.objects.filter(cpf=cpf_limpo).exists()
+                cache.set(cache_key, cpf_exists, 300)  # 5 minutos
+            
+            if cpf_exists:
                 raise ValidationError('Este CPF já está cadastrado')
             return cpf_limpo
         return cpf
@@ -187,7 +197,16 @@ class RegistroUsuarioForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
         if email:
             email = email.lower()
-            if Usuario.objects.filter(email=email).exists():
+            
+            # Cache para verificar email existente
+            cache_key = f"email_exists_{email}"
+            email_exists = cache.get(cache_key)
+            
+            if email_exists is None:
+                email_exists = Usuario.objects.filter(email=email).exists()
+                cache.set(cache_key, email_exists, 300)  # 5 minutos
+            
+            if email_exists:
                 raise ValidationError('Este e-mail já está cadastrado')
             return email
         return email
@@ -223,8 +242,20 @@ class RegistroUsuarioForm(forms.ModelForm):
     def save(self, commit=True):
         usuario = super().save(commit=False)
         usuario.set_password(self.cleaned_data['senha'])
+        
         if commit:
             usuario.save()
+            
+            # Invalidar caches relacionados após criar usuário
+            cache_keys_to_delete = [
+                f"cpf_exists_{usuario.cpf}",
+                f"email_exists_{usuario.email}",
+                f"usuario_profile_{usuario.id}",
+            ]
+            
+            for key in cache_keys_to_delete:
+                cache.delete(key)
+        
         return usuario
 
 class LoginForm(AuthenticationForm):
@@ -305,7 +336,16 @@ class EditarPerfilForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
         if email:
             email = email.lower()
-            if User.objects.filter(email=email).exclude(id=self.instance.id).exists():
+            
+            # Cache para verificar email existente (excluindo usuário atual)
+            cache_key = f"email_exists_{email}_exclude_{self.instance.id}"
+            email_exists = cache.get(cache_key)
+            
+            if email_exists is None:
+                email_exists = User.objects.filter(email=email).exclude(id=self.instance.id).exists()
+                cache.set(cache_key, email_exists, 300)  # 5 minutos
+            
+            if email_exists:
                 raise ValidationError('Este e-mail já está em uso por outro utilizador.')
         return email
 
@@ -330,8 +370,20 @@ class EditarPerfilForm(forms.ModelForm):
         nova_senha = self.cleaned_data.get('nova_senha')
         if nova_senha:
             user.set_password(nova_senha)
+        
         if commit:
             user.save()
+            
+            # Invalidar caches relacionados após atualizar perfil
+            cache_keys_to_delete = [
+                f"usuario_profile_{user.id}",
+                f"email_exists_{user.email}_exclude_{user.id}",
+                f"user_details_{user.id}",
+            ]
+            
+            for key in cache_keys_to_delete:
+                cache.delete(key)
+        
         return user
 
 class AvatarForm(forms.ModelForm):
@@ -360,3 +412,17 @@ class AvatarForm(forms.ModelForm):
             raise ValidationError('Formato não suportado. Use JPG, PNG ou GIF.')
 
         return foto_perfil
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        
+        if commit:
+            # Invalidar cache do perfil após atualizar avatar
+            cache_key = f"usuario_profile_{instance.id}"
+            cache.delete(cache_key)
+            
+            # Invalidar cache da foto específica
+            foto_cache_key = f"usuario_avatar_{instance.id}"
+            cache.delete(foto_cache_key)
+        
+        return instance

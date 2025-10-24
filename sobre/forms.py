@@ -1,10 +1,9 @@
 # forms.py - ATUALIZADO
 from django.core.exceptions import ValidationError
+from django.core.cache import cache
 import os
 from .models import VideoHistoria
 from django import forms
-    
-
 
 class VideoHistoriaForm(forms.ModelForm):
     class Meta:
@@ -78,3 +77,29 @@ class VideoHistoriaForm(forms.ModelForm):
             )
         
         return cleaned_data
+
+    def save(self, commit=True):
+        # Salva o vídeo história
+        instance = super().save(commit=commit)
+        
+        if commit:
+            # Invalidar todos os caches relacionados a vídeos histórias
+            self.invalidar_cache_videos_historia()
+        
+        return instance
+
+    def invalidar_cache_videos_historia(self):
+        """Invalida todos os caches relacionados a vídeos histórias"""
+        cache_keys_to_delete = [
+            "videos_historia_ativos",
+            "videos_historia_todos",
+            "videos_historia_count",
+            "videos_historia_destaque",
+            "videos_historia_recentes",
+            f"video_historia_detalhe_{self.instance.id}" if hasattr(self, 'instance') and self.instance.id else None,
+        ]
+        
+        # Remover None values e deletar caches
+        cache_keys_to_delete = [key for key in cache_keys_to_delete if key]
+        for key in cache_keys_to_delete:
+            cache.delete(key)

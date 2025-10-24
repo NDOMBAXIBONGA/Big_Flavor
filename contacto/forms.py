@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.core.cache import cache
 from .models import Contacto
 import re
 
@@ -91,3 +92,26 @@ class ContactoForm(forms.ModelForm):
             })
         
         return cleaned_data
+
+    def save(self, commit=True):
+        # Salva o formulário de contacto
+        instance = super().save(commit=commit)
+        
+        if commit:
+            # Invalidar cache de contactos após salvar
+            cache_keys_to_delete = [
+                "contactos_recentes",
+                "contactos_count",
+                "contactos_ultimos_7_dias",
+            ]
+            
+            for key in cache_keys_to_delete:
+                cache.delete(key)
+            
+            # Adicionar ao cache de submissões recentes (para prevenir spam)
+            email = self.cleaned_data.get('email')
+            if email:
+                spam_cache_key = f"contacto_submission_{email}"
+                cache.set(spam_cache_key, True, 300)  # 5 minutos de cache para prevenir spam
+        
+        return instance
