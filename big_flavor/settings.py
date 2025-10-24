@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-#from dotenv import load_dotenv
-#load_dotenv()  # Carrega variáveis do .env
+from dotenv import load_dotenv # Devo comentar em desenvolvimento
+load_dotenv()  # Carrega variáveis do .env Devo comentar em desenvolvimento
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
