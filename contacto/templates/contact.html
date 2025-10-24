@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %} <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,14 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contactar-Nós - Big Flavor</title>
+    
+    <!-- Cache para recursos externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
+    
+    <!-- Cache para CSS estático -->
+    {% cache 86400 css_contactar %} <!-- Cache por 24 horas -->
     <link href="{% static "css/contactar.css" %}" rel="stylesheet">
+    {% endcache %}
     
 </head>
 <body>
+    <!-- Cache para navbar -->
+    {% cache 3600 navbar_contacto request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -109,12 +117,15 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
     <!-- Contact Hero Section -->
     <section class="contact-hero">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
         
+        <!-- Cache para hero section -->
+        {% cache 86400 contact_hero %}
         <div class="contact-hero-background">
             <img src="{% static "img/big.jpg" %}" alt="Contactar Big Flavor">
         </div>
@@ -123,11 +134,14 @@
             <h1 class="contact-hero-title" data-aos="fade-up">Entre em <span>Contacto</span> Com Nosco</h1>
             <p class="contact-hero-subtitle" data-aos="fade-up" data-aos-delay="200">Estamos aqui para tornar sua experiência ainda mais especial. Fale connosco!</p>
         </div>
+        {% endcache %}
     </section>
 
     <!-- Contact Info Section -->
     <section class="section">
         <div class="container">
+            <!-- Informações de Contacto - Cache estático -->
+            {% cache 86400 contact_info %}
             <div class="contact-info-section" data-aos="fade-up">
                 <div class="section-header">
                     <h2 class="section-title">Informações de Contacto</h2>
@@ -176,12 +190,14 @@
                     </div>
                 </div>
             </div>
+            {% endcache %}
             
             <div class="row">
                 <div class="col-lg-8" data-aos="fade-right">
                     <div class="contact-form-container">
                         <h3 class="mb-4">Envie-nos uma Mensagem</h3>
                         
+                        <!-- Mensagens SEM CACHE (dinâmicas) -->
                         {% if messages %}
                             {% for message in messages %}
                                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -192,6 +208,7 @@
                             {% endfor %}
                         {% endif %}
                         
+                        <!-- Formulário SEM CACHE (dinâmico) -->
                         <form name="sentMessage" id="contactForm" novalidate="novalidate" method="post">
                             {% csrf_token %}
 
@@ -283,7 +300,8 @@
                     </div>
                 </div>
                     
-                    <!-- CARD SIGA-NOS CORRIGIDO E VISÍVEL -->
+                    <!-- CARD SIGA-NOS - Cache estático -->
+                    {% cache 86400 social_card %}
                     <div class="col-lg-4 contact-card social-card" data-aos="fade-up" data-aos-delay="300">
                         <div class="contact-icon">
                             <i class="fas fa-share-alt"></i>
@@ -305,12 +323,14 @@
                             </a>
                         </div>
                     </div>
+                    {% endcache %}
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
+    <!-- FAQ Section - Cache estático -->
+    {% cache 86400 faq_section %}
     <section class="section bg-light">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
@@ -363,8 +383,10 @@
             </div>
         </div>
     </section>
+    {% endcache %}
 
-    <!-- Footer -->
+    <!-- Footer - Cache estático -->
+    {% cache 86400 footer_contacto %}
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -413,16 +435,19 @@
             </div>
         </div>
     </footer>
+    {% endcache %}
 
     <!-- Back to top button -->
     <a href="#" class="back-to-top">
         <i class="fas fa-arrow-up"></i>
     </a>
 
+    <!-- Cache para scripts -->
+    {% cache 86400 scripts_contacto %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
     <script src="{% static "js/contacto.js" %}"></script>
+    {% endcache %}
     
 </body>
 </html>

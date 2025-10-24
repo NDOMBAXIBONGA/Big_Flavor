@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %} <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,13 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ produto.nome }} - Big Flavor</title>
+    
+    <!-- Cache para recursos externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Cache para CSS estático -->
+    {% cache 86400 css_detalhes %} <!-- Cache por 24 horas -->
     <link href="{% static "css/detalhes.css" %}" rel="stylesheet">
+    {% endcache %}
  
 </head>
 <body>
+    <!-- Cache para navbar -->
+    {% cache 3600 navbar_detalhes request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -108,121 +117,125 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
-    <!-- Product Hero Section -->
-<section class="product-hero">
-    <div class="floating-element floating-1"></div>
-    <div class="floating-element floating-2"></div>
-    
-    <div class="container product-hero-content">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{% url 'lista_produtos' %}">
-                        <i class="fas fa-arrow-left me-2"></i>
-                        Voltar para Cardápio
-                    </a>
-                </li>
-                <li class="breadcrumb-item active">
-                    {% if produto.nome %}
-                        {{ produto.nome|truncatewords:3 }}
-                    {% else %}
-                        Produto
-                    {% endif %}
-                </li>
-            </ol>
-        </nav>
+    <!-- Product Hero Section - Cache por produto -->
+    {% cache 300 product_hero produto.id %} <!-- Cache por 5 minutos -->
+    <section class="product-hero">
+        <div class="floating-element floating-1"></div>
+        <div class="floating-element floating-2"></div>
         
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h1 class="product-title" data-aos="fade-up">
-                    {% if produto.nome %}
-                        {{ produto.nome }}
-                    {% else %}
-                        Nome do Produto
-                    {% endif %}
-                </h1>
-                
-                <p class="product-subtitle" data-aos="fade-up" data-aos-delay="200">
-                    {% if produto.descricao_curta %}
-                        {{ produto.descricao_curta }}
-                    {% else %}
-                        Descrição breve do produto...
-                    {% endif %}
-                </p>
-                
-                <div class="product-meta" data-aos="fade-up" data-aos-delay="400">
-                    <!-- Categoria -->
-                    <div class="meta-item">
-                        <i class="fas fa-tag"></i>
-                        <span>
-                            {% if produto.categoria %}
-                                {{ produto.get_categoria_display }}
-                            {% else %}
-                                Sem categoria
-                            {% endif %}
-                        </span>
-                    </div>
-                    
-                    <!-- Avaliações -->
-                    <div class="meta-item">
-                        <i class="fas fa-star"></i>
-                        <span>
-                            {% if produto.avaliacao_media %}
-                                {{ produto.avaliacao_media }} ({{ produto.total_avaliacoes }} avaliações)
-                            {% else %}
-                                4.9 (128 avaliações)
-                            {% endif %}
-                        </span>
-                    </div>
-                    
-                    <!-- Tempo de Preparação -->
-                    <div class="meta-item">
-                        <i class="fas fa-clock"></i>
-                        <span>
-                            {% if produto.tempo_preparacao %}
-                                Preparação: {{ produto.tempo_preparacao }} min
-                            {% else %}
-                                Preparação: 15-20 min
-                            {% endif %}
-                        </span>
-                    </div>
-                    
-                    <!-- Dificuldade (opcional) -->
-                    {% if produto.dificuldade %}
-                    <div class="meta-item">
-                        <i class="fas fa-chef-hat"></i>
-                        <span>Dificuldade: {{ produto.get_dificuldade_display }}</span>
-                    </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Preço na versão mobile -->
-                <div class="d-lg-none mt-4" data-aos="fade-up" data-aos-delay="600">
-                    <div class="price-tag-mobile">
-                        {% if produto.preco %}
-                            {{ produto.get_preco_formatado }}
+        <div class="container product-hero-content">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'lista_produtos' %}">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Voltar para Cardápio
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        {% if produto.nome %}
+                            {{ produto.nome|truncatewords:3 }}
                         {% else %}
-                            Preço não disponível
+                            Produto
+                        {% endif %}
+                    </li>
+                </ol>
+            </nav>
+            
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="product-title" data-aos="fade-up">
+                        {% if produto.nome %}
+                            {{ produto.nome }}
+                        {% else %}
+                            Nome do Produto
+                        {% endif %}
+                    </h1>
+                    
+                    <p class="product-subtitle" data-aos="fade-up" data-aos-delay="200">
+                        {% if produto.descricao_curta %}
+                            {{ produto.descricao_curta }}
+                        {% else %}
+                            Descrição breve do produto...
+                        {% endif %}
+                    </p>
+                    
+                    <div class="product-meta" data-aos="fade-up" data-aos-delay="400">
+                        <!-- Categoria -->
+                        <div class="meta-item">
+                            <i class="fas fa-tag"></i>
+                            <span>
+                                {% if produto.categoria %}
+                                    {{ produto.get_categoria_display }}
+                                {% else %}
+                                    Sem categoria
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <!-- Avaliações -->
+                        <div class="meta-item">
+                            <i class="fas fa-star"></i>
+                            <span>
+                                {% if produto.avaliacao_media %}
+                                    {{ produto.avaliacao_media }} ({{ produto.total_avaliacoes }} avaliações)
+                                {% else %}
+                                    4.9 (128 avaliações)
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <!-- Tempo de Preparação -->
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>
+                                {% if produto.tempo_preparacao %}
+                                    Preparação: {{ produto.tempo_preparacao }} min
+                                {% else %}
+                                    Preparação: 15-20 min
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <!-- Dificuldade (opcional) -->
+                        {% if produto.dificuldade %}
+                        <div class="meta-item">
+                            <i class="fas fa-chef-hat"></i>
+                            <span>Dificuldade: {{ produto.get_dificuldade_display }}</span>
+                        </div>
                         {% endif %}
                     </div>
+                    
+                    <!-- Preço na versão mobile -->
+                    <div class="d-lg-none mt-4" data-aos="fade-up" data-aos-delay="600">
+                        <div class="price-tag-mobile">
+                            {% if produto.preco %}
+                                {{ produto.get_preco_formatado }}
+                            {% else %}
+                                Preço não disponível
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Coluna direita para elementos visuais (opcional) -->
-            <div class="col-lg-4 d-none d-lg-block" data-aos="fade-left" data-aos-delay="300">
-                <div class="hero-badge">
-                    <div class="badge-content">
-                        <i class="fas fa-fire"></i>
-                        <span>Mais Vendido</span>
+                
+                <!-- Coluna direita para elementos visuais (opcional) -->
+                <div class="col-lg-4 d-none d-lg-block" data-aos="fade-left" data-aos-delay="300">
+                    <div class="hero-badge">
+                        <div class="badge-content">
+                            <i class="fas fa-fire"></i>
+                            <span>Mais Vendido</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+    {% endcache %}
 
-    <!-- Product Detail Section -->
+    <!-- Product Detail Section - Cache por produto -->
+    {% cache 300 product_detail produto.id %} <!-- Cache por 5 minutos -->
     <section class="product-detail-section">
         <div class="container">
             <div class="row">
@@ -236,18 +249,6 @@
                                 <i class="fas fa-utensils"></i>
                             </div>
                         {% endif %}
-                        
-                        <!-- Botão de Favorito na imagem (versão mobile) -->
-                        {% if user.is_authenticated %}
-                        <div class="favorite-button-mobile d-lg-none">
-                            <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn-favorite {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
-                                    <i class="{% if eh_favorito %}fas{% else %}far{% endif %} fa-heart"></i>
-                                </button>
-                            </form>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
 
@@ -256,19 +257,6 @@
                     <div class="product-info">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <span class="price-tag">{{ produto.get_preco_formatado }}</span>
-                            
-                            <!-- Botão de Favorito (versão desktop) -->
-                            {% if user.is_authenticated %}
-                            <div class="favorite-button-desktop d-none d-lg-block">
-                                <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-favorite-lg {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
-                                        <i class="{% if eh_favorito %}fas{% else %}far{% endif %} fa-heart me-2"></i>
-                                        {% if eh_favorito %}Remover Favorito{% else %}Adicionar aos Favoritos{% endif %}
-                                    </button>
-                                </form>
-                            </div>
-                            {% endif %}
                         </div>
                         
                         <div class="product-description">
@@ -308,90 +296,6 @@
                             </div>
                         </div>
 
-                        <!-- Cart Actions -->
-                        {% if user.is_authenticated %}
-                            {% if produto.em_estoque %}
-                                <div class="quantity-controls">
-                                    <label for="quantidade" class="form-label fw-bold">Quantidade:</label>
-                                    <button class="btn-quantity" id="decrease-qty" type="button">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <input type="number" 
-                                           id="quantidade"
-                                           name="quantidade" 
-                                           value="1" 
-                                           min="1" 
-                                           max="{{ produto.estoque|default:1 }}"
-                                           class="form-control quantity-input"
-                                           required>
-                                    <button class="btn-quantity" id="increase-qty" type="button">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-
-                                <div class="action-buttons">
-                                    <form method="post" action="{% url 'adicionar_ao_carrinho' produto.pk %}" class="d-inline-block me-2">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="quantidade" id="hidden-quantidade" value="1">
-                                        <button type="submit" class="btn-cart-action btn-primary-action pulse">
-                                            <i class="fas fa-cart-plus me-2"></i>
-                                            Adicionar ao Carrinho
-                                        </button>
-                                    </form>
-
-                                    <!-- Botão de Favorito (versão mobile alternativa) -->
-                                    <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}" class="d-inline-block d-lg-none">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn-favorite-action {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
-                                            <i class="{% if eh_favorito %}fas{% else %}far{% endif %} fa-heart me-2"></i>
-                                            {% if eh_favorito %}Remover{% else %}Favorito{% endif %}
-                                        </button>
-                                    </form>
-                                </div>
-
-                                <!-- Se o produto já está no carrinho -->
-                                {% if item_carrinho %}
-                                    <div class="cart-item-info">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span>
-                                                <i class="fas fa-info-circle text-primary me-1"></i>
-                                                Você tem {{ item_carrinho.quantidade }} unidade(s) no carrinho
-                                            </span>
-                                            <form method="post" action="{% url 'remover_do_carrinho' item_carrinho.pk %}">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn btn-outline-danger btn-sm" 
-                                                        onclick="return confirm('Remover {{ produto.nome }} do carrinho?')">
-                                                    <i class="fas fa-trash me-1"></i>
-                                                    Remover
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                                
-                            {% else %}
-                                <div class="alert alert-warning">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    Este produto está temporariamente indisponível.
-                                </div>
-                            {% endif %}
-                        {% else %}
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Você precisa estar logado para adicionar produtos ao carrinho e favoritos.
-                                <div class="mt-3">
-                                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary me-2">
-                                        <i class="fas fa-sign-in-alt me-1"></i>
-                                        Fazer Login
-                                    </a>
-                                    <a href="{% url 'registro' %}" class="btn btn-outline-primary">
-                                        <i class="fas fa-user-plus me-1"></i>
-                                        Criar Conta
-                                    </a>
-                                </div>
-                            </div>
-                        {% endif %}
-
                         <!-- Additional Info -->
                         <div class="mt-4 pt-4 border-top">
                             <div class="row">
@@ -424,8 +328,119 @@
             </div>
         </div>
     </section>
+    {% endcache %}
 
-    <!-- Related Products -->
+    <!-- Elementos Dinâmicos SEM CACHE -->
+    <div class="container">
+        <!-- Botões de Favorito - SEM CACHE (dinâmico) -->
+        {% if user.is_authenticated %}
+        <div class="favorite-button-mobile d-lg-none">
+            <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-favorite {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
+                    <i class="{% if eh_favorito %}fas{% else %}far{% endif %} fa-heart"></i>
+                </button>
+            </form>
+        </div>
+
+        <div class="favorite-button-desktop d-none d-lg-block">
+            <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-favorite-lg {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
+                    <i class="{% if eh_favorito %}fas{% else %}far{% endif %} fa-heart me-2"></i>
+                    {% if eh_favorito %}Remover Favorito{% else %}Adicionar aos Favoritos{% endif %}
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Cart Actions - SEM CACHE (dinâmico) -->
+        {% if user.is_authenticated %}
+            {% if produto.em_estoque %}
+                <div class="quantity-controls">
+                    <label for="quantidade" class="form-label fw-bold">Quantidade:</label>
+                    <button class="btn-quantity" id="decrease-qty" type="button">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <input type="number" 
+                           id="quantidade"
+                           name="quantidade" 
+                           value="1" 
+                           min="1" 
+                           max="{{ produto.estoque|default:1 }}"
+                           class="form-control quantity-input"
+                           required>
+                    <button class="btn-quantity" id="increase-qty" type="button">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="action-buttons">
+                    <form method="post" action="{% url 'adicionar_ao_carrinho' produto.pk %}" class="d-inline-block me-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantidade" id="hidden-quantidade" value="1">
+                        <button type="submit" class="btn-cart-action btn-primary-action pulse">
+                            <i class="fas fa-cart-plus me-2"></i>
+                            Adicionar ao Carrinho
+                        </button>
+                    </form>
+
+                    <!-- Botão de Favorito (versão mobile alternativa) -->
+                    <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}" class="d-inline-block d-lg-none">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-favorite-action {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
+                            <i class="{% if eh_favorito %}fas{% else %}far{% endif %} fa-heart me-2"></i>
+                            {% if eh_favorito %}Remover{% else %}Favorito{% endif %}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Se o produto já está no carrinho -->
+                {% if item_carrinho %}
+                    <div class="cart-item-info">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="fas fa-info-circle text-primary me-1"></i>
+                                Você tem {{ item_carrinho.quantidade }} unidade(s) no carrinho
+                            </span>
+                            <form method="post" action="{% url 'remover_do_carrinho' item_carrinho.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                        onclick="return confirm('Remover {{ produto.nome }} do carrinho?')">
+                                    <i class="fas fa-trash me-1"></i>
+                                    Remover
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+                
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Este produto está temporariamente indisponível.
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Você precisa estar logado para adicionar produtos ao carrinho e favoritos.
+                <div class="mt-3">
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary me-2">
+                        <i class="fas fa-sign-in-alt me-1"></i>
+                        Fazer Login
+                    </a>
+                    <a href="{% url 'registro' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-user-plus me-1"></i>
+                        Criar Conta
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Related Products - Cache por produto -->
+    {% cache 300 related_products produto.id produtos_relacionados.count %} <!-- Cache por 5 minutos -->
     {% if produtos_relacionados %}
     <section class="related-products">
         <div class="container">
@@ -446,32 +461,16 @@
                                     <i class="fas fa-utensils"></i>
                                 </div>
                             {% endif %}
-                            
-                            <!-- Botão de favorito nos cards relacionados -->
-                            {% if user.is_authenticated %}
-                            <div class="favorite-card-button">
-                                <form method="post" action="{% if produto_rel.eh_favorito %}{% url 'remover_favorito' produto_rel.pk %}{% else %}{% url 'adicionar_favorito' produto_rel.pk %}{% endif %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-favorite-card {% if produto_rel.eh_favorito %}favorited{% endif %}" title="{% if produto_rel.eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
-                                        <i class="{% if produto_rel.eh_favorito %}fas{% else %}far{% endif %} fa-heart"></i>
-                                    </button>
-                                </form>
-                            </div>
-                            {% endif %}
                         </div>
                         <div class="product-card-body">
                             <h3 class="product-card-title">{{ produto_rel.nome|truncatewords:4 }}</h3>
                             <div class="product-card-price">{{ produto_rel.get_preco_formatado }}</div>
                             
-                            {% if produto_rel.em_estoque and user.is_authenticated %}
-                                <form method="post" action="{% url 'adicionar_ao_carrinho' produto_rel.pk %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="quantidade" value="1">
-                                    <button type="submit" class="product-card-action">
-                                        <i class="fas fa-cart-plus me-1"></i>
-                                        Adicionar ao Carrinho
-                                    </button>
-                                </form>
+                            {% if produto_rel.em_estoque %}
+                                <a href="{% url 'detalhes_produto' produto_rel.pk %}" class="product-card-action">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Ver Detalhes
+                                </a>
                             {% else %}
                                 <a href="{% url 'detalhes_produto' produto_rel.pk %}" class="product-card-action">
                                     <i class="fas fa-eye me-1"></i>
@@ -486,8 +485,10 @@
         </div>
     </section>
     {% endif %}
+    {% endcache %}
 
-    <!-- Footer -->
+    <!-- Footer - Cache estático -->
+    {% cache 86400 footer_detalhes %}
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -538,14 +539,18 @@
             </div>
         </div>
     </footer>
+    {% endcache %}
 
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
+    <!-- Cache para scripts -->
+    {% cache 86400 scripts_detalhes %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
     <script src="{% static "js/detalhes.js" %}"></script>
+    {% endcache %}
     
+    <!-- Scripts dinâmicos SEM CACHE -->
     <script>
         // Inicializar AOS (Animate On Scroll)
         AOS.init({

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %} <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,14 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solicitar Entrega - Big Flavor</title>
+    
+    <!-- Cache para recursos externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <!-- Cache para CSS estático -->
+    {% cache 86400 css_so %} <!-- Cache por 24 horas -->
     <link href="{% static "css/so.css" %}" rel="stylesheet">
+    {% endcache %}
     
 </head>
 <body>
+    <!-- Cache para navbar -->
+    {% cache 3600 navbar request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -109,12 +117,15 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
     <!-- Page Hero -->
     <section class="page-hero">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
         
+        <!-- Cache para imagem hero - diferenciado por usuário -->
+        {% cache 86400 page_hero request.user.id %}
         <div class="page-hero-background">
             <img src="{% static "img/big.jpg" %}" alt="Entrega Big Flavor">
         </div>
@@ -123,6 +134,7 @@
             <h1 class="page-hero-title" data-aos="fade-up">Solicitar <span>Entrega</span></h1>
             <p class="page-hero-subtitle" data-aos="fade-up" data-aos-delay="200">Finalize seu pedido e receba em casa com toda qualidade Big Flavor</p>
         </div>
+        {% endcache %}
     </section>
 
     <!-- Main Content -->
@@ -134,7 +146,8 @@
             </div>
             
             <div class="delivery-card-body">
-                <!-- Resumo do Pedido -->
+                <!-- Resumo do Pedido - Cache por usuário e carrinho -->
+                {% cache 300 resumo_pedido request.user.id carrinho.total carrinho.total_itens %} <!-- Cache por 5 minutos -->
                 <div class="summary-card" data-aos="zoom-in" data-aos-delay="200">
                     <h5 class="summary-title">
                         <i class="fas fa-receipt"></i>
@@ -159,8 +172,10 @@
                         </div>
                     </div>
                 </div>
+                {% endcache %}
 
-                <!-- Informações de Entrega -->
+                <!-- Informações de Entrega - Cache estático -->
+                {% cache 86400 delivery_info %} <!-- Cache por 24 horas -->
                 <div class="delivery-info" data-aos="fade-up" data-aos-delay="300">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-info-circle info-icon"></i>
@@ -170,8 +185,9 @@
                         </div>
                     </div>
                 </div>
+                {% endcache %}
 
-                <!-- Formulário -->
+                <!-- Formulário - Sem cache por ser dinâmico -->
                 <form method="post">
                     {% csrf_token %}
                     
@@ -217,11 +233,12 @@
 
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
+    <!-- Cache para scripts -->
+    {% cache 86400 scripts_so %} <!-- Cache por 24 horas -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
     <script src="{% static "js/so.js" %}"></script>
-    
+    {% endcache %}
     
 </body>
 </html>

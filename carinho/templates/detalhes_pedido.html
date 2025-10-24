@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %}  <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,9 +8,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Pedido - Big Flavor</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- CSS Otimizado com preload -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></noscript>
+    
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+
+    <link rel="preload" href="https://unpkg.com/aos@2.3.1/dist/aos.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></noscript>
+
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -704,6 +714,8 @@
     </style>
 </head>
 <body>
+    <!-- Cache da Navbar por 30 minutos -->
+    {% cache 1800 navbar_pedidos request.user.is_authenticated request.user.id %}
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -798,6 +810,7 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
     <!-- Floating Elements -->
     <div class="floating-element floating-1"></div>
@@ -805,6 +818,8 @@
 
     <!-- Main Content -->
     <div class="main-container">
+        <!-- Cache do header do pedido por 5 minutos (conteúdo pode mudar com status) -->
+        {% cache 300 pedido_header pedido.id pedido.estado pedido.data_atualizacao|date:"Y-m-d_H-i" %}
         <!-- Header do Pedido -->
         <div class="order-header-section" data-aos="fade-up">
             <div class="row align-items-center">
@@ -825,6 +840,7 @@
                 </div>
             </div>
         </div>
+        {% endcache %}
 
         {% if messages %}
             {% for message in messages %}
@@ -836,7 +852,8 @@
             {% endfor %}
         {% endif %}
 
-        <!-- Timeline do Pedido -->
+        <!-- Timeline do Pedido (cache curto devido a atualizações de status) -->
+        {% cache 180 pedido_timeline pedido.id pedido.estado %}
         <div class="order-card" data-aos="fade-up" data-aos-delay="100">
             <div class="order-card-header">
                 <i class="fas fa-history me-2"></i>
@@ -901,11 +918,14 @@
                 </div>
             </div>
         </div>
+        {% endcache %}
 
         <!-- Conteúdo Principal com Grid -->
         <div class="content-grid">
             <!-- Coluna Principal -->
             <div class="main-content">
+                <!-- Cache dos itens do pedido por 15 minutos -->
+                {% cache 900 pedido_itens pedido.id %}
                 <!-- Itens do Pedido -->
                 <div class="order-card" data-aos="fade-right" data-aos-delay="200">
                     <div class="order-card-header">
@@ -920,7 +940,8 @@
                                     {% if item.produto.imagem %}
                                         <img src="{{ item.produto.imagem.url }}" 
                                              class="product-image" 
-                                             alt="{{ item.produto.nome }}">
+                                             alt="{{ item.produto.nome }}"
+                                             loading="lazy">
                                     {% else %}
                                         <div class="product-image bg-light d-flex align-items-center justify-content-center">
                                             <i class="fas fa-image text-muted"></i>
@@ -946,8 +967,9 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endcache %}
 
-                <!-- Ações do Pedido -->
+                <!-- Ações do Pedido (NÃO CACHEAR - conteúdo dinâmico) -->
                 <div class="order-card" data-aos="fade-right" data-aos-delay="300">
                     <div class="order-card-header">
                         <i class="fas fa-cog me-2"></i>
@@ -980,6 +1002,8 @@
 
             <!-- Sidebar -->
             <div class="sidebar-content">
+                <!-- Cache das informações de entrega por 1 hora -->
+                {% cache 3600 pedido_entrega pedido.id %}
                 <!-- Informações de Entrega -->
                 <div class="info-card" data-aos="fade-left" data-aos-delay="200">
                     <div class="info-card-header">
@@ -1003,7 +1027,10 @@
                         <p class="text-muted mb-0">{{ pedido.data_solicitacao|date:"d/m/Y H:i" }}</p>
                     </div>
                 </div>
+                {% endcache %}
 
+                <!-- Cache do resumo do pedido por 15 minutos -->
+                {% cache 900 pedido_resumo pedido.id %}
                 <!-- Resumo do Pedido -->
                 <div class="info-card" data-aos="fade-left" data-aos-delay="300">
                     <div class="info-card-header">
@@ -1056,9 +1083,12 @@
                         </div>
                     </div>
                 </div>
+                {% endcache %}
             </div>
         </div>
 
+        <!-- Cache do alerta de contacto por 24 horas -->
+        {% cache 86400 contacto_suporte %}
         <!-- Informações de Contacto -->
         <div class="alert-modern alert alert-info border-0" data-aos="fade-up" data-aos-delay="400">
             <div class="row align-items-center">
@@ -1079,6 +1109,7 @@
                 </div>
             </div>
         </div>
+        {% endcache %}
     </div>
 
     <!-- Back to top button -->
@@ -1086,7 +1117,7 @@
         <i class="fas fa-arrow-up"></i>
     </a>
 
-    <!-- Modal de Cancelamento -->
+    <!-- Modal de Cancelamento (NÃO CACHEAR - conteúdo dinâmico) -->
     {% if pedido.estado == 'pendente' %}
     <div class="modal fade" id="cancelModal" tabindex="-1">
         <div class="modal-dialog">
@@ -1114,42 +1145,68 @@
     </div>
     {% endif %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
+    <!-- Scripts Otimizados -->
     <script>
-        // Inicializar AOS (Animate On Scroll)
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            offset: 100
-        });
+        // Carregamento assíncrono de scripts
+        function loadScript(src, callback) {
+            var script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.onload = callback;
+            document.head.appendChild(script);
+        }
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+        // Carregar scripts críticos primeiro
+        loadScript('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', function() {
+            // Bootstrap carregado, agora carregar AOS
+            loadScript('https://unpkg.com/aos@2.3.1/dist/aos.js', function() {
+                // Inicializar AOS (Animate On Scroll)
+                AOS.init({
+                    duration: 800,
+                    easing: 'ease-in-out',
+                    once: true,
+                    offset: 100
+                });
 
-            // Back to top button
-            const backToTop = document.querySelector('.back-to-top');
-            if (window.scrollY > 300) {
-                backToTop.classList.add('active');
-            } else {
-                backToTop.classList.remove('active');
-            }
-        });
+                // Navbar scroll effect
+                window.addEventListener('scroll', function() {
+                    const navbar = document.querySelector('.navbar');
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
 
-        // Back to top functionality
-        document.querySelector('.back-to-top').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+                    // Back to top button
+                    const backToTop = document.querySelector('.back-to-top');
+                    if (window.scrollY > 300) {
+                        backToTop.classList.add('active');
+                    } else {
+                        backToTop.classList.remove('active');
+                    }
+                });
+
+                // Back to top functionality
+                document.querySelector('.back-to-top').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+
+                // Efeitos de hover nos cards
+                document.addEventListener('DOMContentLoaded', function() {
+                    const cards = document.querySelectorAll('.order-card, .info-card');
+                    cards.forEach(card => {
+                        card.addEventListener('mouseenter', function() {
+                            this.style.transform = 'translateY(-10px)';
+                        });
+                        card.addEventListener('mouseleave', function() {
+                            this.style.transform = 'translateY(0)';
+                        });
+                    });
+                });
             });
         });
 
@@ -1160,16 +1217,27 @@
         }, 30000);
         {% endif %}
 
-        // Efeitos de hover nos cards
+        // Cache warming para melhor performance
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.order-card, .info-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
+            // Pré-carregar links de navegação prováveis
+            const linksParaPreload = [
+                '{% url "historico_pedidos" %}',
+                '{% url "lista_produtos" %}',
+                '{% url "dashboard" %}'
+            ];
+            
+            // Pré-conectar a domínios externos
+            const domainsToPreconnect = [
+                'https://cdn.jsdelivr.net',
+                'https://cdnjs.cloudflare.com',
+                'https://unpkg.com'
+            ];
+            
+            domainsToPreconnect.forEach(domain => {
+                const link = document.createElement('link');
+                link.rel = 'preconnect';
+                link.href = domain;
+                document.head.appendChild(link);
             });
         });
     </script>

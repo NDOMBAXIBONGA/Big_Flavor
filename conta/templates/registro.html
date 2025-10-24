@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %} <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,13 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta - Big Flavor | Sabores Inesquecíveis</title>
+    
+    <!-- Cache para recursos externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Cache para CSS estático -->
+    {% cache 86400 css_reg %} <!-- Cache por 24 horas -->
     <link href="{% static "css/reg.css" %}" rel="stylesheet">
+    {% endcache %}
    
 </head>
 <body>
+    <!-- Cache para navbar -->
+    {% cache 3600 navbar_registro request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
     <!-- Nav Bar -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
@@ -100,27 +109,33 @@
             </div>
         </div>
     </nav>
+    {% endcache %}
 
     <!-- Hero Section de Registro -->
     <section class="register-hero">
-        <!-- Background Cinematográfico -->
+        <!-- Background Cinematográfico - Cache estático -->
+        {% cache 86400 register_background %}
         <div class="register-background">
             <img src="{% static "img/big.jpg" %}" alt="Big Flavor Register Background">
         </div>
+        {% endcache %}
         
-        <!-- Partículas Animadas -->
+        <!-- Partículas Animadas - Sem cache (dinâmico) -->
         <div class="particles-container" id="particlesContainer"></div>
         
-        <!-- Elementos Flutuantes Decorativos -->
+        <!-- Elementos Flutuantes Decorativos - Cache estático -->
+        {% cache 86400 floating_elements_reg %}
         <div class="floating-elements">
             <div class="floating-element"></div>
             <div class="floating-element"></div>
             <div class="floating-element"></div>
         </div>
+        {% endcache %}
         
         <!-- Container Principal -->
         <div class="register-container">
-            <!-- Conteúdo do Lado Esquerdo -->
+            <!-- Conteúdo do Lado Esquerdo - Cache estático -->
+            {% cache 86400 register_content %}
             <div class="register-content" data-aos="fade-right" data-aos-duration="1000">
                 <h1 class="register-welcome">
                     Junte-se à <span>Família</span> Big Flavor
@@ -161,8 +176,9 @@
                     </div>
                 </div>
             </div>
+            {% endcache %}
             
-            <!-- Card de Registro -->
+            <!-- Card de Registro - SEM CACHE (dinâmico) -->
             <div class="register-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
                 <div class="register-header">
                     <div class="register-logo">
@@ -172,7 +188,9 @@
                     <p class="register-subtitle-card">Preencha seus dados para começar</p>
                 </div>
 
-                <!-- Barra de Progresso 
+                <!-- Barra de Progresso (comentado) - Cache estático se descomentar -->
+                {% comment %}
+                {% cache 86400 progress_bar %}
                 <div class="progress-container">
                     <div class="progress-steps">
                         <div class="progress-bar" style="width: 33%"></div>
@@ -181,8 +199,10 @@
                         <div class="step">3</div>
                     </div>
                 </div>
-                -->
+                {% endcache %}
+                {% endcomment %}
 
+                <!-- Mensagens SEM CACHE (dinâmicas) -->
                 {% if messages %}
                     {% for message in messages %}
                         {% if message.tags == 'error' %}
@@ -199,6 +219,7 @@
                     {% endfor %}
                 {% endif %}
 
+                <!-- Formulário SEM CACHE (dinâmico) -->
                 <form method="post" novalidate id="registerForm">
                     {% csrf_token %}
                     
@@ -419,19 +440,27 @@
                     </button>
                 </form>
 
+                <!-- Links de Registro - Cache estático -->
+                {% cache 86400 register_links %}
                 <div class="register-links">
                     <a href="{% url 'login' %}" class="register-link">
                         <i class="fas fa-sign-in-alt"></i>
                         Já tenho uma conta
                     </a>
                 </div>
+                {% endcache %}
             </div>
         </div>
     </section>
 
+    <!-- Cache para scripts -->
+    {% cache 86400 scripts_reg %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="{% static "js/reg.js" %}"></script>
+    {% endcache %}
+    
+    <!-- Script para carregar municípios - SEM CACHE (dinâmico) -->
     <script>
         function carregarMunicipios() {
             const provinciaSelect = document.getElementById('provincia-select');

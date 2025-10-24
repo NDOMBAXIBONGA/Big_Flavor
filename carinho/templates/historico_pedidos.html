@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %} <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,14 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Histórico de Pedidos - Big Flavor</title>
+    
+    <!-- Cache para recursos externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <!-- Cache para CSS estático -->
+    {% cache 86400 css_hp %} <!-- Cache por 24 horas -->
     <link href="{% static "css/hp.css" %}" rel="stylesheet">
+    {% endcache %}
     
 </head>
 <body>
+    <!-- Cache para navbar -->
+    {% cache 3600 navbar request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -109,6 +117,7 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
     <!-- Floating Elements -->
     <div class="floating-element floating-1"></div>
@@ -125,7 +134,9 @@
             <p class="page-subtitle">Acompanhe o histórico completo dos seus pedidos</p>
         </div>
 
+        <!-- Cache para conteúdo principal - diferenciado por usuário -->
         {% if pedidos %}
+            {% cache 1800 historico_pedidos request.user.id %} <!-- Cache por 30 minutos, por usuário -->
             <div class="orders-list">
                 {% for pedido in pedidos %}
                 <div class="order-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
@@ -206,8 +217,10 @@
                 </div>
                 {% endfor %}
             </div>
+            {% endcache %}
         {% else %}
-            <!-- Estado Vazio -->
+            <!-- Cache para estado vazio - diferenciado por usuário -->
+            {% cache 1800 historico_vazio request.user.id %} <!-- Cache por 30 minutos, por usuário -->
             <div class="empty-state" data-aos="zoom-in">
                 <i class="fas fa-box-open"></i>
                 <h3>Nenhum pedido encontrado</h3>
@@ -217,6 +230,7 @@
                     Fazer Primeiro Pedido
                 </a>
             </div>
+            {% endcache %}
         {% endif %}
     </div>
 
@@ -225,11 +239,12 @@
         <i class="fas fa-arrow-up"></i>
     </a>
 
+    <!-- Cache para scripts -->
+    {% cache 86400 scripts_hp %} <!-- Cache por 24 horas -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
     <script src="{% static "js/hp.js" %}"></script>
-    
+    {% endcache %}
     
 </body>
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %}  <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -29,6 +30,8 @@
     {% endif %}
 </head>
 <body>
+    <!-- Cache da Navbar por 30 minutos -->
+    {% cache 1800 navbar_detalhes request.user.is_authenticated request.user.id %}
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -95,15 +98,13 @@
                         <a href="{% url 'ver_carrinho' %}" class="nav-link">
                             <i class="fas fa-shopping-cart me-1"></i>
                             Carrinho
-                            {% if user.is_authenticated %}
-                                {% with user.carrinho_set.first as carrinho %}
-                                    {% if carrinho and carrinho.total_itens > 0 %}
-                                        <span class="badge-cart">
-                                            {{ carrinho.total_itens }}
-                                        </span>
-                                    {% endif %}
-                                {% endwith %}
-                            {% endif %}
+                            {% with user.carrinho_set.first as carrinho %}
+                                {% if carrinho and carrinho.total_itens > 0 %}
+                                    <span class="badge-cart">
+                                        {{ carrinho.total_itens }}
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
                         </a>
                     </li>
                     {% endif %}
@@ -112,6 +113,7 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -154,6 +156,8 @@
                     </ol>
                 </nav>
 
+                <!-- Cache do cabeçalho da publicação por 15 minutos -->
+                {% cache 900 publicacao_header publicacao.id publicacao.data_publicacao|date:"Y-m-d_H-i" %}
                 <!-- Cabeçalho da Publicação -->
                 <div class="publicacao-header" data-aos="fade-up">
                     <h1 class="publicacao-titulo">{{ publicacao.titulo }}</h1>
@@ -186,6 +190,7 @@
                         </div>
                     </div>
                 </div>
+                {% endcache %}
 
                 <!-- Imagem de Destaque -->
                 {% if publicacao.imagem_destaque %}
@@ -194,12 +199,15 @@
                 </div>
                 {% endif %}
 
+                <!-- Cache do conteúdo da publicação por 30 minutos -->
+                {% cache 1800 publicacao_conteudo publicacao.id publicacao.data_publicacao|date:"Y-m-d_H-i" %}
                 <!-- Conteúdo -->
                 <div class="publicacao-conteudo" data-aos="fade-up">
                     {{ publicacao.conteudo|linebreaks }}
                 </div>
+                {% endcache %}
 
-                <!-- Interações -->
+                <!-- Interações (NÃO CACHEAR - conteúdo dinâmico por usuário) -->
                 <div class="interacoes-card" data-aos="fade-up">
                     <h4 class="mb-4"><i class="fas fa-heart me-2"></i>Gostou desta publicação?</h4>
                     
@@ -251,7 +259,7 @@
                     </div>
                 </div>
 
-                <!-- Comentários -->
+                <!-- Comentários (NÃO CACHEAR - conteúdo dinâmico) -->
                 <div class="comentarios-card" data-aos="fade-up">
                     <div class="comentarios-header">
                         <i class="fas fa-comments me-2"></i>
@@ -336,6 +344,8 @@
 
             <!-- Sidebar -->
             <div class="col-lg-4">
+                <!-- Cache das publicações relacionadas por 1 hora -->
+                {% cache 3600 publicacoes_relacionadas publicacao.id %}
                 <!-- Publicações Relacionadas -->
                 <div class="sidebar-card" data-aos="fade-left" data-aos-delay="100">
                     <div class="sidebar-header">
@@ -357,7 +367,10 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endcache %}
 
+                <!-- Cache das publicações recentes por 30 minutos -->
+                {% cache 1800 publicacoes_recentes %}
                 <!-- Publicações Recentes -->
                 <div class="sidebar-card" data-aos="fade-left" data-aos-delay="200">
                     <div class="sidebar-header">
@@ -379,7 +392,10 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endcache %}
 
+                <!-- Cache das publicações mais comentadas por 2 horas -->
+                {% cache 7200 publicacoes_mais_comentadas %}
                 <!-- Mais Comentadas -->
                 <div class="sidebar-card" data-aos="fade-left" data-aos-delay="300">
                     <div class="sidebar-header">
@@ -401,8 +417,9 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endcache %}
 
-                <!-- Voltar ao Topo -->
+                <!-- Voltar ao Topo (não precisa de cache) -->
                 <div class="sidebar-card" data-aos="fade-left" data-aos-delay="400">
                     <div class="card-body text-center">
                         <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn btn-voltar-topo">
@@ -414,6 +431,8 @@
         </div>
     </div>
 
+    <!-- Cache do footer por 24 horas -->
+    {% cache 86400 footer_detalhes %}
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -465,6 +484,7 @@
             </div>
         </div>
     </footer>
+    {% endcache %}
 
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
@@ -510,6 +530,30 @@
             } else {
                 backToTop.style.display = 'none';
             }
+        });
+
+        // Cache warming para melhor performance
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pré-carregar links de navegação prováveis
+            const linksParaPreload = [
+                '{% url "lista_publicacoes" %}',
+                '{% url "lista_produtos" %}',
+                '{% url "contacto" %}'
+            ];
+            
+            // Pré-conectar a domínios externos
+            const domainsToPreconnect = [
+                'https://cdn.jsdelivr.net',
+                'https://cdnjs.cloudflare.com',
+                'https://unpkg.com'
+            ];
+            
+            domainsToPreconnect.forEach(domain => {
+                const link = document.createElement('link');
+                link.rel = 'preconnect';
+                link.href = domain;
+                document.head.appendChild(link);
+            });
         });
     </script>
 </body>

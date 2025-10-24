@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %} <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,13 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Perfil - Big Flavor</title>
+    
+    <!-- Cache para recursos externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Cache para CSS estático -->
+    {% cache 86400 css_ed %} <!-- Cache por 24 horas -->
     <link href="{% static "css/ed.css" %}" rel="stylesheet">
+    {% endcache %}
    
 </head>
 <body>
+    <!-- Cache para navbar -->
+    {% cache 3600 navbar request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -108,6 +117,7 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
     <!-- Profile Section -->
     <section class="profile-section">
@@ -115,11 +125,15 @@
         <div class="floating-element floating-2"></div>
         
         <div class="container">
+            <!-- Cache para header do perfil - diferenciado por usuário -->
+            {% cache 3600 profile_header request.user.id %}
             <div class="profile-header" data-aos="fade-up">
                 <h1 class="profile-title">Editar Perfil</h1>
                 <p class="profile-subtitle">Atualize suas informações pessoais para uma experiência personalizada</p>
             </div>
+            {% endcache %}
 
+            <!-- Mensagens sem cache (dinâmicas) -->
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert" data-aos="fade-up">
@@ -138,7 +152,8 @@
                             Informações do Perfil
                         </div>
                         <div class="profile-card-body">
-                            <!-- Avatar Section -->
+                            <!-- Avatar Section - Cache por usuário -->
+                            {% cache 3600 profile_avatar request.user.id %}
                             <div class="profile-avatar-section" data-aos="zoom-in" data-aos-delay="200">
                                 <div class="profile-avatar">
                                     <img src="" alt="Avatar do Usuário">
@@ -151,17 +166,22 @@
                                     Alterar Foto
                                 </button>
                             </div>
+                            {% endcache %}
 
+                            <!-- Formulário SEM CACHE (dinâmico) -->
                             <form method="post" novalidate>
                                 {% csrf_token %}
                                 
                                 <div class="row">
                                     <!-- Informações Básicas -->
                                     <div class="col-md-6">
+                                        <!-- Cache para header de informações pessoais -->
+                                        {% cache 86400 personal_info_header %}
                                         <h5 class="info-card-header">
                                             <i class="fas fa-id-card"></i>
                                             Informações Pessoais
                                         </h5>
+                                        {% endcache %}
                                         
                                         <div class="mb-3" data-aos="fade-right" data-aos-delay="200">
                                             <label for="{{ form.nome.id_for_label }}" class="form-label">
@@ -227,10 +247,13 @@
                                     
                                     <!-- Localização -->
                                     <div class="col-md-6">
+                                        <!-- Cache para header de localização -->
+                                        {% cache 86400 location_header %}
                                         <h5 class="info-card-header">
                                             <i class="fas fa-map-marker-alt"></i>
                                             Localização
                                         </h5>
+                                        {% endcache %}
                                         
                                         <div class="mb-3" data-aos="fade-left" data-aos-delay="200">
                                             <label for="{{ form.bairro.id_for_label }}" class="form-label">
@@ -297,6 +320,8 @@
                                 <!-- Alteração de Senha -->
                                 <div class="row mt-4">
                                     <div class="col-12">
+                                        <!-- Cache para header de senha -->
+                                        {% cache 86400 password_header %}
                                         <h5 class="info-card-header" data-aos="fade-up">
                                             <i class="fas fa-lock"></i>
                                             Alteração de Senha
@@ -305,6 +330,7 @@
                                             <i class="fas fa-info-circle me-1"></i>
                                             Preencha apenas se desejar alterar sua senha
                                         </p>
+                                        {% endcache %}
                                     </div>
                                     
                                     <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
@@ -381,7 +407,8 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Footer - Cache estático -->
+    {% cache 86400 footer %}
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -432,12 +459,16 @@
             </div>
         </div>
     </footer>
+    {% endcache %}
 
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
+    <!-- Cache para scripts -->
+    {% cache 86400 scripts_ed %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="{% static "js/ed.js" %}"></script>
+    {% endcache %}
     
    
 </body>

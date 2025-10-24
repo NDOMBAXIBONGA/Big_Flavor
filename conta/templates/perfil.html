@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %} <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,13 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil - Big Flavor</title>
+    
+    <!-- Cache para recursos externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Cache para CSS estático -->
+    {% cache 86400 css_per %} <!-- Cache por 24 horas -->
     <link href="{% static "css/per.css" %}" rel="stylesheet">
+    {% endcache %}
     
 </head>
 <body>
+    <!-- Cache para navbar -->
+    {% cache 3600 navbar_perfil request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -108,12 +117,15 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
     <!-- Profile Hero Section -->
     <section class="profile-hero">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
         
+        <!-- Cache para background hero - diferenciado por usuário -->
+        {% cache 86400 profile_hero request.user.id %}
         <div class="profile-hero-background">
             <img src="{% static "img/big.jpg" %}" alt="Perfil Big Flavor">
         </div>
@@ -144,10 +156,12 @@
                 </div>
             </div>
         </div>
+        {% endcache %}
     </section>
 
     <!-- Main Content -->
     <div class="main-container">
+        <!-- Mensagens SEM CACHE (dinâmicas) -->
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" data-aos="fade-down">
@@ -162,7 +176,8 @@
         <div class="content-grid">
             <!-- Coluna Principal -->
             <div class="main-content">
-                <!-- Informações Pessoais -->
+                <!-- Informações Pessoais - Cache por usuário -->
+                {% cache 300 personal_info request.user.id %} <!-- Cache por 5 minutos -->
                 <div class="profile-card" data-aos="fade-up">
                     <div class="profile-card-header">
                         <i class="fas fa-user"></i>
@@ -214,8 +229,10 @@
                         </div>
                     </div>
                 </div>
+                {% endcache %}
 
-                <!-- Informações de Endereço -->
+                <!-- Informações de Endereço - Cache por usuário -->
+                {% cache 300 address_info request.user.id %} <!-- Cache por 5 minutos -->
                 <div class="profile-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="profile-card-header">
                         <i class="fas fa-map-marker-alt"></i>
@@ -276,8 +293,10 @@
                         {% endif %}
                     </div>
                 </div>
+                {% endcache %}
 
-                <!-- Estatísticas do Usuário -->
+                <!-- Estatísticas do Usuário - Cache por usuário -->
+                {% cache 300 user_stats request.user.id total_pedidos pedidos_entregues total_gasto %} <!-- Cache por 5 minutos -->
                 <div class="profile-card" data-aos="fade-up" data-aos-delay="400">
                     <div class="profile-card-header">
                         <i class="fas fa-chart-bar"></i>
@@ -300,8 +319,10 @@
                         </div>
                     </div>
                 </div>
+                {% endcache %}
 
-                <!-- Ações Rápidas -->
+                <!-- Ações Rápidas - Cache estático -->
+                {% cache 86400 quick_actions %}
                 <div class="profile-card" data-aos="fade-up" data-aos-delay="600">
                     <div class="profile-card-header">
                         <i class="fas fa-cog"></i>
@@ -332,11 +353,13 @@
                         </div>
                     </div>
                 </div>
+                {% endcache %}
             </div>
 
             <!-- Sidebar -->
             <div class="sidebar-content">
-                <!-- Status da Conta -->
+                <!-- Status da Conta - Cache por usuário -->
+                {% cache 300 account_status request.user.id %} <!-- Cache por 5 minutos -->
                 <div class="info-card" data-aos="fade-left" data-aos-delay="300">
                     <div class="info-card-header">
                         <i class="fas fa-user-check"></i>
@@ -379,8 +402,10 @@
                         <div class="info-value">{{ usuario.data_atualizacao|date:"d/m/Y H:i" }}</div>
                     </div>
                 </div>
+                {% endcache %}
 
-                <!-- Últimos Pedidos -->
+                <!-- Últimos Pedidos - Cache por usuário -->
+                {% cache 300 recent_orders request.user.id %} <!-- Cache por 5 minutos -->
                 <div class="info-card" data-aos="fade-left" data-aos-delay="500">
                     <div class="info-card-header">
                         <i class="fas fa-history"></i>
@@ -472,8 +497,10 @@
                     </div>
                     {% endif %}
                 </div>
+                {% endcache %}
 
-                <!-- Informações de Contacto -->
+                <!-- Informações de Contacto - Cache estático -->
+                {% cache 86400 support_info %}
                 <div class="info-card" data-aos="fade-left" data-aos-delay="700">
                     <div class="info-card-header">
                         <i class="fas fa-headset"></i>
@@ -498,11 +525,13 @@
                         </a>
                     </div>
                 </div>
+                {% endcache %}
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Footer - Cache estático -->
+    {% cache 86400 footer_perfil %}
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -553,10 +582,11 @@
             </div>
         </div>
     </footer>
+    {% endcache %}
 
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
-    <!-- Modal para Upload de Avatar -->
+    <!-- Modal para Upload de Avatar - SEM CACHE (dinâmico) -->
     <div class="modal fade" id="avatarModal" tabindex="-1">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -600,7 +630,7 @@
         </div>
     </div>
 
-    <!-- Modal para Excluir Conta -->
+    <!-- Modal para Excluir Conta - SEM CACHE (dinâmico) -->
     <div class="modal fade" id="deleteAccountModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -648,9 +678,12 @@
         </div>
     </div>
 
+    <!-- Cache para scripts -->
+    {% cache 86400 scripts_per %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="{% static "js/per.js" %}"></script>
+    {% endcache %}
     
 
 </body>

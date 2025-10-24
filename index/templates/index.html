@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %} <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -7,14 +8,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Big Flavor - Sabores Inesquecíveis</title>
+    
+    <!-- Cache para recursos externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
+    
+    <!-- Cache para CSS estático -->
+    {% cache 86400 css_index %} <!-- Cache por 24 horas -->
     <link href="{% static "css/index.css" %}" rel="stylesheet">
+    {% endcache %}
     
 </head>
 <body>
+    <!-- Cache para navbar -->
+    {% cache 3600 navbar_index request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -109,8 +117,10 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
-    <!-- Hero Section -->
+    <!-- Hero Section - Cache estático -->
+    {% cache 86400 hero_section %}
     <section class="hero-section">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
@@ -128,8 +138,10 @@
             </div>
         </div>
     </section>
+    {% endcache %}
 
-    <!-- About Hero Section -->
+    <!-- About Hero Section - Cache estático -->
+    {% cache 86400 about_hero %}
     <section id="about" class="about-hero">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
@@ -145,8 +157,10 @@
             </p>
         </div>
     </section>
+    {% endcache %}
 
-    <!-- About Story Section com Vídeo Corrigido -->
+    <!-- About Story Section - Cache com timeout curto para vídeos dinâmicos -->
+    {% cache 300 about_story video_principal.id videos_galeria.count %} <!-- Cache por 5 minutos -->
     <section class="section">
         <div class="container">
             <div class="row align-items-center">
@@ -243,8 +257,10 @@
             {% endif %}
         </div>
     </section>
+    {% endcache %}
 
-    <!-- Features Section -->
+    <!-- Features Section - Cache estático -->
+    {% cache 86400 features_section %}
     <section class="section bg-light">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
@@ -282,8 +298,10 @@
             </div>
         </div>
     </section>
+    {% endcache %}
 
-    <!-- Food Categories -->
+    <!-- Food Categories - Cache estático -->
+    {% cache 86400 food_categories %}
     <section class="section">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
@@ -324,264 +342,10 @@
             </div>
         </div>
     </section>
-    <!--
-    <section class="section bg-light">
-        <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">Cardápio Destacado</h2>
-                <p class="section-subtitle">Nossas criações mais populares que conquistaram o paladar dos clientes</p>
-            </div>
-            
-            <div class="menu-tab">
-                <!-- Abas CORRIGIDAS - devem corresponder aos IDs do conteúdo 
-                <ul class="nav nav-pills justify-content-center mb-5" data-aos="fade-up">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="pill" href="#burgers">Hambúrgueres</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="pill" href="#pizzas">Pizzas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="pill" href="#bebidas">Bebidas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="pill" href="#sobremesas">Sobremesas</a>
-                    </li>
-                </ul>
-                
-                <div class="tab-content">
-                    <!-- Hambúrgueres 
-                    <div id="burgers" class="tab-pane fade show active">
-                        <div class="row">
-                            <div class="col-lg-6" data-aos="fade-right">
-                                {% for produto in produtos_por_categoria.hamburguer|slice:":2" %}
-                                <div class="menu-item">
-                                    <div class="product-image-container">
-                                    {% if produto.imagem %}
-                                        <img src="{{ produto.imagem.url }}" class="product-image" alt="{{ produto.nome }}">
-                                    {% else %}
-                                        <div class="product-placeholder">
-                                            <i class="fas fa-image"></i>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                    <div class="menu-text">
-                                        <h3>
-                                            <span>{{ produto.nome }}</span> 
-                                            <strong>{{ produto.get_preco_formatado }}</strong>
-                                        </h3>
-                                        <p>{{ produto.descricao_curta }}</p>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="menu-item">
-                                    <div class="menu-text">
-                                        <h3><span>Em Breve</span> <strong>--</strong></h3>
-                                        <p>Novos hambúrgueres estão a caminho!</p>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <div class="col-lg-6" data-aos="fade-left">
-                                {% for produto in produtos_por_categoria.hamburguer|slice:"2:" %}
-                                <div class="menu-item">
-                                    <div class="menu-img">
-                                        <img src="{{ produto.get_imagem_url }}" alt="{{ produto.nome }}" class="img-fluid">
-                                    </div>
-                                    <div class="menu-text">
-                                        <h3>
-                                            <span>{{ produto.nome }}</span> 
-                                            <strong>{{ produto.get_preco_formatado }}</strong>
-                                        </h3>
-                                        <p>{{ produto.descricao_curta }}</p>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                {% if produtos_por_categoria.hamburguer|length <= 2 %}
-                                <div class="menu-item">
-                                    <div class="menu-text">
-                                        <h3><span>Mais Opções</span> <strong>--</strong></h3>
-                                        <p>Em breve teremos mais variedades!</p>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Pizzas 
-                    <div id="pizzas" class="tab-pane fade">
-                        <div class="row">
-                            <div class="col-lg-6" data-aos="fade-right">
-                                {% for produto in produtos_por_categoria.pizza|slice:":2" %}
-                                <div class="menu-item">
-                                    <div class="menu-img">
-                                        <img src="{{ produto.get_imagem_url }}" alt="{{ produto.nome }}" class="img-fluid">
-                                    </div>
-                                    <div class="menu-text">
-                                        <h3>
-                                            <span>{{ produto.nome }}</span> 
-                                            <strong>{{ produto.get_preco_formatado }}</strong>
-                                        </h3>
-                                        <p>{{ produto.descricao_curta }}</p>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="menu-item">
-                                    <div class="menu-text">
-                                        <h3><span>Em Breve</span> <strong>--</strong></h3>
-                                        <p>Novas pizzas estão a caminho!</p>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <div class="col-lg-6" data-aos="fade-left">
-                                {% for produto in produtos_por_categoria.pizza|slice:"2:" %}
-                                <div class="menu-item">
-                                    <div class="menu-img">
-                                        <img src="{{ produto.get_imagem_url }}" alt="{{ produto.nome }}" class="img-fluid">
-                                    </div>
-                                    <div class="menu-text">
-                                        <h3>
-                                            <span>{{ produto.nome }}</span> 
-                                            <strong>{{ produto.get_preco_formatado }}</strong>
-                                        </h3>
-                                        <p>{{ produto.descricao_curta }}</p>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                {% if produtos_por_categoria.pizza|length <= 2 %}
-                                <div class="menu-item">
-                                    <div class="menu-text">
-                                        <h3><span>Mais Opções</span> <strong>--</strong></h3>
-                                        <p>Em breve teremos mais variedades!</p>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Bebidas 
-                    <div id="bebidas" class="tab-pane fade">
-                        <div class="row">
-                            <div class="col-lg-6" data-aos="fade-right">
-                                {% for produto in produtos_por_categoria.bebida|slice:":2" %}
-                                <div class="menu-item">
-                                    <div class="menu-img">
-                                        <img src="{{ produto.get_imagem_url }}" alt="{{ produto.nome }}" class="img-fluid">
-                                    </div>
-                                    <div class="menu-text">
-                                        <h3>
-                                            <span>{{ produto.nome }}</span> 
-                                            <strong>{{ produto.get_preco_formatado }}</strong>
-                                        </h3>
-                                        <p>{{ produto.descricao_curta }}</p>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="menu-item">
-                                    <div class="menu-text">
-                                        <h3><span>Em Breve</span> <strong>--</strong></h3>
-                                        <p>Novas bebidas estão a caminho!</p>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <div class="col-lg-6" data-aos="fade-left">
-                                {% for produto in produtos_por_categoria.bebida|slice:"2:" %}
-                                <div class="menu-item">
-                                    <div class="menu-img">
-                                        <img src="{{ produto.get_imagem_url }}" alt="{{ produto.nome }}" class="img-fluid">
-                                    </div>
-                                    <div class="menu-text">
-                                        <h3>
-                                            <span>{{ produto.nome }}</span> 
-                                            <strong>{{ produto.get_preco_formatado }}</strong>
-                                        </h3>
-                                        <p>{{ produto.descricao_curta }}</p>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                {% if produtos_por_categoria.bebida|length <= 2 %}
-                                <div class="menu-item">
-                                    <div class="menu-text">
-                                        <h3><span>Mais Opções</span> <strong>--</strong></h3>
-                                        <p>Em breve teremos mais variedades!</p>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sobremesas 
-                    <div id="sobremesas" class="tab-pane fade">
-                        <div class="row">
-                            <div class="col-lg-6" data-aos="fade-right">
-                                {% for produto in produtos_por_categoria.sobremesa|slice:":2" %}
-                                <div class="menu-item">
-                                    <div class="menu-img">
-                                        <img src="{{ produto.get_imagem_url }}" alt="{{ produto.nome }}" class="img-fluid">
-                                    </div>
-                                    <div class="menu-text">
-                                        <h3>
-                                            <span>{{ produto.nome }}</span> 
-                                            <strong>{{ produto.get_preco_formatado }}</strong>
-                                        </h3>
-                                        <p>{{ produto.descricao_curta }}</p>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="menu-item">
-                                    <div class="menu-text">
-                                        <h3><span>Em Breve</span> <strong>--</strong></h3>
-                                        <p>Novas sobremesas estão a caminho!</p>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <div class="col-lg-6" data-aos="fade-left">
-                                {% for produto in produtos_por_categoria.sobremesa|slice:"2:" %}
-                                <div class="menu-item">
-                                    <div class="menu-img">
-                                        <img src="{{ produto.get_imagem_url }}" alt="{{ produto.nome }}" class="img-fluid">
-                                    </div>
-                                    <div class="menu-text">
-                                        <h3>
-                                            <span>{{ produto.nome }}</span> 
-                                            <strong>{{ produto.get_preco_formatado }}</strong>
-                                        </h3>
-                                        <p>{{ produto.descricao_curta }}</p>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                {% if produtos_por_categoria.sobremesa|length <= 2 %}
-                                <div class="menu-item">
-                                    <div class="menu-text">
-                                        <h3><span>Mais Opções</span> <strong>--</strong></h3>
-                                        <p>Em breve teremos mais variedades!</p>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center mt-5" data-aos="fade-up">
-                <a href="{% url 'lista_produtos' %}" class="btn btn-custom">Ver Cardápio Completo</a>
-            </div>
-        </div>
-    </section>
-    -->
-    
-    <!-- Team Section -->
+    {% endcache %}
+
+    <!-- Team Section - Cache estático -->
+    {% cache 86400 team_section %}
     <section class="section">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
@@ -656,8 +420,10 @@
             </div>
         </div>
     </section>
+    {% endcache %}
 
-    <!-- Contact Section -->
+    <!-- Contact Section - Cache estático -->
+    {% cache 86400 contact_section %}
     <section class="section bg-light">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
@@ -728,8 +494,10 @@
             </div>
         </div>
     </section>
+    {% endcache %}
 
-    <!-- Footer -->
+    <!-- Footer - Cache estático -->
+    {% cache 86400 footer_index %}
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -780,13 +548,14 @@
             </div>
         </div>
     </footer>
+    {% endcache %}
 
     <!-- Back to top button -->
     <a href="#" class="back-to-top">
         <i class="fas fa-arrow-up"></i>
     </a>
 
-    <!-- Video Modal Corrigido -->
+    <!-- Video Modal - SEM CACHE (dinâmico) -->
     <div class="modal fade video-modal" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -849,9 +618,11 @@
         </div>
     </div>
 
+    <!-- Cache para scripts -->
+    {% cache 86400 scripts_index %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
     <script src="{% static "js/index.js" %}"></script>
+    {% endcache %}
 </body>
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load cache %}  <!-- Adicione esta linha -->
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -24,6 +25,8 @@
     <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></noscript>
 </head>
 <body>
+    <!-- Cache da Navbar por 30 minutos -->
+    {% cache 1800 navbar request.user.is_authenticated request.user.id %}
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -92,15 +95,13 @@
                         <a href="{% url 'ver_carrinho' %}" class="nav-link">
                             <i class="fas fa-shopping-cart me-1"></i>
                             Carrinho
-                            {% if user.is_authenticated %}
-                                {% with user.carrinho_set.first as carrinho %}
-                                    {% if carrinho and carrinho.total_itens > 0 %}
-                                        <span class="badge-cart">
-                                            {{ carrinho.total_itens }}
-                                        </span>
-                                    {% endif %}
-                                {% endwith %}
-                            {% endif %}
+                            {% with user.carrinho_set.first as carrinho %}
+                                {% if carrinho and carrinho.total_itens > 0 %}
+                                    <span class="badge-cart">
+                                        {{ carrinho.total_itens }}
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
                         </a>
                     </li>
                     {% endif %}
@@ -109,6 +110,7 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
+    {% endcache %}
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -139,6 +141,8 @@
 
     <!-- Category Filter -->
     <div class="container">
+        <!-- Cache do filtro de categorias por 1 hora -->
+        {% cache 3600 category_filter %}
         <div class="category-filter" data-aos="fade-up">
             <h5 class="text-center mb-4" style="color: var(--dark-text);">
                 <i class="fas fa-filter me-2"></i>Filtrar por Categoria
@@ -156,6 +160,7 @@
                 {% endfor %}
             </div>
         </div>
+        {% endcache %}
     </div>
 
     <!-- Main Content -->
@@ -166,6 +171,8 @@
                 {% if publicacoes %}
                 <div class="row">
                     {% for publicacao in publicacoes %}
+                    <!-- Cache individual de cada card de publicação por 15 minutos -->
+                    {% cache 900 post_card publicacao.id publicacao.data_publicacao|date:"Y-m-d_H-i" %}
                     <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
                         <div class="post-card">
                             <div class="post-image-container">
@@ -215,6 +222,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endcache %}
                     {% endfor %}
                 </div>
                 {% else %}
@@ -230,6 +238,8 @@
 
                 <!-- Pagination -->
                 {% if is_paginated %}
+                <!-- Cache da paginação por 5 minutos -->
+                {% cache 300 pagination page_obj.number request.GET.q %}
                 <div class="pagination-container" data-aos="fade-up">
                     <nav aria-label="Page navigation">
                         <ul class="pagination justify-content-center">
@@ -263,12 +273,15 @@
                         </ul>
                     </nav>
                 </div>
+                {% endcache %}
                 {% endif %}
             </div>
 
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <!-- Popular Posts -->
+                <!-- Cache dos posts populares por 30 minutos -->
+                {% cache 1800 popular_posts %}
                 <div class="sidebar-card" data-aos="fade-left" data-aos-delay="200">
                     <div class="sidebar-header">
                         <i class="fas fa-fire me-2"></i>Mais Populares
@@ -291,8 +304,11 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endcache %}
 
                 <!-- Categories -->
+                <!-- Cache das categorias por 2 horas -->
+                {% cache 7200 sidebar_categories %}
                 <div class="sidebar-card" data-aos="fade-left" data-aos-delay="300">
                     <div class="sidebar-header">
                         <i class="fas fa-tags me-2"></i>Categorias
@@ -308,11 +324,14 @@
                         </div>
                     </div>
                 </div>
+                {% endcache %}
             </div>
         </div>
     </div>
 
     <!-- Footer -->
+    <!-- Cache do footer por 24 horas -->
+    {% cache 86400 footer %}
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -363,6 +382,7 @@
             </div>
         </div>
     </footer>
+    {% endcache %}
 
     <!-- Back to top button -->
     <a href="#" class="back-to-top">
@@ -401,6 +421,20 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js');
+            });
+        }
+
+        // Cache warming para páginas frequentes
+        if (document.readyState === 'complete') {
+            // Pré-carregar links prováveis
+            const preloadLinks = [
+                '{% url "lista_produtos" %}',
+                '{% url "contacto" %}',
+                '{% url "sobre" %}'
+            ];
+            
+            preloadLinks.forEach(url => {
+                fetch(url, { method: 'HEAD' });
             });
         }
     </script>
