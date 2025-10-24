@@ -117,29 +117,42 @@ def adicionar_ao_carrinho(request, produto_id):
 # SEM CACHE - operação de escrita
 @login_required
 def atualizar_item_carrinho(request, item_id):
-    """Atualiza quantidade de um item no carrinho"""
-    item = get_object_or_404(ItemCarrinho, id=item_id, carrinho__usuario=request.user)
-    
-    if request.method == 'POST':
-        form = AtualizarItemForm(request.POST, instance=item)
-        if form.is_valid():
-            nova_quantidade = form.cleaned_data['quantidade']
-            
-            # Verificar estoque
-            if nova_quantidade > item.produto.estoque:
-                messages.error(request, f'Estoque insuficiente. Disponível: {item.produto.estoque}')
-            else:
-                if nova_quantidade == 0:
-                    item.delete()
-                    messages.success(request, 'Item removido do carrinho.')
-                else:
-                    form.save()
-                    messages.success(request, 'Quantidade atualizada.')
+    """Atualiza quantidade de um item no carrinho - VERSÃO CORRIGIDA"""
+    try:
+        # VERIFICAÇÃO DE SEGURANÇA: Garante que o item pertence ao usuário
+        item = get_object_or_404(
+            ItemCarrinho, 
+            id=item_id, 
+            carrinho__usuario=request.user,  # ← ESTÁ CORRETO!
+            carrinho__estado='aberto'  # ← ADICIONE ESTA VERIFICAÇÃO
+        )
         
-        # Invalidar cache do carrinho
-        invalidar_cache_carrinho(request.user)
-    
-    return redirect('ver_carrinho')
+        if request.method == 'POST':
+            form = AtualizarItemForm(request.POST, instance=item)
+            if form.is_valid():
+                nova_quantidade = form.cleaned_data['quantidade']
+                
+                # Verificar estoque
+                if nova_quantidade > item.produto.estoque:
+                    messages.error(request, f'Estoque insuficiente. Disponível: {item.produto.estoque}')
+                else:
+                    if nova_quantidade == 0:
+                        produto_nome = item.produto.nome
+                        item.delete()
+                        messages.success(request, f'{produto_nome} removido do carrinho.')
+                    else:
+                        form.save()
+                        messages.success(request, 'Quantidade atualizada com sucesso!')
+            
+            # Invalidar cache do carrinho
+            invalidar_cache_carrinho(request.user)
+        
+        return redirect('ver_carrinho')
+        
+    except Exception as e:
+        logger.error(f"Erro ao atualizar item do carrinho: {str(e)}")
+        messages.error(request, 'Erro ao atualizar item.')
+        return redirect('ver_carrinho')
 
 # SEM CACHE - operação de escrita
 @login_required
@@ -465,10 +478,10 @@ def atualizar_quantidade_ajax(request, item_id):
             
             return JsonResponse({
                 'success': True,
-                'subtotal_item': f'€{item.subtotal:.2f}',
-                'subtotal_carrinho': f'€{item.carrinho.subtotal:.2f}',
-                'taxa_entrega': f'€{item.carrinho.taxa_entrega:.2f}',
-                'total': f'€{item.carrinho.total:.2f}',
+                'subtotal_item': f'KZ {item.subtotal:.2f}',
+                'subtotal_carrinho': f'KZ {item.carrinho.subtotal:.2f}',
+                'taxa_entrega': f'KZ {item.carrinho.taxa_entrega:.2f}',
+                'total': f'KZ {item.carrinho.total:.2f}',
             })
         else:
             return JsonResponse({
