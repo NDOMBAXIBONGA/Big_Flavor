@@ -1,6 +1,7 @@
 # balanco/models.py
 from django.db import models
 from django.utils import timezone
+from django.core.cache import cache
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -78,8 +79,40 @@ class RelatorioBalanco(models.Model):
     def __str__(self):
         return f"Relatório {self.nome_relatorio} - {self.data_inicio} a {self.data_fim}"
     
+    def save(self, *args, **kwargs):
+        """Override do save para invalidar cache"""
+        super().save(*args, **kwargs)
+        self.invalidar_cache_relatorio()
+    
+    def delete(self, *args, **kwargs):
+        """Override do delete para invalidar cache"""
+        self.invalidar_cache_relatorio()
+        super().delete(*args, **kwargs)
+    
+    def invalidar_cache_relatorio(self):
+        """Invalida todos os caches relacionados a este relatório"""
+        cache_keys_to_delete = [
+            f"relatorio_balanco_{self.id}",
+            f"relatorio_balanco_detalhe_{self.id}",
+            "relatorios_balanco_recentes",
+            "relatorios_balanco_count",
+            f"relatorio_estatisticas_{self.data_inicio}_{self.data_fim}",
+            "dashboard_estatisticas",
+            "relatorios_periodo_atual",
+        ]
+        
+        for key in cache_keys_to_delete:
+            cache.delete(key)
+    
     def buscar_dados_carrinho(self):
-        """Busca dados do carrinho no período especificado"""
+        """Busca dados do carrinho no período especificado com cache"""
+        cache_key = f"relatorio_dados_{self.id}_{self.data_inicio}_{self.data_fim}"
+        dados_cache = cache.get(cache_key)
+        
+        if dados_cache is not None:
+            print("📊 Dados do relatório carregados do cache")
+            return dados_cache
+        
         from carinho.models import PedidoEntrega
         
         inicio_periodo = timezone.make_aware(
@@ -99,6 +132,9 @@ class RelatorioBalanco(models.Model):
         
         self._calcular_estatisticas(pedidos_periodo)
         self.save()
+        
+        # Salvar no cache por 1 hora
+        cache.set(cache_key, self, 3600)
         
         return self
     
@@ -141,63 +177,111 @@ class RelatorioBalanco(models.Model):
         print(f"   - Total geral: R$ {self.total_geral}")
         print(f"   - Total pedidos no período: {self.total_pedidos_periodo}")
     
-    # PROPRIEDADES PARA CÁLCULOS
+    # PROPRIEDADES PARA CÁLCULOS (com cache)
     @property
     def taxa_sucesso(self):
         """Taxa de pedidos entregues com sucesso"""
-        if self.total_pedidos_periodo == 0:
-            return 0
-        return (self.total_pedidos_entregues / self.total_pedidos_periodo) * 100
+        cache_key = f"relatorio_{self.id}_taxa_sucesso"
+        taxa = cache.get(cache_key)
+        
+        if taxa is None:
+            if self.total_pedidos_periodo == 0:
+                taxa = 0
+            else:
+                taxa = (self.total_pedidos_entregues / self.total_pedidos_periodo) * 100
+            cache.set(cache_key, taxa, 3600)  # Cache por 1 hora
+        
+        return taxa
     
     @property
     def taxa_cancelamento(self):
         """Taxa de pedidos cancelados"""
-        if self.total_pedidos_periodo == 0:
-            return 0
-        return (self.total_pedidos_cancelados / self.total_pedidos_periodo) * 100
+        cache_key = f"relatorio_{self.id}_taxa_cancelamento"
+        taxa = cache.get(cache_key)
+        
+        if taxa is None:
+            if self.total_pedidos_periodo == 0:
+                taxa = 0
+            else:
+                taxa = (self.total_pedidos_cancelados / self.total_pedidos_periodo) * 100
+            cache.set(cache_key, taxa, 3600)
+        
+        return taxa
     
     @property
     def taxa_cancelamento_valor(self):
         """NOVA PROPRIEDADE: Taxa de cancelamento em valor"""
-        if self.subtotal_pedidos == 0:
-            return 0
-        return (self.valor_total_cancelados / self.subtotal_pedidos) * 100
+        cache_key = f"relatorio_{self.id}_taxa_cancelamento_valor"
+        taxa = cache.get(cache_key)
+        
+        if taxa is None:
+            if self.subtotal_pedidos == 0:
+                taxa = 0
+            else:
+                taxa = (self.valor_total_cancelados / self.subtotal_pedidos) * 100
+            cache.set(cache_key, taxa, 3600)
+        
+        return taxa
     
     @property
     def valor_medio_entrega(self):
         """Valor médio por entrega"""
-        if self.total_pedidos_entregues == 0:
-            return Decimal('0.00')
-        # Usa o valor dos pedidos entregues do subtotal
-        valor_entregues = Decimal('0.00')
-        from carinho.models import PedidoEntrega
-        pedidos_entregues = PedidoEntrega.objects.filter(
-            data_solicitacao__range=(
-                timezone.make_aware(datetime.combine(self.data_inicio, datetime.min.time())),
-                timezone.make_aware(datetime.combine(self.data_fim, datetime.max.time()))
-            ),
-            estado='entregue'
-        )
-        for pedido in pedidos_entregues:
-            try:
-                valor_entregues += pedido.total_pedido
-            except:
-                continue
-        return valor_entregues / self.total_pedidos_entregues
+        cache_key = f"relatorio_{self.id}_valor_medio_entrega"
+        valor = cache.get(cache_key)
+        
+        if valor is None:
+            if self.total_pedidos_entregues == 0:
+                valor = Decimal('0.00')
+            else:
+                # Usa o valor dos pedidos entregues do subtotal
+                valor_entregues = Decimal('0.00')
+                from carinho.models import PedidoEntrega
+                pedidos_entregues = PedidoEntrega.objects.filter(
+                    data_solicitacao__range=(
+                        timezone.make_aware(datetime.combine(self.data_inicio, datetime.min.time())),
+                        timezone.make_aware(datetime.combine(self.data_fim, datetime.max.time()))
+                    ),
+                    estado='entregue'
+                )
+                for pedido in pedidos_entregues:
+                    try:
+                        valor_entregues += pedido.total_pedido
+                    except:
+                        continue
+                valor = valor_entregues / self.total_pedidos_entregues
+            cache.set(cache_key, valor, 3600)
+        
+        return valor
     
     @property
     def valor_medio_pedido(self):
         """NOVA PROPRIEDADE: Valor médio por pedido (considerando subtotal)"""
-        if self.total_pedidos_periodo == 0:
-            return Decimal('0.00')
-        return self.subtotal_pedidos / self.total_pedidos_periodo
+        cache_key = f"relatorio_{self.id}_valor_medio_pedido"
+        valor = cache.get(cache_key)
+        
+        if valor is None:
+            if self.total_pedidos_periodo == 0:
+                valor = Decimal('0.00')
+            else:
+                valor = self.subtotal_pedidos / self.total_pedidos_periodo
+            cache.set(cache_key, valor, 3600)
+        
+        return valor
     
     @property
     def eficiencia_operacional(self):
         """NOVA PROPRIEDADE: Eficiência operacional (Total Geral / Subtotal)"""
-        if self.subtotal_pedidos == 0:
-            return 0
-        return (self.total_geral / self.subtotal_pedidos) * 100
+        cache_key = f"relatorio_{self.id}_eficiencia_operacional"
+        eficiencia = cache.get(cache_key)
+        
+        if eficiencia is None:
+            if self.subtotal_pedidos == 0:
+                eficiencia = 0
+            else:
+                eficiencia = (self.total_geral / self.subtotal_pedidos) * 100
+            cache.set(cache_key, eficiencia, 3600)
+        
+        return eficiencia
     
     @property
     def dias_periodo(self):
@@ -207,20 +291,44 @@ class RelatorioBalanco(models.Model):
     @property
     def pedidos_por_dia(self):
         """Média de pedidos por dia"""
-        if self.dias_periodo == 0:
-            return 0
-        return self.total_pedidos_periodo / self.dias_periodo
+        cache_key = f"relatorio_{self.id}_pedidos_por_dia"
+        media = cache.get(cache_key)
+        
+        if media is None:
+            if self.dias_periodo == 0:
+                media = 0
+            else:
+                media = self.total_pedidos_periodo / self.dias_periodo
+            cache.set(cache_key, media, 3600)
+        
+        return media
     
     @property
     def valor_geral_por_dia(self):
         """NOVA PROPRIEDADE: Total geral por dia"""
-        if self.dias_periodo == 0:
-            return Decimal('0.00')
-        return self.total_geral / self.dias_periodo
+        cache_key = f"relatorio_{self.id}_valor_geral_por_dia"
+        valor = cache.get(cache_key)
+        
+        if valor is None:
+            if self.dias_periodo == 0:
+                valor = Decimal('0.00')
+            else:
+                valor = self.total_geral / self.dias_periodo
+            cache.set(cache_key, valor, 3600)
+        
+        return valor
     
     @property
     def subtotal_por_dia(self):
         """NOVA PROPRIEDADE: Subtotal por dia"""
-        if self.dias_periodo == 0:
-            return Decimal('0.00')
-        return self.subtotal_pedidos / self.dias_periodo
+        cache_key = f"relatorio_{self.id}_subtotal_por_dia"
+        valor = cache.get(cache_key)
+        
+        if valor is None:
+            if self.dias_periodo == 0:
+                valor = Decimal('0.00')
+            else:
+                valor = self.subtotal_pedidos / self.dias_periodo
+            cache.set(cache_key, valor, 3600)
+        
+        return valor
