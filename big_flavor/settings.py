@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # suas apps personalizadas aqui
 
+    'balanco',
     'blog',
     'carinho',
     'conta',
