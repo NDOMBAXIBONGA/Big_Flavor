@@ -129,24 +129,22 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 
 # settings.py - VERSÃO COMPLETA
 
-if os.getenv('RAILWAY'):
-    # PRODUÇÃO (Railway)
-    DATABASES = {
+DATABASES = {
     'default': dj_database_url.config(
         default='postgresql://postgres:FXCXRkozcXVYOTXNXpgjXXECikZgviaw@interchange.proxy.rlwy.net:24064/railway',
         conn_max_age=600,
         conn_health_checks=True,
     )
 }
-else:
-    # DESENVOLVIMENTO (Local)
-   DATABASES = {
+
+"""# DESENVOLVIMENTO (Local)
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
         'CONN_MAX_AGE': 60,
     }
-}
+}"""
    
 # Cache
 CACHES = {
