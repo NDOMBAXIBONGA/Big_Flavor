@@ -133,7 +133,7 @@ if os.getenv('RAILWAY'):
     # PRODUÇÃO (Railway)
     DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:VicChUbxflWNwzYQyCXRQfNAcLltyYzG@postgres.railway.internal:5432/railway',
+        default='postgresql://postgres:FXCXRkozcXVYOTXNXpgjXXECikZgviaw@interchange.proxy.rlwy.net:24064/railway',
         conn_max_age=600,
         conn_health_checks=True,
     )
