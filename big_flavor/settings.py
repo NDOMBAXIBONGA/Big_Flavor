@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-from dotenv import load_dotenv # Devo comentar em desenvolvimento
-load_dotenv()  # Carrega variáveis do .env Devo comentar em desenvolvimento
+#from dotenv import load_dotenv # Devo comentar em desenvolvimento
+#load_dotenv()  # Carrega variáveis do .env Devo comentar em desenvolvimento
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -132,15 +132,11 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 if os.getenv('RAILWAY'):
     # PRODUÇÃO (Railway)
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['PGDATABASE'],
-        'USER': os.environ['PGUSER'],
-        'PASSWORD': os.environ['PGPASSWORD'],
-        'HOST': os.environ['PGHOST'],  # ← Já é private networking!
-        'PORT': os.environ['PGPORT'],
-        'CONN_MAX_AGE': 60,
-    }
+    'default': dj_database_url.config(
+        default='postgresql://postgres:VicChUbxflWNwzYQyCXRQfNAcLltyYzG@postgres.railway.internal:5432/railway',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 else:
     # DESENVOLVIMENTO (Local)
