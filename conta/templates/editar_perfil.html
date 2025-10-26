@@ -610,17 +610,20 @@
                         <div class="profile-card-body">
                             <!-- Avatar Section - Cache por usuário -->
                             {% cache 3600 profile_avatar request.user.id %}
-                            <div class="profile-avatar-section" data-aos="zoom-in" data-aos-delay="200">
-                                <div class="profile-avatar">
-                                    <img src="" alt="Avatar do Usuário">
-                                    <div class="avatar-overlay">
+                            <div class="col-md-4 text-center" data-aos="fade-left" data-aos-delay="300">
+                                <div class="avatar-container">
+                                    {% if usuario.foto_perfil %}
+                                        <img src="{{ usuario.foto_perfil.url }}" alt="Avatar" class="profile-avatar" 
+                                            data-bs-toggle="modal" data-bs-target="#avatarModal">
+                                    {% else %}
+                                        <img src="{% static 'img/big.jpg' %}" alt="Avatar" class="profile-avatar"
+                                            data-bs-toggle="modal" data-bs-target="#avatarModal">
+                                    {% endif %}
+                                    <div class="avatar-overlay" data-bs-toggle="modal" data-bs-target="#avatarModal">
                                         <i class="fas fa-camera"></i>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-action btn-secondary-action">
-                                    <i class="fas fa-camera me-2"></i>
-                                    Alterar Foto
-                                </button>
+                                <small class="text-white d-block mt-2 opacity-75">Clique para alterar foto</small>
                             </div>
                             {% endcache %}
 

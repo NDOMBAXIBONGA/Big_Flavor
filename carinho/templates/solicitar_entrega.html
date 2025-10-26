@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
-{% load cache %} <!-- Adicione esta linha -->
+{% load cache %}
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -21,42 +21,510 @@
     <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></noscript>
 
     <!-- Cache para CSS estático -->
-    {% cache 86400 css_so %} <!-- Cache por 24 horas -->
-    <link href="{% static "css/so.css" %}" rel="stylesheet">
+    {% cache 86400 css_so %}
+    <link href="{% static 'css/so.css' %}" rel="stylesheet">
     {% endcache %}
-    
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+            --border-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark-text) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .badge-cart {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* Page Hero Section */
+        .page-hero {
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 76px;
+        }
+
+        .page-hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .page-hero-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+
+        .page-hero-content {
+            color: white;
+            z-index: 1;
+            width: 100%;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .page-hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .page-hero-title span {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 15px;
+        }
+
+        /* Delivery Card */
+        .delivery-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .delivery-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .delivery-card-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 25px;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .delivery-card-header i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .delivery-card-body {
+            padding: 30px;
+        }
+
+        /* Summary Card */
+        .summary-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .summary-title {
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .summary-title i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .total-value {
+            color: var(--success-color);
+            font-size: 1.1rem;
+        }
+
+        /* Delivery Info */
+        .delivery-info {
+            background: #e8f4fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .info-icon {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-right: 15px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-label i {
+            margin-right: 8px;
+            color: var(--secondary-color);
+            width: 20px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        /* Buttons */
+        .btn-delivery {
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-delivery i {
+            margin-right: 8px;
+        }
+
+        .btn-confirm {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-delivery:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: white;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .floating-1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 5%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .floating-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .page-hero-title {
+                font-size: 3rem;
+            }
+            
+            .delivery-card-body {
+                padding: 25px;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-hero {
+                height: 300px;
+                margin-top: 66px;
+            }
+            
+            .page-hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .page-hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .delivery-card-body {
+                padding: 20px;
+            }
+            
+            .delivery-card-header {
+                padding: 20px;
+                font-size: 1.2rem;
+            }
+            
+            .btn-group-mobile {
+                flex-direction: column;
+            }
+            
+            .btn-group-mobile .btn-delivery {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-hero {
+                height: 250px;
+            }
+            
+            .page-hero-title {
+                font-size: 2rem;
+            }
+            
+            .summary-card {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Cache para navbar -->
-    {% cache 3600 navbar request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
+    {% cache 3600 navbar_entrega request.user.is_authenticated request.user.id %}
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <a href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'Index' %}{% endif %}" 
+               class="navbar-brand">Big <span>Flavor</span></a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            {% endif %}
-
-            {% if not request.user.is_authenticated %}
-            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            {% endif %}
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <!-- Elementos apenas para usuários logados -->
+                    <!-- Elementos condicionais baseados no estado de autenticação -->
                     {% if request.user.is_authenticated %}
                     <li class="nav-item"> 
                         <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
                     </li>
-                    {% endif %}
-
-                    <!-- Elementos apenas para usuários NÃO logados -->
-                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
                     <li class="nav-item">
                         <a href="{% url 'Index' %}" class="nav-link active">Home</a>
                     </li>
@@ -66,32 +534,24 @@
                     <li class="nav-item">
                         <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
                     {% endif %}
 
+                    <!-- Elementos comuns -->
                     <li class="nav-item">
                         <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
                     </li>
-
-                    <!-- Elementos apenas para usuários logados -->
-                    {% if request.user.is_authenticated %}
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ login_url }}">Login</a>
-                    </li>
-                    {% endif %}
                     
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
                             
-                            <!-- Elementos apenas para usuários logados -->
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
                             <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
@@ -100,21 +560,16 @@
                         </ul>
                     </li>
                     
-                    <!-- Elementos apenas para usuários logados -->
                     {% if request.user.is_authenticated %}
                     <li class="nav-item position-relative">
                         <a href="{% url 'ver_carrinho' %}" class="nav-link">
                             <i class="fas fa-shopping-cart me-1"></i>
                             Carrinho
-                            {% if user.is_authenticated %}
-                                {% with user.carrinho_set.first as carrinho %}
-                                    {% if carrinho and carrinho.total_itens > 0 %}
-                                        <span class="badge-cart">
-                                            {{ carrinho.total_itens }}
-                                        </span>
-                                    {% endif %}
-                                {% endwith %}
-                            {% endif %}
+                            {% with user.carrinho_set.first as carrinho %}
+                                {% if carrinho and carrinho.total_itens > 0 %}
+                                    <span class="badge-cart">{{ carrinho.total_itens }}</span>
+                                {% endif %}
+                            {% endwith %}
                         </a>
                     </li>
                     {% endif %}
@@ -125,26 +580,39 @@
     <!-- Nav Bar End -->
     {% endcache %}
 
-    <!-- Page Hero -->
+    <!-- Page Hero Section -->
     <section class="page-hero">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
         
-        <!-- Cache para imagem hero - diferenciado por usuário -->
-        {% cache 86400 page_hero request.user.id %}
+        <!-- Cache para background hero -->
+        {% cache 86400 entrega_hero request.user.id %}
         <div class="page-hero-background">
-            <img src="{% static "img/big.jpg" %}" alt="Entrega Big Flavor">
+            <img src="{% static 'img/big.jpg' %}" alt="Entrega Big Flavor" loading="lazy">
         </div>
         
         <div class="page-hero-content">
             <h1 class="page-hero-title" data-aos="fade-up">Solicitar <span>Entrega</span></h1>
-            <p class="page-hero-subtitle" data-aos="fade-up" data-aos-delay="200">Finalize seu pedido e receba em casa com toda qualidade Big Flavor</p>
+            <p class="page-hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+                Finalize seu pedido e receba em casa com toda qualidade Big Flavor
+            </p>
         </div>
         {% endcache %}
     </section>
 
     <!-- Main Content -->
     <div class="main-container">
+        <!-- Mensagens SEM CACHE (dinâmicas) -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" data-aos="fade-down">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         <div class="delivery-card" data-aos="fade-up">
             <div class="delivery-card-header">
                 <i class="fas fa-truck-loading"></i>
@@ -153,7 +621,7 @@
             
             <div class="delivery-card-body">
                 <!-- Resumo do Pedido - Cache por usuário e carrinho -->
-                {% cache 300 resumo_pedido request.user.id carrinho.total carrinho.total_itens %} <!-- Cache por 5 minutos -->
+                {% cache 300 resumo_pedido request.user.id carrinho.total carrinho.total_itens %}
                 <div class="summary-card" data-aos="zoom-in" data-aos-delay="200">
                     <h5 class="summary-title">
                         <i class="fas fa-receipt"></i>
@@ -181,7 +649,7 @@
                 {% endcache %}
 
                 <!-- Informações de Entrega - Cache estático -->
-                {% cache 86400 delivery_info %} <!-- Cache por 24 horas -->
+                {% cache 86400 delivery_info %}
                 <div class="delivery-info" data-aos="fade-up" data-aos-delay="300">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-info-circle info-icon"></i>
@@ -237,14 +705,85 @@
         </div>
     </div>
 
-    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top">
+        <i class="fas fa-chevron-up"></i>
+    </a>
 
-    <!-- Cache para scripts -->
-    {% cache 86400 scripts_so %} <!-- Cache por 24 horas -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="{% static "js/so.js" %}"></script>
-    {% endcache %}
-    
+    <!-- Scripts Otimizados -->
+    <script>
+        // Carregamento assíncrono de scripts
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.onload = callback;
+            script.onerror = () => console.error(`Erro ao carregar script: ${src}`);
+            document.head.appendChild(script);
+        }
+
+        // Inicialização das funcionalidades da página
+        function initPageFunctionality() {
+            // Inicializar AOS (Animate On Scroll)
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    duration: 800,
+                    easing: 'ease-in-out',
+                    once: true,
+                    offset: 100
+                });
+            }
+
+            // Navbar scroll effect
+            const navbar = document.querySelector('.navbar');
+            const backToTop = document.querySelector('.back-to-top');
+
+            function handleScroll() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+
+                // Back to top button
+                if (window.scrollY > 300) {
+                    backToTop.classList.add('active');
+                } else {
+                    backToTop.classList.remove('active');
+                }
+            }
+
+            window.addEventListener('scroll', handleScroll);
+            handleScroll(); // Executar uma vez para estado inicial
+
+            // Back to top functionality
+            backToTop.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Pré-conectar a domínios externos para melhor performance
+            const domainsToPreconnect = [
+                'https://cdn.jsdelivr.net',
+                'https://cdnjs.cloudflare.com',
+                'https://unpkg.com'
+            ];
+            
+            domainsToPreconnect.forEach(domain => {
+                const link = document.createElement('link');
+                link.rel = 'preconnect';
+                link.href = domain;
+                document.head.appendChild(link);
+            });
+        }
+
+        // Carregar scripts críticos
+        loadScript('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', function() {
+            loadScript('https://unpkg.com/aos@2.3.1/dist/aos.js', initPageFunctionality);
+        });
+    </script>
 </body>
 </html>

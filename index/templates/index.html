@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
-{% load cache %} <!-- Adicione esta linha -->
+{% load cache %}
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -21,42 +21,1031 @@
     <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></noscript>
     
     <!-- Cache para CSS estático -->
-    {% cache 86400 css_index %} <!-- Cache por 24 horas -->
-    <link href="{% static "css/index.css" %}" rel="stylesheet">
+    {% cache 86400 css_index %}
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
     {% endcache %}
-    
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+            --border-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark-text) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .badge-cart {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 76px;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .hero-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+
+        .hero-content {
+            color: white;
+            z-index: 1;
+            text-align: center;
+            padding: 0 20px;
+            max-width: 800px;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .hero-title span {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-hero-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-hero-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-hero-primary:hover {
+            color: white;
+        }
+
+        .btn-hero-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        /* About Hero Section */
+        .about-hero {
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 76px;
+        }
+
+        .about-hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .about-hero-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+
+        .about-hero-content {
+            color: white;
+            z-index: 1;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .about-hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .about-hero-title span {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Sections */
+        .section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark-text);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #6c757d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* About Story */
+        .about-img {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+        .btn-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-play:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .about-content {
+            padding-left: 30px;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #555;
+        }
+
+        .btn-cta {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: white;
+        }
+
+        /* Video Gallery */
+        .video-gallery {
+            margin-top: 80px;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .video-card-thumbnail {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .video-card-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover .video-card-thumbnail img {
+            transform: scale(1.1);
+        }
+
+        .video-card-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover .video-card-play {
+            opacity: 1;
+        }
+
+        .video-card-body {
+            padding: 20px;
+        }
+
+        .video-card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark-text);
+        }
+
+        .video-card-desc {
+            color: #6c757d;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Features */
+        .feature-item {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .feature-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-item h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark-text);
+        }
+
+        .feature-item p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        /* Food Categories */
+        .food-category {
+            height: 300px;
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .food-category:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .food-category-1 {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .food-category-2 {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+        }
+
+        .food-category-3 {
+            background: linear-gradient(135deg, #fd9644 0%, #f39c12 100%);
+        }
+
+        .food-category-content {
+            color: white;
+            z-index: 2;
+            padding: 20px;
+        }
+
+        .food-category-content i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .food-category-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .food-category-content p {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .food-category-content a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: 2px solid white;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .food-category-content a:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        /* Team Section */
+        .team-item {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .team-img {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .team-img img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .team-item:hover .team-img img {
+            transform: scale(1.1);
+        }
+
+        .team-social {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .team-item:hover .team-social {
+            bottom: 0;
+        }
+
+        .team-social a {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            margin: 0 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .team-social a:hover {
+            transform: translateY(-3px);
+        }
+
+        .team-text h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--dark-text);
+        }
+
+        .team-text p {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Contact Section */
+        .contact-info {
+            display: flex;
+            align-items: center;
+            padding: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .contact-info:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .contact-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .contact-text h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--dark-text);
+        }
+
+        .contact-text p {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+
+        .contact-social {
+            display: flex;
+            gap: 10px;
+        }
+
+        .contact-social a {
+            width: 35px;
+            height: 35px;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-social a:hover {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-text);
+            color: white;
+            padding: 50px 0 0;
+        }
+
+        .footer h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .footer p, .footer a {
+            color: #bdc3c7;
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .footer-social a {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .copyright {
+            background: #1a252f;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .floating-1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 5%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .floating-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Video Modal */
+        .video-modal .modal-content {
+            background: transparent;
+            border: none;
+        }
+
+        .video-modal .modal-header {
+            border-bottom: none;
+            padding: 20px 20px 0;
+        }
+
+        .video-modal .modal-title {
+            font-weight: 600;
+        }
+
+        .video-player-container {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .video-player {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-video-control {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-video-control:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .video-progress {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .video-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .video-time {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .video-loading-indicator,
+        .video-error,
+        .video-format-warning {
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .video-loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3.5rem;
+            }
+            
+            .about-hero-title {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .about-content {
+                padding-left: 0;
+                margin-top: 40px;
+            }
+            
+            .section {
+                padding: 80px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section,
+            .about-hero {
+                margin-top: 66px;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .about-hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .about-hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-hero {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .about-hero-title {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .contact-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Cache para navbar -->
-    {% cache 3600 navbar_index request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
+    {% cache 3600 navbar_index request.user.is_authenticated request.user.id %}
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <a href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'Index' %}{% endif %}" 
+               class="navbar-brand">Big <span>Flavor</span></a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            {% endif %}
-
-            {% if not request.user.is_authenticated %}
-            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            {% endif %}
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <!-- Elementos apenas para usuários logados -->
+                    <!-- Elementos condicionais baseados no estado de autenticação -->
                     {% if request.user.is_authenticated %}
                     <li class="nav-item"> 
                         <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
                     </li>
-                    {% endif %}
-
-                    <!-- Elementos apenas para usuários NÃO logados -->
-                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
                     <li class="nav-item">
                         <a href="{% url 'Index' %}" class="nav-link active">Home</a>
                     </li>
@@ -66,32 +1055,24 @@
                     <li class="nav-item">
                         <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
                     {% endif %}
 
+                    <!-- Elementos comuns -->
                     <li class="nav-item">
                         <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
                     </li>
-
-                    <!-- Elementos apenas para usuários logados -->
-                    {% if request.user.is_authenticated %}
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ login_url }}">Login</a>
-                    </li>
-                    {% endif %}
                     
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
                             
-                            <!-- Elementos apenas para usuários logados -->
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
                             <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
@@ -100,21 +1081,16 @@
                         </ul>
                     </li>
                     
-                    <!-- Elementos apenas para usuários logados -->
                     {% if request.user.is_authenticated %}
                     <li class="nav-item position-relative">
                         <a href="{% url 'ver_carrinho' %}" class="nav-link">
                             <i class="fas fa-shopping-cart me-1"></i>
                             Carrinho
-                            {% if user.is_authenticated %}
-                                {% with user.carrinho_set.first as carrinho %}
-                                    {% if carrinho and carrinho.total_itens > 0 %}
-                                        <span class="badge-cart">
-                                            {{ carrinho.total_itens }}
-                                        </span>
-                                    {% endif %}
-                                {% endwith %}
-                            {% endif %}
+                            {% with user.carrinho_set.first as carrinho %}
+                                {% if carrinho and carrinho.total_itens > 0 %}
+                                    <span class="badge-cart">{{ carrinho.total_itens }}</span>
+                                {% endif %}
+                            {% endwith %}
                         </a>
                     </li>
                     {% endif %}
@@ -132,7 +1108,7 @@
         <div class="floating-element floating-2"></div>
         
         <div class="hero-background">
-            <img src="{% static 'img/big.jpg' %}" alt="Big Flavor Hero">
+            <img src="{% static 'img/big.jpg' %}" alt="Big Flavor Hero" loading="lazy">
         </div>
         
         <div class="hero-content">
@@ -153,7 +1129,7 @@
         <div class="floating-element floating-2"></div>
         
         <div class="about-hero-background">
-            <img src="{% static "img/carousel-1.jpg" %}" alt="Big Flavor Sobre Nós">
+            <img src="{% static 'img/carousel-1.jpg' %}" alt="Big Flavor Sobre Nós" loading="lazy">
         </div>
         
         <div class="about-hero-content">
@@ -166,7 +1142,7 @@
     {% endcache %}
 
     <!-- About Story Section - Cache com timeout curto para vídeos dinâmicos -->
-    {% cache 300 about_story video_principal.id videos_galeria.count %} <!-- Cache por 5 minutos -->
+    {% cache 300 about_story video_principal.id videos_galeria.count %}
     <section class="section">
         <div class="container">
             <div class="row align-items-center">
@@ -174,7 +1150,7 @@
                     <div class="about-img">
                         {% if video_principal %}
                             {% if video_principal.thumbnail %}
-                                <img src="{{ video_principal.thumbnail.url }}" alt="{{ video_principal.titulo }}" class="video-thumbnail">
+                                <img src="{{ video_principal.thumbnail.url }}" alt="{{ video_principal.titulo }}" class="video-thumbnail" loading="lazy">
                             {% else %}
                                 <div class="video-thumbnail" style="background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white;">
                                     <i class="fas fa-play-circle fa-3x"></i>
@@ -189,7 +1165,7 @@
                             </button>
                         {% else %}
                             <!-- Fallback -->
-                            <img src="{% static 'img/about-story.jpg' %}" alt="Nossa História">
+                            <img src="{% static 'img/about-story.jpg' %}" alt="Nossa História" loading="lazy">
                             <button type="button" class="btn-play" data-bs-toggle="modal" data-bs-target="#videoModal" 
                                     data-video-url="https://www.youtube.com/embed/DWRcNpR6Kdc" 
                                     data-video-type="youtube"
@@ -214,7 +1190,7 @@
                             <p class="mb-4">
                                 Nossa missão vai além de servir comida excepcional - queremos criar momentos especiais que ficarão para sempre na memória dos nossos clientes.
                             </p>
-                            <a href="{% url 'lista_produtos' %}" class="btn btn-cta">Explorar Cardápio</a>
+                            <a href="{% url 'lista_produtos' %}" class="btn-cta">Explorar Cardápio</a>
                         </div>
                     </div>
                 </div>
@@ -233,7 +1209,7 @@
                         <div class="video-card">
                             <div class="video-card-thumbnail">
                                 {% if video.thumbnail %}
-                                    <img src="{{ video.thumbnail.url }}" alt="{{ video.titulo }}">
+                                    <img src="{{ video.thumbnail.url }}" alt="{{ video.titulo }}" loading="lazy">
                                 {% else %}
                                     <div style="background: var(--gradient-primary); height: 100%; display: flex; align-items: center; justify-content: center; color: white;">
                                         <i class="fas fa-play-circle fa-2x"></i>
@@ -331,7 +1307,7 @@
                             <i class="fas fa-pizza-slice"></i>
                             <h2>Lanches</h2>
                             <p>Petiscos irresistíveis perfeitos para qualquer momento do dia</p>
-                            <a href="{% url 'lista_produtos'%}?query=&categoria=Lanches">Explorar Cardápio</a>
+                            <a href="{% url 'lista_produtos' %}?query=&categoria=Lanches">Explorar Cardápio</a>
                         </div>
                     </div>
                 </div>
@@ -362,7 +1338,7 @@
                 <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
                     <div class="team-item">
                         <div class="team-img">
-                            <img src="{% static 'img/team-1.jpg' %}" alt="Chef">
+                            <img src="{% static 'img/team-1.jpg' %}" alt="Chef" loading="lazy">
                             <div class="team-social">
                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -378,7 +1354,7 @@
                 <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
                     <div class="team-item">
                         <div class="team-img">
-                            <img src="{% static 'img/team-2.jpg' %}" alt="Chef">
+                            <img src="{% static 'img/team-2.jpg' %}" alt="Chef" loading="lazy">
                             <div class="team-social">
                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -394,7 +1370,7 @@
                 <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="300">
                     <div class="team-item">
                         <div class="team-img">
-                            <img src="{% static 'img/team-3.jpg' %}" alt="Chef">
+                            <img src="{% static 'img/team-3.jpg' %}" alt="Chef" loading="lazy">
                             <div class="team-social">
                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -410,7 +1386,7 @@
                 <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="400">
                     <div class="team-item">
                         <div class="team-img">
-                            <img src="{% static 'img/team-4.jpg' %}" alt="Chef">
+                            <img src="{% static 'img/team-4.jpg' %}" alt="Chef" loading="lazy">
                             <div class="team-social">
                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
                                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -626,9 +1602,186 @@
 
     <!-- Cache para scripts -->
     {% cache 86400 scripts_index %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="{% static "js/index.js" %}"></script>
+    <script>
+        // Carregamento assíncrono de scripts
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.onload = callback;
+            script.onerror = () => console.error(`Erro ao carregar script: ${src}`);
+            document.head.appendChild(script);
+        }
+
+        // Inicialização das funcionalidades da página
+        function initPageFunctionality() {
+            // Inicializar AOS (Animate On Scroll)
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    duration: 800,
+                    easing: 'ease-in-out',
+                    once: true,
+                    offset: 100
+                });
+            }
+
+            // Navbar scroll effect
+            const navbar = document.querySelector('.navbar');
+            const backToTop = document.querySelector('.back-to-top');
+
+            function handleScroll() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+
+                // Back to top button
+                if (window.scrollY > 300) {
+                    backToTop.classList.add('active');
+                } else {
+                    backToTop.classList.remove('active');
+                }
+            }
+
+            window.addEventListener('scroll', handleScroll);
+            handleScroll(); // Executar uma vez para estado inicial
+
+            // Back to top functionality
+            backToTop.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Video Modal functionality
+            const videoModal = document.getElementById('videoModal');
+            if (videoModal) {
+                videoModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const videoUrl = button.getAttribute('data-video-url');
+                    const videoType = button.getAttribute('data-video-type');
+                    const videoTitle = button.getAttribute('data-video-title') || 'Vídeo';
+                    const videoFormat = button.getAttribute('data-video-format');
+
+                    const modalTitle = videoModal.querySelector('.modal-title');
+                    modalTitle.textContent = videoTitle;
+
+                    loadVideo(videoUrl, videoType, videoFormat);
+                });
+
+                videoModal.addEventListener('hidden.bs.modal', function() {
+                    stopVideo();
+                });
+            }
+
+            // Pré-conectar a domínios externos para melhor performance
+            const domainsToPreconnect = [
+                'https://cdn.jsdelivr.net',
+                'https://cdnjs.cloudflare.com',
+                'https://unpkg.com'
+            ];
+            
+            domainsToPreconnect.forEach(domain => {
+                const link = document.createElement('link');
+                link.rel = 'preconnect';
+                link.href = domain;
+                document.head.appendChild(link);
+            });
+        }
+
+        // Funções de controle de vídeo
+        function loadVideo(url, type, format) {
+            // Reset players
+            document.getElementById('youtubePlayer').style.display = 'none';
+            document.getElementById('localVideoPlayer').style.display = 'none';
+            document.getElementById('videoLoading').style.display = 'none';
+            document.getElementById('videoError').style.display = 'none';
+            document.getElementById('formatWarning').style.display = 'none';
+
+            // Mostrar loading
+            document.getElementById('videoLoading').style.display = 'block';
+
+            if (type === 'youtube') {
+                loadYouTubeVideo(url);
+            } else {
+                loadLocalVideo(url, format);
+            }
+        }
+
+        function loadYouTubeVideo(url) {
+            const iframe = document.getElementById('youtubeIframe');
+            iframe.src = url;
+            document.getElementById('youtubePlayer').style.display = 'block';
+            document.getElementById('videoLoading').style.display = 'none';
+        }
+
+        function loadLocalVideo(url, format) {
+            const video = document.getElementById('localVideo');
+            const source = document.createElement('source');
+            source.src = url;
+            
+            if (format) {
+                source.type = `video/${format}`;
+            } else {
+                // Detectar formato pela extensão
+                const extension = url.split('.').pop().toLowerCase();
+                source.type = `video/${extension}`;
+            }
+
+            // Limpar sources anteriores
+            while (video.firstChild) {
+                video.removeChild(video.firstChild);
+            }
+            video.appendChild(source);
+
+            // Configurar controles personalizados
+            setupVideoControls(video);
+
+            document.getElementById('localVideoPlayer').style.display = 'block';
+            document.getElementById('videoLoading').style.display = 'none';
+
+            // Mostrar aviso de formato se necessário
+            if (format && !['mp4', 'webm', 'ogg'].includes(format.toLowerCase())) {
+                document.getElementById('formatWarning').style.display = 'block';
+                document.getElementById('warningText').textContent = 
+                    `Formato ${format.toUpperCase()} pode não ser compatível com todos os navegadores.`;
+            }
+
+            video.load();
+        }
+
+        function setupVideoControls(video) {
+            // Implementar controles personalizados aqui
+            // (código simplificado para exemplo)
+        }
+
+        function stopVideo() {
+            const iframe = document.getElementById('youtubeIframe');
+            if (iframe.src) {
+                iframe.src = '';
+            }
+
+            const video = document.getElementById('localVideo');
+            if (video) {
+                video.pause();
+                video.currentTime = 0;
+            }
+        }
+
+        function retryVideo() {
+            // Implementar retry logic
+            console.log('Retrying video...');
+        }
+
+        // Carregar scripts críticos
+        loadScript('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', function() {
+            loadScript('https://unpkg.com/aos@2.3.1/dist/aos.js', initPageFunctionality);
+        });
+    </script>
     {% endcache %}
+
 </body>
 </html>

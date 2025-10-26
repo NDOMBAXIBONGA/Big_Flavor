@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
-{% load cache %} <!-- Adicione esta linha -->
+{% load cache %}
 {% url 'login' as login_url %}
 {% url 'logout' as logout_url %}
 <html lang="pt-br">
@@ -21,42 +21,742 @@
     <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></noscript>
     
     <!-- Cache para CSS estático -->
-    {% cache 86400 css_detalhes %} <!-- Cache por 24 horas -->
-    <link href="{% static "css/detalhes.css" %}" rel="stylesheet">
+    {% cache 86400 css_detalhes %}
+    <link href="{% static 'css/detalhes.css' %}" rel="stylesheet">
     {% endcache %}
- 
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+            --border-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark-text) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .badge-cart {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* Product Hero Section */
+        .product-hero {
+            position: relative;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 76px;
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.9) 0%, rgba(52, 152, 219, 0.8) 100%);
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            z-index: 0;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .floating-1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .floating-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .product-hero-content {
+            color: white;
+            z-index: 1;
+            position: relative;
+        }
+
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb-item a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--secondary-color);
+        }
+
+        .product-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .product-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .product-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .price-tag-mobile {
+            background: var(--gradient-success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .hero-badge {
+            text-align: center;
+        }
+
+        .badge-content {
+            background: var(--gradient-warning);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            display: inline-block;
+            box-shadow: var(--shadow);
+        }
+
+        .badge-content i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Product Detail Section */
+        .product-detail-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .product-image-container {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .product-image-container:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .product-image-placeholder {
+            width: 100%;
+            height: 500px;
+            background: var(--light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary-color);
+            font-size: 4rem;
+        }
+
+        .product-info {
+            padding: 30px;
+            background: var(--light-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .price-tag {
+            background: var(--gradient-success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .product-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--dark-text);
+            margin: 25px 0;
+        }
+
+        .stock-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stock-badge {
+            font-size: 0.9rem;
+            padding: 8px 15px;
+        }
+
+        /* Buttons */
+        .btn-action {
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn-primary-action { 
+            background: var(--gradient-primary); 
+            color: white; 
+        }
+
+        .btn-success-action { 
+            background: var(--gradient-success); 
+            color: white; 
+        }
+
+        .btn-warning-action { 
+            background: var(--gradient-warning); 
+            color: white; 
+        }
+
+        .btn-danger-action { 
+            background: var(--gradient-secondary); 
+            color: white; 
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: white;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Favorite Buttons */
+        .btn-favorite {
+            background: var(--light-bg);
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-favorite.favorited {
+            background: var(--gradient-secondary);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-favorite-lg {
+            background: var(--light-bg);
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 12px 25px;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-favorite-lg.favorited {
+            background: var(--gradient-secondary);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-favorite-action {
+            background: var(--light-bg);
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 12px 25px;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-favorite-action.favorited {
+            background: var(--gradient-secondary);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Quantity Controls */
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .btn-quantity {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-quantity:hover {
+            transform: scale(1.1);
+        }
+
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 10px;
+            font-weight: 600;
+        }
+
+        .quantity-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .cart-item-info {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid var(--success-color);
+        }
+
+        /* Related Products */
+        .related-products {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-10px);
+        }
+
+        .product-card-img {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .product-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-card-img img {
+            transform: scale(1.1);
+        }
+
+        .product-card-body {
+            padding: 25px;
+        }
+
+        .product-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 10px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .product-card-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+
+        .product-card-action {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .product-card-action:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-text);
+            color: white;
+            padding: 50px 0 0;
+        }
+
+        .footer h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .footer p, .footer a {
+            color: #bdc3c7;
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .footer-social a {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .copyright {
+            background: #1a252f;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .product-title {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .product-hero {
+                min-height: 50vh;
+                margin-top: 66px;
+            }
+            
+            .product-title {
+                font-size: 2.5rem;
+            }
+            
+            .product-meta {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-title {
+                font-size: 2rem;
+            }
+            
+            .product-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .product-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .meta-item {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-action {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-hero {
+                min-height: 40vh;
+            }
+            
+            .product-title {
+                font-size: 1.8rem;
+            }
+            
+            .price-tag {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Cache para navbar -->
-    {% cache 3600 navbar_detalhes request.user.is_authenticated %} <!-- Cache por 1 hora, diferenciado por estado de autenticação -->
+    {% cache 3600 navbar_detalhes request.user.is_authenticated request.user.id %}
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <a href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'Index' %}{% endif %}" 
+               class="navbar-brand">Big <span>Flavor</span></a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            {% endif %}
-
-            {% if not request.user.is_authenticated %}
-            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            {% endif %}
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <!-- Elementos apenas para usuários logados -->
+                    <!-- Elementos condicionais baseados no estado de autenticação -->
                     {% if request.user.is_authenticated %}
                     <li class="nav-item"> 
                         <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
                     </li>
-                    {% endif %}
-
-                    <!-- Elementos apenas para usuários NÃO logados -->
-                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
                     <li class="nav-item">
                         <a href="{% url 'Index' %}" class="nav-link active">Home</a>
                     </li>
@@ -66,32 +766,24 @@
                     <li class="nav-item">
                         <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
                     {% endif %}
 
+                    <!-- Elementos comuns -->
                     <li class="nav-item">
                         <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
                     </li>
-
-                    <!-- Elementos apenas para usuários logados -->
-                    {% if request.user.is_authenticated %}
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ login_url }}">Login</a>
-                    </li>
-                    {% endif %}
                     
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
                             
-                            <!-- Elementos apenas para usuários logados -->
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
                             <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
@@ -100,21 +792,16 @@
                         </ul>
                     </li>
                     
-                    <!-- Elementos apenas para usuários logados -->
                     {% if request.user.is_authenticated %}
                     <li class="nav-item position-relative">
                         <a href="{% url 'ver_carrinho' %}" class="nav-link">
                             <i class="fas fa-shopping-cart me-1"></i>
                             Carrinho
-                            {% if user.is_authenticated %}
-                                {% with user.carrinho_set.first as carrinho %}
-                                    {% if carrinho and carrinho.total_itens > 0 %}
-                                        <span class="badge-cart">
-                                            {{ carrinho.total_itens }}
-                                        </span>
-                                    {% endif %}
-                                {% endwith %}
-                            {% endif %}
+                            {% with user.carrinho_set.first as carrinho %}
+                                {% if carrinho and carrinho.total_itens > 0 %}
+                                    <span class="badge-cart">{{ carrinho.total_itens }}</span>
+                                {% endif %}
+                            {% endwith %}
                         </a>
                     </li>
                     {% endif %}
@@ -126,7 +813,7 @@
     {% endcache %}
 
     <!-- Product Hero Section - Cache por produto -->
-    {% cache 300 product_hero produto.id %} <!-- Cache por 5 minutos -->
+    {% cache 300 product_hero produto.id %}
     <section class="product-hero">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
@@ -226,7 +913,7 @@
                     </div>
                 </div>
                 
-                <!-- Coluna direita para elementos visuais (opcional) -->
+                <!-- Coluna direita para elementos visuais -->
                 <div class="col-lg-4 d-none d-lg-block" data-aos="fade-left" data-aos-delay="300">
                     <div class="hero-badge">
                         <div class="badge-content">
@@ -241,7 +928,7 @@
     {% endcache %}
 
     <!-- Product Detail Section - Cache por produto -->
-    {% cache 300 product_detail produto.id %} <!-- Cache por 5 minutos -->
+    {% cache 300 product_detail produto.id %}
     <section class="product-detail-section">
         <div class="container">
             <div class="row">
@@ -249,7 +936,7 @@
                 <div class="col-lg-6 mb-5" data-aos="fade-right">
                     <div class="product-image-container">
                         {% if produto.imagem %}
-                            <img src="{{ produto.imagem.url }}" class="product-image" alt="{{ produto.nome }}">
+                            <img src="{{ produto.imagem.url }}" class="product-image" alt="{{ produto.nome }}" loading="lazy">
                         {% else %}
                             <div class="product-image-placeholder">
                                 <i class="fas fa-utensils"></i>
@@ -340,7 +1027,7 @@
     <div class="container">
         <!-- Botões de Favorito - SEM CACHE (dinâmico) -->
         {% if user.is_authenticated %}
-        <div class="favorite-button-mobile d-lg-none">
+        <div class="favorite-button-mobile d-lg-none mb-4">
             <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-favorite {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
@@ -349,7 +1036,7 @@
             </form>
         </div>
 
-        <div class="favorite-button-desktop d-none d-lg-block">
+        <div class="favorite-button-desktop d-none d-lg-block mb-4">
             <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-favorite-lg {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
@@ -446,7 +1133,7 @@
     </div>
 
     <!-- Related Products - Cache por produto -->
-    {% cache 300 related_products produto.id produtos_relacionados.count %} <!-- Cache por 5 minutos -->
+    {% cache 300 related_products produto.id produtos_relacionados.count %}
     {% if produtos_relacionados %}
     <section class="related-products">
         <div class="container">
@@ -457,13 +1144,13 @@
             
             <div class="row">
                 {% for produto_rel in produtos_relacionados %}
-                <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:100 }}">
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:100 }}">
                     <div class="product-card">
                         <div class="product-card-img">
                             {% if produto_rel.imagem %}
-                                <img src="{{ produto_rel.imagem.url }}" alt="{{ produto_rel.nome }}">
+                                <img src="{{ produto_rel.imagem.url }}" alt="{{ produto_rel.nome }}" loading="lazy">
                             {% else %}
-                                <div class="product-image-placeholder" style="height: 200px;">
+                                <div class="product-image-placeholder">
                                     <i class="fas fa-utensils"></i>
                                 </div>
                             {% endif %}
@@ -547,52 +1234,67 @@
     </footer>
     {% endcache %}
 
-    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top">
+        <i class="fas fa-chevron-up"></i>
+    </a>
 
-    <!-- Cache para scripts -->
-    {% cache 86400 scripts_detalhes %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="{% static "js/detalhes.js" %}"></script>
-    {% endcache %}
-    
-    <!-- Scripts dinâmicos SEM CACHE -->
+    <!-- Scripts Otimizados -->
     <script>
-        // Inicializar AOS (Animate On Scroll)
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 100
-        });
+        // Carregamento assíncrono de scripts
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.onload = callback;
+            script.onerror = () => console.error(`Erro ao carregar script: ${src}`);
+            document.head.appendChild(script);
+        }
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                document.querySelector('.navbar').classList.add('scrolled');
-            } else {
-                document.querySelector('.navbar').classList.remove('scrolled');
+        // Inicialização das funcionalidades da página
+        function initPageFunctionality() {
+            // Inicializar AOS (Animate On Scroll)
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    duration: 800,
+                    easing: 'ease-in-out',
+                    once: true,
+                    offset: 100
+                });
             }
-            
-            // Back to top button
-            if (window.scrollY > 300) {
-                document.querySelector('.back-to-top').classList.add('active');
-            } else {
-                document.querySelector('.back-to-top').classList.remove('active');
-            }
-        });
 
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            // Navbar scroll effect
+            const navbar = document.querySelector('.navbar');
+            const backToTop = document.querySelector('.back-to-top');
+
+            function handleScroll() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+
+                // Back to top button
+                if (window.scrollY > 300) {
+                    backToTop.classList.add('active');
+                } else {
+                    backToTop.classList.remove('active');
+                }
+            }
+
+            window.addEventListener('scroll', handleScroll);
+            handleScroll(); // Executar uma vez para estado inicial
+
+            // Back to top functionality
+            backToTop.addEventListener('click', function(e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                window.scrollTo({
+                    top: 0,
                     behavior: 'smooth'
                 });
             });
-        });
 
-        // Quantity controls
-        document.addEventListener('DOMContentLoaded', function() {
+            // Quantity controls
             const quantidadeInput = document.getElementById('quantidade');
             const hiddenQuantidade = document.getElementById('hidden-quantidade');
             const decreaseBtn = document.getElementById('decrease-qty');
@@ -604,7 +1306,9 @@
                 if (value > estoqueMaximo) value = estoqueMaximo;
                 
                 quantidadeInput.value = value;
-                hiddenQuantidade.value = value;
+                if (hiddenQuantidade) {
+                    hiddenQuantidade.value = value;
+                }
             }
             
             if (decreaseBtn) {
@@ -626,15 +1330,36 @@
             }
 
             // Efeito de animação para botões de favorito
-            document.querySelectorAll('.btn-favorite, .btn-favorite-lg, .btn-favorite-action, .btn-favorite-card').forEach(btn => {
+            document.querySelectorAll('.btn-favorite, .btn-favorite-lg, .btn-favorite-action').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     const icon = this.querySelector('i');
-                    icon.style.transform = 'scale(1.3)';
-                    setTimeout(() => {
-                        icon.style.transform = 'scale(1)';
-                    }, 300);
+                    if (icon) {
+                        icon.style.transform = 'scale(1.3)';
+                        setTimeout(() => {
+                            icon.style.transform = 'scale(1)';
+                        }, 300);
+                    }
                 });
             });
+
+            // Pré-conectar a domínios externos para melhor performance
+            const domainsToPreconnect = [
+                'https://cdn.jsdelivr.net',
+                'https://cdnjs.cloudflare.com',
+                'https://unpkg.com'
+            ];
+            
+            domainsToPreconnect.forEach(domain => {
+                const link = document.createElement('link');
+                link.rel = 'preconnect';
+                link.href = domain;
+                document.head.appendChild(link);
+            });
+        }
+
+        // Carregar scripts críticos
+        loadScript('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', function() {
+            loadScript('https://unpkg.com/aos@2.3.1/dist/aos.js', initPageFunctionality);
         });
     </script>
 </body>
