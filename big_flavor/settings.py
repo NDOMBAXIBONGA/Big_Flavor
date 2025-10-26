@@ -62,7 +62,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    #'whitenoise.runserver_nostatic', # Devo comentar em desenvolvimento
+    'whitenoise.runserver_nostatic', # Devo comentar em desenvolvimento
     'django.contrib.staticfiles',
     # suas apps personalizadas aqui
 
@@ -81,19 +81,19 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #'django.middleware.cache.UpdateCacheMiddleware',  # ← Adicione mas devo comentar em Desenvolvimento
+    'django.middleware.cache.UpdateCacheMiddleware',  # ← Adicione mas devo comentar em Desenvolvimento
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.cache.FetchFromCacheMiddleware',  # ← Adicione mas devo comentar em Desenvolvimento
+    'django.middleware.cache.FetchFromCacheMiddleware',  # ← Adicione mas devo comentar em Desenvolvimento
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-"""# Configuração do cache middleware
+# Configuração do cache middleware
 CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 600  # 10 minutos # Devo comentar em Desenvolvimento
-CACHE_MIDDLEWARE_KEY_PREFIX = 'site'"""
+CACHE_MIDDLEWARE_KEY_PREFIX = 'site'
 
 ROOT_URLCONF = 'big_flavor.urls'
 
@@ -102,7 +102,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True, # Devo comentar antes de fazer a atualizacao no servidor
+        #'APP_DIRS': True, # Devo comentar antes de fazer a atualizacao no servidor
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -112,13 +112,13 @@ TEMPLATES = [
                 'index.context_processors.videos_context',
                 'index.context_processors.dashboard_stats'
             ],
-#            'loaders': [
-#                # Cache de templates em produção mas devo comentar em Desenvolvimento
-#                ('django.template.loaders.cached.Loader', [
-#                    'django.template.loaders.filesystem.Loader',
-#                    'django.template.loaders.app_directories.Loader',
-#                ]),
-#            ],
+            'loaders': [
+                # Cache de templates em produção mas devo comentar em Desenvolvimento
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
+            ],
         },
     },
 ]
@@ -131,25 +131,25 @@ WSGI_APPLICATION = 'big_flavor.wsgi.application'
 
 # settings.py - VERSÃO COMPLETA
 
-"""DATABASES = {
+DATABASES = {
     'default': dj_database_url.config(
         default='postgresql://postgres:FXCXRkozcXVYOTXNXpgjXXECikZgviaw@interchange.proxy.rlwy.net:24064/railway',
         conn_max_age=600,
         conn_health_checks=True,
     )
-}"""
+}
 
-# DESENVOLVIMENTO (Local)
+"""# DESENVOLVIMENTO (Local)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
         'CONN_MAX_AGE': 60,
     }
-}
+}"""
    
 # Cache
-"""CACHES = {
+CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': 'redis://127.0.0.1:6379',
@@ -167,7 +167,7 @@ CACHES = {
             'IGNORE_EXCEPTIONS': True,
         }
     }
-}"""
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -192,11 +192,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'pt-br'
-
-TIME_ZONE = 'UTC'
-
+TIME_ZONE = 'Africa/Luanda'
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
 
 
@@ -238,9 +236,9 @@ AUTH_USER_MODEL = 'conta.Usuario'
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # Devo comentar em Desenvolvimento
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # Devo comentar em Desenvolvimento
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage' # Devo comentar em Desenvolvimento
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage' # Devo comentar em Desenvolvimento
 
 # Media files
 MEDIA_URL = '/media/'
