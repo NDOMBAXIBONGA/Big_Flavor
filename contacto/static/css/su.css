@@ -421,87 +421,137 @@
             }
         }
 
-        /* Footer */
-        .footer {
-            background: var(--gradient-dark);
-            color: white;
-            padding: 80px 0 0;
-        }
+        /* Estilos para o footer responsivo */
+.footer {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 2rem 0 0;
+}
 
-        .footer-contact h2,
-        .footer-link h2,
-        .footer-newsletter h2 {
-            font-weight: 700;
-            margin-bottom: 25px;
-            font-size: 1.5rem;
-        }
+.footer-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #f39c12;
+    font-weight: 600;
+}
 
-        .footer-contact p {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.contact-item, .hours-item {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+}
 
-        .footer-social {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
+.contact-item i {
+    min-width: 25px;
+    color: #f39c12;
+}
 
-        .footer-social a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 45px;
-            height: 45px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
+.hours-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .footer-social a:hover {
-            background: white;
-            color: var(--primary-color);
-            transform: translateY(-3px);
-        }
+.hours-item .day {
+    color: #bdc3c7;
+    font-weight: 500;
+}
 
-        .footer-link a {
-            display: block;
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 15px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
+.hours-item .time {
+    color: #ecf0f1;
+    font-weight: 600;
+}
 
-        .footer-link a:hover {
-            color: white;
-            padding-left: 5px;
-        }
+.footer-social {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
 
-        .footer-newsletter .form {
-            display: flex;
-        }
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #34495e;
+    color: #ecf0f1;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
 
-        .footer-newsletter .form-control {
-            border-radius: 50px 0 0 50px;
-            border: none;
-            padding: 15px 20px;
-        }
+.social-link:hover {
+    background: #f39c12;
+    color: #2c3e50;
+    transform: translateY(-2px);
+}
 
-        .footer-newsletter .btn-custom {
-            border-radius: 0 50px 50px 0;
-            padding: 15px 25px;
-        }
+.copyright {
+    background: #1a252f;
+    padding: 1rem 0;
+    margin-top: 2rem;
+    border-top: 1px solid #34495e;
+}
 
-        .copyright {
-            text-align: center;
-            padding: 30px 0;
-            margin-top: 60px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.7);
-        }
+.copyright-link {
+    color: #f39c12;
+    text-decoration: none;
+}
+
+.copyright-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .footer {
+        padding: 1.5rem 0 0;
+    }
+    
+    .footer-title {
+        font-size: 1.1rem;
+    }
+    
+    .footer-social {
+        justify-content: flex-start;
+    }
+    
+    .contact-item, .hours-item {
+        font-size: 0.9rem;
+    }
+    
+    .hours-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer {
+        text-align: center;
+    }
+    
+    .contact-item, .hours-item {
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
+    
+    .social-link {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .hours-item {
+        align-items: center;
+    }
+}
 
         .back-to-top {
             position: fixed;
