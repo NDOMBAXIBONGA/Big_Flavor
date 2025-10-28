@@ -20,9 +20,7 @@
     <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></noscript>
     
     <!-- Cache para CSS estático -->
-    
     <link href="{% static 'css/logado.css' %}" rel="stylesheet">
-    
     
     <style>
         :root {
@@ -121,15 +119,17 @@
             right: -5px;
         }
 
-        /* Dashboard Hero Section */
+        /* Dashboard Hero Section - RESPONSIVIDADE MELHORADA */
         .dashboard-hero {
             position: relative;
-            height: 500px;
+            height: 100vh;
+            min-height: 600px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            margin-top: 0px;
+            margin-top: 0;
+            padding: 20px 0;
         }
 
         .dashboard-background {
@@ -154,13 +154,19 @@
             width: 100%;
             padding: 0 20px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .welcome-title {
-            font-size: 3.5rem;
+            font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 800;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
+            width: 100%;
         }
 
         .welcome-title span {
@@ -168,66 +174,130 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display: inline-block;
         }
 
         .welcome-subtitle {
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 4vw, 1.5rem);
             opacity: 0.9;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            line-height: 1.4;
+            max-width: 800px;
+            width: 100%;
         }
 
         .dashboard-stats {
             display: flex;
             justify-content: center;
-            gap: 40px;
+            gap: clamp(20px, 5vw, 50px);
             flex-wrap: wrap;
+            margin: 2rem 0;
+            width: 100%;
         }
 
         .stat-item {
             text-align: center;
-            padding: 20px;
+            padding: clamp(15px, 3vw, 25px);
+            min-width: 120px;
         }
 
         .stat-number {
-            font-size: 3rem;
+            font-size: clamp(2rem, 8vw, 3.5rem);
             font-weight: 800;
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1;
         }
 
         .stat-label {
-            font-size: 1.1rem;
+            font-size: clamp(0.8rem, 3vw, 1.1rem);
             opacity: 0.9;
             text-transform: uppercase;
             letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: clamp(15px, 3vw, 25px);
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .btn-dashboard {
+            padding: clamp(12px, 3vw, 16px) clamp(20px, 4vw, 30px);
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 140px;
+        }
+
+        .btn-dashboard-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-dashboard-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-dashboard:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-dashboard-primary:hover {
+            color: white;
+        }
+
+        .btn-dashboard-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
         }
 
         /* Dashboard Sections */
         .dashboard-section {
-            padding: 80px 0;
+            padding: clamp(40px, 8vw, 80px) 0;
         }
 
         .section-header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: clamp(30px, 6vw, 50px);
+            padding: 0 15px;
         }
 
         .section-title {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
             color: var(--dark-text);
+            line-height: 1.2;
         }
 
         .section-subtitle {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             color: #6c757d;
             max-width: 600px;
             margin: 0 auto;
+            line-height: 1.5;
         }
 
-        /* Quick Actions */
+        /* Quick Actions - RESPONSIVIDADE MELHORADA */
         .quick-actions {
             margin-top: 30px;
         }
@@ -235,11 +305,12 @@
         .action-card {
             background: white;
             border-radius: var(--border-radius);
-            padding: 30px;
+            padding: clamp(20px, 4vw, 30px);
             text-align: center;
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
             height: 100%;
+            margin-bottom: clamp(15px, 3vw, 20px);
         }
 
         .action-card:hover {
@@ -248,31 +319,34 @@
         }
 
         .action-icon {
-            width: 80px;
-            height: 80px;
+            width: clamp(60px, 12vw, 80px);
+            height: clamp(60px, 12vw, 80px);
             background: var(--gradient-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
+            margin: 0 auto clamp(15px, 3vw, 20px);
         }
 
         .action-icon i {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
             color: white;
         }
 
         .action-card h3 {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: clamp(10px, 2vw, 15px);
             color: var(--dark-text);
+            line-height: 1.3;
         }
 
         .action-card p {
             color: #6c757d;
-            margin-bottom: 20px;
+            margin-bottom: clamp(15px, 3vw, 20px);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            line-height: 1.5;
         }
 
         /* Buttons */
@@ -281,7 +355,7 @@
             color: white;
             border: none;
             border-radius: 25px;
-            padding: 12px 25px;
+            padding: clamp(10px, 2.5vw, 12px) clamp(20px, 4vw, 25px);
             font-weight: 600;
             text-decoration: none;
             display: inline-flex;
@@ -290,16 +364,14 @@
             transition: all 0.3s ease;
             box-shadow: var(--shadow);
             cursor: pointer;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            gap: 8px;
         }
 
         .btn-action:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-hover);
             color: white;
-        }
-
-        .btn-action i {
-            margin-right: 8px;
         }
 
         .btn-disabled {
@@ -312,14 +384,14 @@
             transform: none !important;
         }
 
-        /* Order Cards */
+        /* Order Cards - RESPONSIVIDADE MELHORADA */
         .order-card {
             background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             overflow: hidden;
             transition: all 0.3s ease;
-            margin-bottom: 30px;
+            margin-bottom: clamp(20px, 4vw, 30px);
         }
 
         .order-card:hover {
@@ -333,22 +405,33 @@
         .order-header {
             background: var(--gradient-primary);
             color: white;
-            padding: 20px;
+            padding: clamp(15px, 3vw, 20px);
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 10px;
             align-items: center;
+            text-align: center;
+        }
+
+        @media (min-width: 576px) {
+            .order-header {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
         }
 
         .order-id {
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
         }
 
         .order-status {
             padding: 5px 15px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .status-pendente { background: var(--gradient-warning); }
@@ -359,7 +442,7 @@
         .status-cancelado { background: var(--gradient-secondary); }
 
         .order-body {
-            padding: 25px;
+            padding: clamp(20px, 4vw, 25px);
         }
 
         .order-timeline {
@@ -367,17 +450,25 @@
             justify-content: space-between;
             margin-bottom: 20px;
             position: relative;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .order-timeline::before {
             content: '';
             position: absolute;
             top: 15px;
-            left: 0;
-            right: 0;
+            left: 10%;
+            right: 10%;
             height: 2px;
             background: #e9ecef;
             z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .order-timeline::before {
+                display: none;
+            }
         }
 
         .timeline-item {
@@ -386,11 +477,13 @@
             align-items: center;
             position: relative;
             z-index: 2;
+            flex: 1;
+            min-width: 60px;
         }
 
         .timeline-dot {
-            width: 30px;
-            height: 30px;
+            width: clamp(25px, 6vw, 30px);
+            height: clamp(25px, 6vw, 30px);
             border-radius: 50%;
             background: #e9ecef;
             margin-bottom: 5px;
@@ -402,9 +495,10 @@
         }
 
         .timeline-item span {
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
             color: #6c757d;
             text-align: center;
+            line-height: 1.2;
         }
 
         .timeline-item.active span {
@@ -421,33 +515,52 @@
             justify-content: space-between;
             padding: 8px 0;
             border-bottom: 1px solid #f8f9fa;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .order-item span {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
 
         .order-total {
             display: flex;
             justify-content: space-between;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 3vw, 1.1rem);
             padding-top: 10px;
             border-top: 2px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 5px;
         }
 
         .order-actions {
-            padding: 20px;
+            padding: clamp(15px, 3vw, 20px);
             background: #f8f9fa;
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        @media (min-width: 576px) {
+            .order-actions {
+                justify-content: flex-start;
+            }
         }
 
         .btn-order {
-            padding: 10px 20px;
+            padding: clamp(8px, 2vw, 10px) clamp(15px, 3vw, 20px);
             border-radius: 20px;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
         }
 
         .btn-primary-order {
@@ -465,7 +578,7 @@
             transform: translateY(-2px);
         }
 
-        /* Recommendation Cards */
+        /* Recommendation Cards - RESPONSIVIDADE MELHORADA */
         .recommendation-card {
             background: white;
             border-radius: var(--border-radius);
@@ -473,6 +586,7 @@
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
             height: 100%;
+            margin-bottom: clamp(20px, 4vw, 30px);
         }
 
         .recommendation-card:hover {
@@ -482,7 +596,7 @@
 
         .recommendation-img {
             position: relative;
-            height: 200px;
+            height: clamp(180px, 40vw, 250px);
             overflow: hidden;
         }
 
@@ -507,18 +621,18 @@
         }
 
         .recommendation-placeholder i {
-            font-size: 3rem;
+            font-size: clamp(2rem, 8vw, 3rem);
             color: #6c757d;
         }
 
         .recommendation-badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 5px 10px;
-            border-radius: 15px;
+            top: 12px;
+            right: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
             color: white;
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
             font-weight: 600;
         }
 
@@ -528,15 +642,15 @@
 
         .recommendation-favorite {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 12px;
+            left: 12px;
         }
 
         .btn-favorite-recommendation {
             background: rgba(255, 255, 255, 0.9);
             border: none;
-            width: 40px;
-            height: 40px;
+            width: clamp(35px, 8vw, 40px);
+            height: clamp(35px, 8vw, 40px);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -551,34 +665,38 @@
         }
 
         .recommendation-content {
-            padding: 25px;
+            padding: clamp(20px, 4vw, 25px);
         }
 
         .recommendation-title {
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 4vw, 1.3rem);
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
             color: var(--dark-text);
+            line-height: 1.3;
         }
 
         .recommendation-price {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 800;
             color: var(--accent-color);
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
         }
 
         .recommendation-description {
             color: #6c757d;
-            margin-bottom: 15px;
+            margin-bottom: clamp(10px, 2vw, 15px);
             line-height: 1.5;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
 
         .recommendation-meta {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+            margin-bottom: clamp(15px, 3vw, 20px);
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .recommendation-rating,
@@ -596,11 +714,17 @@
         /* Empty States */
         .empty-orders,
         .empty-recommendations {
-            padding: 50px 20px;
+            padding: clamp(30px, 8vw, 50px) 20px;
+            text-align: center;
         }
 
         .empty-icon {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-icon i {
+            font-size: clamp(3rem, 12vw, 4rem);
+            color: #6c757d;
         }
 
         /* Floating Elements */
@@ -613,16 +737,16 @@
         }
 
         .floating-1 {
-            width: 200px;
-            height: 200px;
+            width: clamp(100px, 25vw, 200px);
+            height: clamp(100px, 25vw, 200px);
             top: 10%;
             left: 5%;
             animation: float 15s infinite ease-in-out;
         }
 
         .floating-2 {
-            width: 150px;
-            height: 150px;
+            width: clamp(80px, 20vw, 150px);
+            height: clamp(80px, 20vw, 150px);
             bottom: 20%;
             right: 10%;
             animation: float 12s infinite ease-in-out reverse;
@@ -631,10 +755,10 @@
         /* Back to top */
         .back-to-top {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
+            bottom: 20px;
+            right: 20px;
+            width: clamp(45px, 10vw, 50px);
+            height: clamp(45px, 10vw, 50px);
             background: var(--gradient-primary);
             color: white;
             border-radius: 50%;
@@ -661,136 +785,96 @@
         }
 
         /* Estilos para o footer responsivo */
-.footer {
-    background: #2c3e50;
-    color: #ecf0f1;
-    padding: 2rem 0 0;
-}
+        .footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: clamp(1.5rem, 5vw, 2rem) 0 0;
+        }
 
-.footer-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #f39c12;
-    font-weight: 600;
-}
+        .footer-title {
+            font-size: clamp(1.1rem, 3vw, 1.2rem);
+            margin-bottom: 1rem;
+            color: #f39c12;
+            font-weight: 600;
+        }
 
-.contact-item, .hours-item {
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: flex-start;
-}
+        .contact-item, .hours-item {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
 
-.contact-item i {
-    min-width: 25px;
-    color: #f39c12;
-}
+        .contact-item i {
+            min-width: 25px;
+            color: #f39c12;
+        }
 
-.hours-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .hours-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
 
-.hours-item .day {
-    color: #bdc3c7;
-    font-weight: 500;
-}
+        .hours-item .day {
+            color: #bdc3c7;
+            font-weight: 500;
+        }
 
-.hours-item .time {
-    color: #ecf0f1;
-    font-weight: 600;
-}
+        .hours-item .time {
+            color: #ecf0f1;
+            font-weight: 600;
+        }
 
-.footer-social {
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-}
+        .footer-social {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-.social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: #34495e;
-    color: #ecf0f1;
-    border-radius: 50%;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
+        @media (min-width: 768px) {
+            .footer-social {
+                justify-content: flex-start;
+            }
+        }
 
-.social-link:hover {
-    background: #f39c12;
-    color: #2c3e50;
-    transform: translateY(-2px);
-}
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(35px, 8vw, 40px);
+            height: clamp(35px, 8vw, 40px);
+            background: #34495e;
+            color: #ecf0f1;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
 
-.copyright {
-    background: #1a252f;
-    padding: 1rem 0;
-    margin-top: 2rem;
-    border-top: 1px solid #34495e;
-}
+        .social-link:hover {
+            background: #f39c12;
+            color: #2c3e50;
+            transform: translateY(-2px);
+        }
 
-.copyright-link {
-    color: #f39c12;
-    text-decoration: none;
-}
+        .copyright {
+            background: #1a252f;
+            padding: clamp(0.8rem, 3vw, 1rem) 0;
+            margin-top: 2rem;
+            border-top: 1px solid #34495e;
+        }
 
-.copyright-link:hover {
-    text-decoration: underline;
-}
+        .copyright-link {
+            color: #f39c12;
+            text-decoration: none;
+        }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .footer {
-        padding: 1.5rem 0 0;
-    }
-    
-    .footer-title {
-        font-size: 1.1rem;
-    }
-    
-    .footer-social {
-        justify-content: flex-start;
-    }
-    
-    .contact-item, .hours-item {
-        font-size: 0.9rem;
-    }
-    
-    .hours-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.2rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .footer {
-        text-align: center;
-    }
-    
-    .contact-item, .hours-item {
-        justify-content: center;
-        flex-direction: column;
-        gap: 0.2rem;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .social-link {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .hours-item {
-        align-items: center;
-    }
-}
+        .copyright-link:hover {
+            text-decoration: underline;
+        }
 
         /* Animations */
         @keyframes float {
@@ -819,104 +903,116 @@
         }
 
         /* Responsive */
-        @media (max-width: 1200px) {
-            .dashboard-stats {
-                gap: 30px;
-            }
-            
-            .stat-number {
-                font-size: 2.5rem;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .dashboard-hero {
-                height: 400px;
-            }
-            
-            .welcome-title {
-                font-size: 3rem;
-            }
-            
-            .section-title {
-                font-size: 2.2rem;
-            }
-        }
-
         @media (max-width: 768px) {
             .dashboard-hero {
-                height: 350px;
                 margin-top: 66px;
+                height: auto;
+                min-height: 100vh;
             }
-            
-            .welcome-title {
-                font-size: 2.5rem;
+
+            .dashboard-content {
+                padding-top: 40px;
+                padding-bottom: 40px;
             }
-            
-            .welcome-subtitle {
-                font-size: 1.1rem;
-            }
-            
+
             .dashboard-stats {
-                gap: 20px;
-            }
-            
-            .stat-item {
-                padding: 15px;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
-            
-            .order-timeline {
-                flex-direction: column;
                 gap: 15px;
             }
-            
-            .order-timeline::before {
-                display: none;
+
+            .stat-item {
+                padding: 10px;
+                min-width: 100px;
+            }
+
+            .dashboard-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-dashboard {
+                width: 100%;
+                max-width: 280px;
             }
         }
 
         @media (max-width: 576px) {
             .dashboard-hero {
-                height: 300px;
+                padding: 60px 0 40px;
             }
-            
+
             .welcome-title {
-                font-size: 2rem;
+                margin-bottom: 0.5rem;
             }
-            
-            .section-title {
-                font-size: 1.8rem;
+
+            .welcome-subtitle {
+                margin-bottom: 1.5rem;
             }
-            
+
             .dashboard-stats {
-                flex-direction: column;
                 gap: 10px;
             }
-            
-            .order-header {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
+
+            .stat-item {
+                min-width: 80px;
+                padding: 8px;
             }
-            
+
+            .order-timeline {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
             .order-actions {
                 flex-direction: column;
             }
-            
+
             .btn-order {
                 width: 100%;
+            }
+
+            .footer {
                 text-align: center;
+            }
+
+            .contact-item, .hours-item {
+                justify-content: center;
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+
+            .hours-item {
+                align-items: center;
+            }
+        }
+
+        /* Melhorias para telas muito pequenas */
+        @media (max-width: 360px) {
+            .dashboard-hero {
+                padding: 50px 0 30px;
+            }
+
+            .stat-item {
+                min-width: 70px;
+                padding: 5px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .btn-dashboard {
+                padding: 10px 15px;
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Cache para navbar -->
-    
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -1011,9 +1107,8 @@
         </div>
     </nav>
     <!-- Nav Bar End -->
-    
 
-    <!-- CONTEÚDO PRINCIPAL COM REDIRECIONAMENTO - SEM CACHE (dinâmico) -->
+    <!-- CONTEÚDO PRINCIPAL COM REDIRECIONAMENTO -->
     <main>
         {% if user.is_authenticated %}
             {% if user.is_staff or user.is_superuser %}
@@ -1032,23 +1127,19 @@
                 </div>
             {% else %}
                 <!-- CONTEÚDO NORMAL PARA USUÁRIOS COMUNS -->
-                <div class="user-content">
-                    <h1>Bem-vindo, {{ user.username }}!</h1>
-                    <p>Você está logado como usuário regular.</p>
+                <div class="user-content" style="display: none;">
+                    <!-- Conteúdo será mostrado no hero section -->
                 </div>
             {% endif %}
         {% else %}
             <!-- CONTEÚDO PARA VISITANTES NÃO LOGADOS -->
-            <div class="public-content">
-                <h1>Bem-vindo à nossa loja</h1>
-                <p>Faça login para continuar.</p>
-                <a href="{% url 'login' %}">Fazer Login</a>
+            <div class="public-content" style="display: none;">
+                <!-- Conteúdo será mostrado no hero section -->
             </div>
         {% endif %}
     </main>
 
-    <!-- Dashboard Hero Section - Cache por usuário -->
-
+    <!-- Dashboard Hero Section - RESPONSIVIDADE OTIMIZADA -->
     <section class="dashboard-hero">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
@@ -1058,7 +1149,7 @@
         </div>
         
         <div class="dashboard-content">
-            <h1 class="welcome-title" data-aos="fade-up">Bem-vindo, <span>{{ request.user.first_name }}</span>!</h1>
+            <h1 class="welcome-title" data-aos="fade-up">Bem-vindo, <span>{{ request.user.first_name|default:request.user.username }}</span>!</h1>
             <p class="welcome-subtitle" data-aos="fade-up" data-aos-delay="200">Sua jornada gastronômica personalizada começa aqui</p>
             
             <div class="dashboard-stats" data-aos="fade-up" data-aos-delay="400">
@@ -1070,13 +1161,33 @@
                     <div class="stat-number">{{ total_favoritos|default:0 }}</div>
                     <div class="stat-label">Favoritos</div>
                 </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ pedido_andamento|yesno:"1,0" }}</div>
+                    <div class="stat-label">Pedido Ativo</div>
+                </div>
+            </div>
+
+            <div class="dashboard-actions" data-aos="fade-up" data-aos-delay="600">
+                <a href="{% url 'lista_produtos' %}" class="btn-dashboard btn-dashboard-primary pulse">
+                    <i class="fas fa-utensils"></i>
+                    Explorar Cardápio
+                </a>
+                <a href="{% url 'historico_pedidos' %}" class="btn-dashboard btn-dashboard-secondary">
+                    <i class="fas fa-history"></i>
+                    Ver Histórico
+                </a>
+                {% if pedido_andamento %}
+                <a href="{% url 'detalhes_pedido' pedido_andamento.id %}" class="btn-dashboard btn-dashboard-secondary">
+                    <i class="fas fa-truck"></i>
+                    Acompanhar Pedido
+                </a>
+                {% endif %}
             </div>
         </div>
     </section>
 
-
-    <!-- Quick Actions Section - Cache estático -->
-    
+    <!-- Resto do conteúdo permanece igual (Quick Actions, Recent Orders, Recommendations) -->
+    <!-- Quick Actions Section -->
     <section class="dashboard-section">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
@@ -1130,7 +1241,6 @@
             </div>
         </div>
     </section>
-    
 
     <!-- Recent Orders Section - Cache por usuário -->
     
@@ -1279,7 +1389,7 @@
     
 
     <!-- Recommendations Section - Cache por usuário -->
-
+    
     <section class="dashboard-section">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
@@ -1374,10 +1484,8 @@
             </div>
         </div>
     </section>
-    
 
-    
-    <!-- Footer - Cache estático -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="container-fluid">
             <div class="row justify-content-center">
@@ -1387,7 +1495,7 @@
                         <div class="col-12 col-md-6 col-lg-5 mb-4">
                             <div class="footer-contact">
                                 <h2 class="footer-title">Nosso Endereço</h2>
-                                <div class="contact-info">
+                                <div>
                                     <p class="contact-item">
                                         <i class="fa fa-map-marker-alt me-2"></i>
                                         <span>123 Street, New York, USA</span>
@@ -1408,7 +1516,7 @@
                         <div class="col-12 col-md-6 col-lg-4 mb-4">
                             <div class="footer-hours">
                                 <h2 class="footer-title">Horário de Funcionamento</h2>
-                                <div class="hours-info">
+                                <div>
                                     <p class="hours-item">
                                         <span class="day">Segunda - Sexta:</span>
                                         <span class="time">08:00 - 22:00</span>
@@ -1463,15 +1571,13 @@
             </div>
         </div>
     </footer>
-    
 
     <!-- Back to top button -->
     <a href="#" class="back-to-top">
         <i class="fas fa-arrow-up"></i>
     </a>
 
-    <!-- Cache para scripts -->
-    
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -1480,7 +1586,8 @@
             duration: 800,
             easing: 'ease-in-out',
             once: true,
-            mirror: false
+            mirror: false,
+            disable: window.innerWidth < 768 ? true : false
         });
 
         // Back to top button
@@ -1517,7 +1624,7 @@
         // Loading states
         document.addEventListener('DOMContentLoaded', function() {
             // Add loading class to buttons on click
-            const buttons = document.querySelectorAll('.btn-action, .btn-order');
+            const buttons = document.querySelectorAll('.btn-action, .btn-order, .btn-dashboard');
             buttons.forEach(button => {
                 button.addEventListener('click', function() {
                     this.classList.add('loading');
@@ -1526,9 +1633,14 @@
                     }, 2000);
                 });
             });
+
+            // Re-initialize AOS on resize for mobile
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    AOS.refresh();
+                }
+            });
         });
     </script>
-    
-
 </body>
 </html>
