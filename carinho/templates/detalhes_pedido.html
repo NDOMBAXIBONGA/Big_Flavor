@@ -976,7 +976,7 @@
                     <!-- Elementos apenas para usuários NÃO logados -->
                     {% if not request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a href="{% url 'Index' %}" class="nav-link active">Home</a>
+                        <a href="{% url 'Index' %}" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'registro' %}" class="nav-link">Criar Conta</a>
@@ -990,7 +990,7 @@
                         <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
+                        <a href="{% url 'contacto' %}" class="nav-link active">Contactar Nós</a>
                     </li>
 
                     <!-- Elementos apenas para usuários logados -->

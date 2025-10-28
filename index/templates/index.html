@@ -9,11 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Big Flavor - Sabores Inesquecíveis</title>
     
+    <!-- Meta tags de cache -->
+    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
+    <meta http-equiv="Expires" content="Mon, 01 Jan 2024 00:00:00 GMT">
+    
     <!-- Otimização de carregamento de recursos externos -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></noscript>
     
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
 
@@ -630,11 +637,12 @@
             font-style: italic;
         }
 
-        /* Estilos para o footer responsivo */
+        /* Estilos para o footer responsivo - CORRIGIDOS */
 .footer {
     background: #2c3e50;
     color: #ecf0f1;
-    padding: 2rem 0 0;
+    padding: 3rem 0 0;
+    margin-top: 0;
 }
 
 .footer-title {
@@ -698,9 +706,10 @@
 
 .copyright {
     background: #1a252f;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
     margin-top: 2rem;
     border-top: 1px solid #34495e;
+    text-align: center;
 }
 
 .copyright-link {
@@ -710,56 +719,6 @@
 
 .copyright-link:hover {
     text-decoration: underline;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .footer {
-        padding: 1.5rem 0 0;
-    }
-    
-    .footer-title {
-        font-size: 1.1rem;
-    }
-    
-    .footer-social {
-        justify-content: flex-start;
-    }
-    
-    .contact-item, .hours-item {
-        font-size: 0.9rem;
-    }
-    
-    .hours-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.2rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .footer {
-        text-align: center;
-    }
-    
-    .contact-item, .hours-item {
-        justify-content: center;
-        flex-direction: column;
-        gap: 0.2rem;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .social-link {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .hours-item {
-        align-items: center;
-    }
 }
 
         /* Floating Elements */
@@ -1019,6 +978,29 @@
                 width: 100%;
                 max-width: 300px;
             }
+            
+            /* Responsividade do footer */
+            .footer {
+                padding: 2rem 0 0;
+            }
+            
+            .footer-title {
+                font-size: 1.1rem;
+            }
+            
+            .footer-social {
+                justify-content: flex-start;
+            }
+            
+            .contact-item, .hours-item {
+                font-size: 0.9rem;
+            }
+            
+            .hours-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.2rem;
+            }
         }
 
         @media (max-width: 576px) {
@@ -1043,6 +1025,30 @@
                 margin-right: 0;
                 margin-bottom: 15px;
             }
+            
+            /* Responsividade do footer */
+            .footer {
+                text-align: center;
+            }
+            
+            .contact-item, .hours-item {
+                justify-content: center;
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+            
+            .social-link {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .hours-item {
+                align-items: center;
+            }
         }
     </style>
 </head>
@@ -1052,26 +1058,33 @@
     <!-- Nav Bar Start -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <a href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'Index' %}{% endif %}" 
-               class="navbar-brand">Big <span>Flavor</span></a>
-            
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="navbar-brand">Big <span>Flavor</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            {% endif %}
+
+            {% if not request.user.is_authenticated %}
+            <a href="{% url 'Index' %}" class="navbar-brand">Big <span>Flavor</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            {% endif %}
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <!-- Elementos condicionais baseados no estado de autenticação -->
+                    <!-- Elementos apenas para usuários logados -->
                     {% if request.user.is_authenticated %}
                     <li class="nav-item"> 
                         <a class="nav-link" href="{% url 'dashboard' %}">Home</a> 
                     </li>
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
-                    </li>
-                    {% else %}
+                    {% endif %}
+
+                    <!-- Elementos apenas para usuários NÃO logados -->
+                    {% if not request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a href="{% url 'Index' %}" class="nav-link active">Home</a>
+                        <a href="{% url 'Index' %}" class="nav-link">Home</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'registro' %}" class="nav-link">Criar Conta</a>
@@ -1079,24 +1092,32 @@
                     <li class="nav-item">
                         <a href="{% url 'sobre' %}" class="nav-link">Sobre Nós</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ login_url }}">Login</a>
-                    </li>
                     {% endif %}
 
-                    <!-- Elementos comuns -->
                     <li class="nav-item">
                         <a href="{% url 'lista_produtos' %}" class="nav-link">Cardápio</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'contacto' %}" class="nav-link">Contactar Nós</a>
+                        <a href="{% url 'contacto' %}" class="nav-link active">Contactar Nós</a>
                     </li>
+
+                    <!-- Elementos apenas para usuários logados -->
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ login_url }}">Login</a>
+                    </li>
+                    {% endif %}
                     
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'lista_publicacoes' %}" class="dropdown-item">Publicações</a></li>
                             
+                            <!-- Elementos apenas para usuários logados -->
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'historico_pedidos' %}" class="dropdown-item">Historicos dos Pedidos</a></li>
                             <li><a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a></li>
@@ -1105,16 +1126,21 @@
                         </ul>
                     </li>
                     
+                    <!-- Elementos apenas para usuários logados -->
                     {% if request.user.is_authenticated %}
                     <li class="nav-item position-relative">
                         <a href="{% url 'ver_carrinho' %}" class="nav-link">
                             <i class="fas fa-shopping-cart me-1"></i>
                             Carrinho
-                            {% with user.carrinho_set.first as carrinho %}
-                                {% if carrinho and carrinho.total_itens > 0 %}
-                                    <span class="badge-cart">{{ carrinho.total_itens }}</span>
-                                {% endif %}
-                            {% endwith %}
+                            {% if user.is_authenticated %}
+                                {% with user.carrinho_set.first as carrinho %}
+                                    {% if carrinho and carrinho.total_itens > 0 %}
+                                        <span class="badge-cart">
+                                            {{ carrinho.total_itens }}
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
                         </a>
                     </li>
                     {% endif %}
@@ -1166,8 +1192,8 @@
     </section>
     {% endcache %}
 
-    <!-- About Story Section - Cache com timeout curto para vídeos dinâmicos -->
-    {% cache 300 about_story video_principal.id videos_galeria.count %}
+    <!-- About Story Section - Cache estático -->
+    {% cache 86400 about_story video_principal.id videos_galeria.count %}
     <section class="section">
         <div class="container">
             <div class="row align-items-center">
@@ -1503,8 +1529,8 @@
     </section>
     {% endcache %}
 
-    {% cache 86400 footer_dashboard %}
     <!-- Footer - Cache estático -->
+    {% cache 86400 footer_index %}
     <footer class="footer">
         <div class="container-fluid">
             <div class="row justify-content-center">
@@ -1514,7 +1540,7 @@
                         <div class="col-12 col-md-6 col-lg-5 mb-4">
                             <div class="footer-contact">
                                 <h2 class="footer-title">Nosso Endereço</h2>
-                                <div class="contact-info">
+                                <div>
                                     <p class="contact-item">
                                         <i class="fa fa-map-marker-alt me-2"></i>
                                         <span>123 Street, New York, USA</span>
@@ -1535,7 +1561,7 @@
                         <div class="col-12 col-md-6 col-lg-4 mb-4">
                             <div class="footer-hours">
                                 <h2 class="footer-title">Horário de Funcionamento</h2>
-                                <div class="hours-info">
+                                <div>
                                     <p class="hours-item">
                                         <span class="day">Segunda - Sexta:</span>
                                         <span class="time">08:00 - 22:00</span>
@@ -1597,7 +1623,7 @@
         <i class="fas fa-arrow-up"></i>
     </a>
 
-    <!-- Video Modal - SEM CACHE (dinâmico) -->
+    <!-- Video Modal -->
     <div class="modal fade video-modal" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
