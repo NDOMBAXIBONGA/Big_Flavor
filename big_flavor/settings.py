@@ -1,6 +1,126 @@
 import os
 import dj_database_url
 from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = 'django-insecure-chave-temporaria-dev'
+
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1', 
+    'big-flovar.up.railway.app',
+    '.railway.app',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://big-flovar.up.railway.app',
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth', 
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
+    'django.contrib.staticfiles',
+    
+    'balanco',
+    'blog',
+    'carinho',
+    'conta',
+    'contacto',
+    'index',
+    'menu',
+    'sobre',
+    'storages',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'big_flavor.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'index.context_processors.videos_context',
+                'index.context_processors.dashboard_stats'
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'big_flavor.wsgi.application'
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgresql://postgres:FXCXRkozcXVYOTXNXpgjXXECikZgviaw@interchange.proxy.rlwy.net:24064/railway',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
+
+AUTH_PASSWORD_VALIDATORS = [
+    # ... seus validadores
+]
+
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'Africa/Luanda'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
+
+SESSION_COOKIE_AGE = 1209600
+
+AUTH_USER_MODEL = 'conta.Usuario'
+
+# ✅ CONFIGURAÇÕES STATIC FILES
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# ✅ CONFIGURAÇÕES MEDIA FILES (LOCAL TEMPORÁRIO)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+"""
+import os
+import dj_database_url
+from pathlib import Path
 #from dotenv import load_dotenv # Devo comentar em desenvolvimento
 #load_dotenv()  # Carrega variáveis do .env Devo comentar em desenvolvimento
 
@@ -12,8 +132,7 @@ SECRET_KEY = 'django-insecure-chave-temporaria-dev'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-#DEBUG = True # Devo comentar em Producao
-
+DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1', 
@@ -50,7 +169,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic', # Devo comentar em desenvolvimento
+    #'whitenoise.runserver_nostatic', # Devo comentar em desenvolvimento
     'django.contrib.staticfiles',
     # suas apps personalizadas aqui
 
@@ -62,19 +181,7 @@ INSTALLED_APPS = [
     'index',
     'menu',
     'sobre',
-
-    'storages',
 ]
-
-# Configuração AWS S3
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-1')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = 'public-read'
-AWS_QUERYSTRING_AUTH = False
 
 # settings.py
 MIDDLEWARE = [
@@ -91,9 +198,9 @@ MIDDLEWARE = [
 ]
 
 # Configuração do cache middleware
-CACHE_MIDDLEWARE_ALIAS = 'default'
-CACHE_MIDDLEWARE_SECONDS = 600  # 10 minutos # Devo comentar em Desenvolvimento
-CACHE_MIDDLEWARE_KEY_PREFIX = 'site'
+#CACHE_MIDDLEWARE_ALIAS = 'default'
+#CACHE_MIDDLEWARE_SECONDS = 600  # 10 minutos # Devo comentar em Desenvolvimento
+#CACHE_MIDDLEWARE_KEY_PREFIX = 'site'
 
 ROOT_URLCONF = 'big_flavor.urls'
 
@@ -102,7 +209,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-        #'APP_DIRS': True, # Devo comentar antes de fazer a atualizacao no servidor
+        'APP_DIRS': True, # Devo comentar antes de fazer a atualizacao no servidor
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -112,13 +219,13 @@ TEMPLATES = [
                 'index.context_processors.videos_context',
                 'index.context_processors.dashboard_stats'
             ],
-            'loaders': [
-                # Cache de templates em produção mas devo comentar em Desenvolvimento
-                ('django.template.loaders.cached.Loader', [
-                    'django.template.loaders.filesystem.Loader',
-                    'django.template.loaders.app_directories.Loader',
-                ]),
-           ],
+#            'loaders': [
+#                # Cache de templates em produção mas devo comentar em Desenvolvimento
+#                ('django.template.loaders.cached.Loader', [
+#                   'django.template.loaders.filesystem.Loader',
+#                    'django.template.loaders.app_directories.Loader',
+#                ]),
+#           ],
         },
     },
 ]
@@ -133,14 +240,14 @@ DATABASES = {
     )
 }
 
-"""# DESENVOLVIMENTO (Local)
+# DESENVOLVIMENTO (Local)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
         'CONN_MAX_AGE': 60,
     }
-}"""
+}
    
 # Cache
 CACHES = {
@@ -217,19 +324,11 @@ AUTH_USER_MODEL = 'conta.Usuario'
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # Devo comentar em Desenvolvimento
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # Devo comentar em Desenvolvimento
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage' # Devo comnetar em Producao
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage' # Devo comentar em Desenvolvimento
+#STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage' # Devo comentar em Desenvolvimento
 
 # Media files
-#MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
-
-# Storage settings
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# Se quiser static files também no S3:
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
-
-# URLs
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+"""
