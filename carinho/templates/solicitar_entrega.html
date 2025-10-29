@@ -319,7 +319,7 @@
             margin-top: 5px;
         }
 
-        /* Buttons */
+        /* Buttons - MELHORIAS PARA MOBILE */
         .btn-delivery {
             border: none;
             border-radius: 25px;
@@ -333,6 +333,7 @@
             box-shadow: var(--shadow);
             font-size: 1rem;
             cursor: pointer;
+            width: 100%; /* Botão ocupa toda a largura disponível no mobile */
         }
 
         .btn-delivery i {
@@ -357,6 +358,13 @@
 
         .pulse {
             animation: pulse 2s infinite;
+        }
+
+        /* Container para os botões - MELHORIAS PARA MOBILE */
+        .btn-action-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 2rem;
         }
 
         /* Back to top */
@@ -438,7 +446,7 @@
             }
         }
 
-        /* Responsive */
+        /* Responsive - MELHORIAS ESPECÍFICAS PARA MOBILE */
         @media (max-width: 992px) {
             .page-hero-title {
                 font-size: 3rem;
@@ -476,13 +484,16 @@
                 font-size: 1.2rem;
             }
             
-            .btn-group-mobile {
+            /* MELHORIA: Container de botões em coluna no mobile */
+            .btn-action-container {
                 flex-direction: column;
+                gap: 10px;
             }
             
-            .btn-group-mobile .btn-delivery {
+            /* MELHORIA: Botões com largura total no mobile */
+            .btn-delivery {
                 width: 100%;
-                margin-bottom: 10px;
+                margin-bottom: 0;
             }
         }
 
@@ -497,6 +508,24 @@
             
             .summary-card {
                 padding: 20px;
+            }
+            
+            /* MELHORIA: Ajustes finos para telas muito pequenas */
+            .btn-delivery {
+                padding: 14px 20px; /* Aumenta o tamanho do toque */
+                font-size: 1.05rem; /* Texto ligeiramente maior */
+            }
+            
+            .btn-action-container {
+                margin-top: 2.5rem; /* Mais espaço acima dos botões */
+            }
+        }
+
+        /* MELHORIA: Estilo adicional para garantir boa aparência em todos os dispositivos */
+        @media (min-width: 769px) {
+            .btn-delivery {
+                width: auto; /* Largura automática em desktop */
+                min-width: 180px; /* Largura mínima para boa aparência */
             }
         }
     </style>
@@ -709,8 +738,8 @@
                         {% endfor %}
                     </div>
                     
-                    <!-- Botões de Ação -->
-                    <div class="d-flex gap-4 mt-5 {% if viewport_width < 576 %}btn-group-mobile{% endif %}" data-aos="fade-up" data-aos-delay="900">
+                    <!-- MELHORIA: Botões de Ação com container responsivo -->
+                    <div class="btn-action-container" data-aos="fade-up" data-aos-delay="900">
                         <button type="submit" class="btn-delivery btn-confirm pulse">
                             <i class="fas fa-check"></i>
                             Confirmar Pedido

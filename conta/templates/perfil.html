@@ -819,7 +819,7 @@
         <div class="profile-hero-content">
             <div class="row align-items-center">
                 <div class="col-md-8 text-center text-md-start" data-aos="fade-right">
-                    <h1 class="profile-hero-title">Olá, <span>{{ usuario.nome }}</span></h1>
+                    <h1 class="profile-hero-title">Olá, <span>{{ request.user.first_name|default:request.user.username }}</span></h1>
                     <p class="profile-hero-subtitle">
                         <i class="fas fa-calendar me-2"></i>
                         Membro desde {{ usuario.data_criacao|date:"F Y" }}
