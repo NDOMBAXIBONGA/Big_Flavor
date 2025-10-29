@@ -58,7 +58,7 @@
 
         .navbar-brand {
             font-weight: 800;
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2rem);
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -67,7 +67,7 @@
         }
 
         .navbar {
-            padding: 15px 0;
+            padding: clamp(10px, 3vw, 15px) 0;
             transition: all 0.5s ease;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.95) !important;
@@ -75,7 +75,7 @@
         }
 
         .navbar.scrolled {
-            padding: 10px 0;
+            padding: clamp(8px, 2vw, 10px) 0;
             background: rgba(255, 255, 255, 0.98) !important;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
@@ -85,6 +85,7 @@
             color: var(--dark-text) !important;
             position: relative;
             transition: all 0.3s ease;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
 
         .nav-link:hover {
@@ -110,27 +111,29 @@
             background: var(--accent-color);
             color: white;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: clamp(18px, 4vw, 20px);
+            height: clamp(18px, 4vw, 20px);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: clamp(0.6rem, 2.5vw, 0.7rem);
             font-weight: 700;
             position: absolute;
             top: -5px;
             right: -5px;
         }
 
-        /* Profile Hero Section */
+        /* Profile Hero Section - RESPONSIVIDADE MELHORADA */
         .profile-hero {
             position: relative;
-            height: 400px;
+            height: clamp(300px, 50vh, 400px);
+            min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             margin-top: 76px;
+            padding: 20px 0;
         }
 
         .profile-hero-background {
@@ -153,14 +156,15 @@
             color: white;
             z-index: 1;
             width: 100%;
-            padding: 0 20px;
+            padding: 0 clamp(15px, 4vw, 20px);
         }
 
         .profile-hero-title {
-            font-size: 3.5rem;
+            font-size: clamp(2rem, 8vw, 3.5rem);
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: clamp(8px, 2vw, 10px);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
         }
 
         .profile-hero-title span {
@@ -168,12 +172,14 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display: inline-block;
         }
 
         .profile-hero-subtitle {
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
             opacity: 0.9;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            line-height: 1.4;
         }
 
         .avatar-container {
@@ -183,11 +189,11 @@
         }
 
         .profile-avatar {
-            width: 150px;
-            height: 150px;
+            width: clamp(100px, 25vw, 150px);
+            height: clamp(100px, 25vw, 150px);
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid rgba(255, 255, 255, 0.3);
+            border: clamp(3px, 1vw, 5px) solid rgba(255, 255, 255, 0.3);
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
         }
@@ -213,28 +219,28 @@
 
         .avatar-overlay i {
             color: white;
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
         }
 
         /* Main Content */
         .main-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 50px 15px;
+            padding: clamp(30px, 6vw, 50px) clamp(10px, 3vw, 15px);
         }
 
         /* Content Grid */
         .content-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 30px;
+            gap: clamp(20px, 4vw, 30px);
             align-items: start;
         }
 
         .main-content, .sidebar-content {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: clamp(20px, 4vw, 30px);
         }
 
         /* Profile Card */
@@ -253,29 +259,29 @@
         .profile-card-header, .info-card-header {
             background: var(--gradient-primary);
             color: white;
-            padding: 25px;
-            font-size: 1.3rem;
+            padding: clamp(20px, 4vw, 25px);
+            font-size: clamp(1.1rem, 3.5vw, 1.3rem);
             font-weight: 700;
         }
 
         .profile-card-header i, .info-card-header i {
-            margin-right: 10px;
-            font-size: 1.5rem;
+            margin-right: 8px;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
         }
 
         .profile-card-body {
-            padding: 30px;
+            padding: clamp(20px, 4vw, 30px);
         }
 
         /* User Info Grid */
         .user-info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            gap: clamp(15px, 3vw, 20px);
         }
 
         .info-item {
-            padding: 20px;
+            padding: clamp(15px, 3vw, 20px);
             background: #f8f9fa;
             border-radius: 10px;
             border-left: 4px solid var(--secondary-color);
@@ -285,13 +291,13 @@
             font-weight: 600;
             color: var(--dark-text);
             margin-bottom: 5px;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .info-value {
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 3vw, 1.1rem);
             font-weight: 600;
             color: var(--primary-color);
         }
@@ -304,13 +310,13 @@
         /* Stats Container */
         .stats-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: clamp(15px, 3vw, 20px);
             text-align: center;
         }
 
         .stat-card {
-            padding: 25px 15px;
+            padding: clamp(20px, 4vw, 25px) clamp(12px, 2.5vw, 15px);
             background: var(--light-bg);
             border-radius: 15px;
             transition: all 0.3s ease;
@@ -322,23 +328,24 @@
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
             font-weight: 800;
             color: var(--primary-color);
             margin-bottom: 5px;
+            line-height: 1;
         }
 
         .stat-label {
             color: #6c757d;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
         }
 
         /* Buttons */
         .btn-action {
             border: none;
             border-radius: 25px;
-            padding: 12px 25px;
+            padding: clamp(10px, 2.5vw, 12px) clamp(15px, 3vw, 25px);
             font-weight: 600;
             transition: all 0.3s ease;
             text-decoration: none;
@@ -346,13 +353,11 @@
             align-items: center;
             justify-content: center;
             box-shadow: var(--shadow);
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
             cursor: pointer;
             margin: 5px;
-        }
-
-        .btn-action i {
-            margin-right: 8px;
+            gap: 8px;
+            min-width: 140px;
         }
 
         .btn-primary-action { background: var(--gradient-primary); color: white; }
@@ -368,8 +373,9 @@
         }
 
         .btn-sm {
-            padding: 8px 15px;
-            font-size: 0.9rem;
+            padding: clamp(8px, 2vw, 10px) clamp(12px, 2.5vw, 15px);
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            min-width: 120px;
         }
 
         .pulse {
@@ -380,15 +386,23 @@
         .pedido-item {
             background: #f8f9fa;
             border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: clamp(12px, 2.5vw, 15px);
+            margin-bottom: clamp(12px, 2.5vw, 15px);
         }
 
         .pedido-header {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
             margin-bottom: 10px;
+        }
+
+        @media (min-width: 576px) {
+            .pedido-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .pedido-meta {
@@ -404,8 +418,15 @@
 
         .pedido-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        @media (min-width: 576px) {
+            .pedido-actions {
+                justify-content: flex-start;
+            }
         }
 
         .status-pendente { background: var(--gradient-warning); color: white; }
@@ -417,7 +438,8 @@
 
         /* Empty State */
         .empty-state {
-            padding: 30px 20px;
+            padding: clamp(25px, 6vw, 30px) clamp(15px, 3vw, 20px);
+            text-align: center;
         }
 
         /* Floating Elements */
@@ -430,16 +452,16 @@
         }
 
         .floating-1 {
-            width: 200px;
-            height: 200px;
+            width: clamp(100px, 25vw, 200px);
+            height: clamp(100px, 25vw, 200px);
             top: 10%;
             left: 5%;
             animation: float 15s infinite ease-in-out;
         }
 
         .floating-2 {
-            width: 150px;
-            height: 150px;
+            width: clamp(80px, 20vw, 150px);
+            height: clamp(80px, 20vw, 150px);
             bottom: 20%;
             right: 10%;
             animation: float 12s infinite ease-in-out reverse;
@@ -448,10 +470,10 @@
         /* Back to top */
         .back-to-top {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
+            bottom: 20px;
+            right: 20px;
+            width: clamp(45px, 10vw, 50px);
+            height: clamp(45px, 10vw, 50px);
             background: var(--gradient-primary);
             color: white;
             border-radius: 50%;
@@ -477,137 +499,97 @@
             box-shadow: var(--shadow-hover);
         }
 
-                /* Estilos para o footer responsivo */
-.footer {
-    background: #2c3e50;
-    color: #ecf0f1;
-    padding: 2rem 0 0;
-}
+        /* Estilos para o footer responsivo */
+        .footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: clamp(1.5rem, 5vw, 2rem) 0 0;
+        }
 
-.footer-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #f39c12;
-    font-weight: 600;
-}
+        .footer-title {
+            font-size: clamp(1.1rem, 3vw, 1.2rem);
+            margin-bottom: 1rem;
+            color: #f39c12;
+            font-weight: 600;
+        }
 
-.contact-item, .hours-item {
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: flex-start;
-}
+        .contact-item, .hours-item {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
 
-.contact-item i {
-    min-width: 25px;
-    color: #f39c12;
-}
+        .contact-item i {
+            min-width: 25px;
+            color: #f39c12;
+        }
 
-.hours-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .hours-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
 
-.hours-item .day {
-    color: #bdc3c7;
-    font-weight: 500;
-}
+        .hours-item .day {
+            color: #bdc3c7;
+            font-weight: 500;
+        }
 
-.hours-item .time {
-    color: #ecf0f1;
-    font-weight: 600;
-}
+        .hours-item .time {
+            color: #ecf0f1;
+            font-weight: 600;
+        }
 
-.footer-social {
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-}
+        .footer-social {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-.social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: #34495e;
-    color: #ecf0f1;
-    border-radius: 50%;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
+        @media (min-width: 768px) {
+            .footer-social {
+                justify-content: flex-start;
+            }
+        }
 
-.social-link:hover {
-    background: #f39c12;
-    color: #2c3e50;
-    transform: translateY(-2px);
-}
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(35px, 8vw, 40px);
+            height: clamp(35px, 8vw, 40px);
+            background: #34495e;
+            color: #ecf0f1;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
 
-.copyright {
-    background: #1a252f;
-    padding: 1rem 0;
-    margin-top: 2rem;
-    border-top: 1px solid #34495e;
-}
+        .social-link:hover {
+            background: #f39c12;
+            color: #2c3e50;
+            transform: translateY(-2px);
+        }
 
-.copyright-link {
-    color: #f39c12;
-    text-decoration: none;
-}
+        .copyright {
+            background: #1a252f;
+            padding: clamp(0.8rem, 3vw, 1rem) 0;
+            margin-top: 2rem;
+            border-top: 1px solid #34495e;
+        }
 
-.copyright-link:hover {
-    text-decoration: underline;
-}
+        .copyright-link {
+            color: #f39c12;
+            text-decoration: none;
+        }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .footer {
-        padding: 1.5rem 0 0;
-    }
-    
-    .footer-title {
-        font-size: 1.1rem;
-    }
-    
-    .footer-social {
-        justify-content: flex-start;
-    }
-    
-    .contact-item, .hours-item {
-        font-size: 0.9rem;
-    }
-    
-    .hours-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.2rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .footer {
-        text-align: center;
-    }
-    
-    .contact-item, .hours-item {
-        justify-content: center;
-        flex-direction: column;
-        gap: 0.2rem;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .social-link {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .hours-item {
-        align-items: center;
-    }
-}
+        .copyright-link:hover {
+            text-decoration: underline;
+        }
 
         /* Animations */
         @keyframes pulse {
@@ -644,12 +626,8 @@
         }
 
         @media (max-width: 992px) {
-            .profile-hero-title {
-                font-size: 3rem;
-            }
-            
-            .profile-card-body {
-                padding: 25px;
+            .profile-hero {
+                margin-top: 66px;
             }
             
             .user-info-grid {
@@ -659,49 +637,26 @@
 
         @media (max-width: 768px) {
             .profile-hero {
-                height: 300px;
-                margin-top: 66px;
-            }
-            
-            .profile-hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .profile-hero-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .profile-card-body {
-                padding: 20px;
-            }
-            
-            .profile-card-header, .info-card-header {
-                padding: 20px;
-                font-size: 1.2rem;
+                height: clamp(250px, 45vh, 350px);
             }
             
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .pedido-header {
-                flex-direction: column;
-                gap: 10px;
+            .btn-action {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .profile-card-body {
+                padding: 20px;
             }
         }
 
         @media (max-width: 576px) {
             .profile-hero {
-                height: 250px;
-            }
-            
-            .profile-hero-title {
-                font-size: 2rem;
-            }
-            
-            .profile-avatar {
-                width: 120px;
-                height: 120px;
+                padding: 40px 0 20px;
             }
             
             .stats-container {
@@ -709,8 +664,64 @@
             }
             
             .btn-action {
-                width: 100%;
-                margin: 5px 0;
+                min-width: auto;
+            }
+            
+            .footer {
+                text-align: center;
+            }
+            
+            .contact-item, .hours-item {
+                justify-content: center;
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+            
+            .hours-item {
+                align-items: center;
+            }
+        }
+
+        /* Melhorias para telas muito pequenas */
+        @media (max-width: 360px) {
+            .profile-hero {
+                height: 280px;
+                padding: 30px 0 15px;
+            }
+            
+            .profile-avatar {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .stat-card {
+                padding: 15px 10px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .btn-action {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Melhorias de acessibilidade e toque */
+        @media (max-width: 768px) {
+            .btn-action, .nav-link {
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+            }
+            
+            .info-item {
+                padding: 15px;
+            }
+            
+            .profile-card-header, .info-card-header {
+                padding: 18px;
             }
         }
     </style>
@@ -794,7 +805,7 @@
     <!-- Nav Bar End -->
     {% endcache %}
 
-    <!-- Profile Hero Section -->
+    <!-- Profile Hero Section - RESPONSIVIDADE OTIMIZADA -->
     <section class="profile-hero">
         <div class="floating-element floating-1"></div>
         <div class="floating-element floating-2"></div>
@@ -807,7 +818,7 @@
         
         <div class="profile-hero-content">
             <div class="row align-items-center">
-                <div class="col-md-8 text-md-start" data-aos="fade-right">
+                <div class="col-md-8 text-center text-md-start" data-aos="fade-right">
                     <h1 class="profile-hero-title">Olá, <span>{{ usuario.nome }}</span></h1>
                     <p class="profile-hero-subtitle">
                         <i class="fas fa-calendar me-2"></i>
@@ -1003,7 +1014,7 @@
                         Ações Rápidas
                     </div>
                     <div class="profile-card-body">
-                        <div class="d-flex gap-3 flex-wrap justify-content-center">
+                        <div class="d-flex flex-column flex-md-row gap-3 flex-wrap justify-content-center">
                             <a href="{% url 'editar_perfil' %}" class="btn-action btn-primary-action pulse" data-aos="fade-up" data-aos-delay="700">
                                 <i class="fas fa-edit"></i>
                                 Editar Perfil
@@ -1203,8 +1214,8 @@
         </div>
     </div>
 
-    {% cache 86400 footer_dashboard %}
     <!-- Footer - Cache estático -->
+    {% cache 86400 footer_dashboard %}
     <footer class="footer">
         <div class="container-fluid">
             <div class="row justify-content-center">
@@ -1297,109 +1308,49 @@
         <i class="fas fa-chevron-up"></i>
     </a>
 
-    <!-- Modal para Upload de Avatar - SEM CACHE (dinâmico) -->
-    <div class="modal fade" id="avatarModal" tabindex="-1">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Alterar Foto de Perfil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="{% url 'upload_avatar' %}" enctype="multipart/form-data" id="avatarForm">
-                        {% csrf_token %}
-                        <div class="text-center mb-4">
-                            <div class="avatar-container mb-3">
-                                {% if usuario.foto_perfil %}
-                                    <img id="avatarPreview" src="{{ usuario.foto_perfil.url }}" alt="Preview" class="profile-avatar">
-                                {% else %}
-                                    <img id="avatarPreview" src="{% static 'img/default-avatar.png' %}" alt="Preview" class="profile-avatar">
-                                {% endif %}
-                            </div>
-                            <p class="text-muted">Formatos suportados: JPG, PNG, GIF (Max: 5MB)</p>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="foto_perfil" class="form-label">Selecionar imagem</label>
-                            <input type="file" class="form-control" id="foto_perfil" name="foto_perfil" accept="image/*">
-                        </div>
-                        
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            A imagem será redimensionada automaticamente para 300x300 pixels.
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="avatarForm" class="btn btn-primary-action">
-                        <i class="fas fa-upload me-2"></i>
-                        Upload
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para Excluir Conta - SEM CACHE (dinâmico) -->
-    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Excluir Conta
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger">
-                        <h6 class="alert-heading">Atenção!</h6>
-                        <p class="mb-0">Esta ação é irreversível. Todos os seus dados serão permanentemente excluídos.</p>
-                    </div>
-                    
-                    <p><strong>O que será excluído:</strong></p>
-                    <ul>
-                        <li>Seus dados pessoais</li>
-                        <li>Histórico de pedidos</li>
-                        <li>Preferências e configurações</li>
-                        <li>Todos os dados associados à sua conta</li>
-                    </ul>
-                    
-                    <div class="mb-3">
-                        <label for="confirmDelete" class="form-label">
-                            Digite <strong>EXCLUIR CONTA</strong> para confirmar:
-                        </label>
-                        <input type="text" class="form-control" id="confirmDelete" placeholder="EXCLUIR CONTA">
-                    </div>
-                    
-                    <p class="text-muted small">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Esta ação não pode ser desfeita. Certifique-se de fazer backup de qualquer informação importante.
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Manter Conta</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" disabled>
-                        <i class="fas fa-trash me-2"></i>
-                        Excluir Permanentemente
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Scripts Otimizados -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Carregamento assíncrono de scripts
-        function loadScript(src, callback) {
-            const script = document.createElement('script');
-            script.src = src;
-            script.async = true;
-            script.onload = callback;
-            script.onerror = () => console.error(`Erro ao carregar script: ${src}`);
-            document.head.appendChild(script);
+        // Inicialização AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            mirror: false,
+            disable: window.innerWidth < 768 ? true : false
+        });
+
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar');
+        const backToTop = document.querySelector('.back-to-top');
+
+        function handleScroll() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Back to top button
+            if (window.scrollY > 300) {
+                backToTop.classList.add('active');
+            } else {
+                backToTop.classList.remove('active');
+            }
         }
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+
+        // Smooth scroll for back to top
+        backToTop.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
 
         // Preview de imagem do avatar
         function initAvatarPreview() {
@@ -1438,73 +1389,17 @@
             }
         }
 
-        // Inicialização das funcionalidades da página
-        function initPageFunctionality() {
-            // Inicializar AOS (Animate On Scroll)
-            if (typeof AOS !== 'undefined') {
-                AOS.init({
-                    duration: 800,
-                    easing: 'ease-in-out',
-                    once: true,
-                    offset: 100
-                });
-            }
-
-            // Navbar scroll effect
-            const navbar = document.querySelector('.navbar');
-            const backToTop = document.querySelector('.back-to-top');
-
-            function handleScroll() {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-
-                // Back to top button
-                if (window.scrollY > 300) {
-                    backToTop.classList.add('active');
-                } else {
-                    backToTop.classList.remove('active');
-                }
-            }
-
-            window.addEventListener('scroll', handleScroll);
-            handleScroll(); // Executar uma vez para estado inicial
-
-            // Back to top functionality
-            backToTop.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-
-            // Inicializar preview do avatar
+        // Inicialização das funcionalidades
+        document.addEventListener('DOMContentLoaded', function() {
             initAvatarPreview();
-
-            // Inicializar validação de exclusão de conta
             initDeleteAccountValidation();
 
-            // Pré-conectar a domínios externos para melhor performance
-            const domainsToPreconnect = [
-                'https://cdn.jsdelivr.net',
-                'https://cdnjs.cloudflare.com',
-                'https://unpkg.com'
-            ];
-            
-            domainsToPreconnect.forEach(domain => {
-                const link = document.createElement('link');
-                link.rel = 'preconnect';
-                link.href = domain;
-                document.head.appendChild(link);
+            // Re-initialize AOS on resize for mobile
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    AOS.refresh();
+                }
             });
-        }
-
-        // Carregar scripts críticos
-        loadScript('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', function() {
-            loadScript('https://unpkg.com/aos@2.3.1/dist/aos.js', initPageFunctionality);
         });
     </script>
 </body>
