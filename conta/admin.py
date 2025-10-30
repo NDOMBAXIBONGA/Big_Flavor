@@ -7,14 +7,14 @@ from .models import Usuario
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'nome', 'telemovel', 'is_staff', 'is_active')
     list_filter = ('is_staff', 'is_active', 'data_criacao')
-    search_fields = ('email', 'nome', 'cpf')
+    search_fields = ('email', 'nome')
     ordering = ('email',)
     readonly_fields = ('data_criacao', 'data_atualizacao', 'last_login', 'date_joined')
     
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Informações Pessoais'), {
-            'fields': ('nome', 'telemovel', 'cpf', 'data_nascimento', 'foto_perfil')
+            'fields': ('nome', 'telemovel', 'foto_perfil')
         }),
         (_('Endereço'), {
             'fields': ('bairro', 'cidade', 'provincia', 'municipio')
@@ -30,7 +30,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'nome', 'cpf', 'password1', 'password2'),
+            'fields': ('email', 'nome', 'password1', 'password2'),
         }),
     )
     

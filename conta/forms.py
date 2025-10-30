@@ -6,7 +6,6 @@ from django.core.cache import cache
 import re
 from django.core.validators import MinLengthValidator
 from .models import Usuario
-from datetime import date
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -32,14 +31,11 @@ class RegistroUsuarioForm(forms.ModelForm):
     
     class Meta:
         model = Usuario
-        fields = ['nome', 'email', 'telemovel', 'cpf', 'data_nascimento', 
-                 'bairro', 'cidade', 'provincia', 'municipio']
+        fields = ['nome', 'email', 'telemovel', 'bairro', 'cidade', 'provincia', 'municipio']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome completo'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'seu@email.com'}),
             'telemovel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(00) 00000-0000'}),
-            'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '000.000.000-00'}),
-            'data_nascimento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'bairro': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Seu bairro'}),
             'cidade': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sua cidade'}),
             'provincia': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sua província'}),
@@ -47,44 +43,247 @@ class RegistroUsuarioForm(forms.ModelForm):
         }
 
     PROVINCIAS = [
-        ('', 'Selecione uma província'),
-        ('huila', 'Huíla'),
-        ('luanda', 'Luanda'),
-        # ... outras províncias
+    ('', 'Selecione uma província'),
+    ('bengo', 'Bengo'),
+    ('benguela', 'Benguela'),
+    ('bíe', 'Bíe'),
+    ('cabinda', 'Cabinda'),
+    ('cunene', 'Cunene'),
+    ('huambo', 'Huambo'),
+    ('huila', 'Huíla'),
+    ('kuando_kubango', 'Kuando Kubango'),
+    ('kwanza_norte', 'Kwanza Norte'),
+    ('kwanza_sul', 'Kwanza Sul'),
+    ('luanda', 'Luanda'),
+    ('lunda_norte', 'Lunda Norte'),
+    ('lunda_sul', 'Lunda Sul'),
+    ('malanje', 'Malanje'),
+    ('moxico', 'Moxico'),
+    ('namibe', 'Namibe'),
+    ('uíge', 'Uíge'),
+    ('zaire', 'Zaire')
     ]
     
     MUNICIPIOS_POR_PROVINCIA = {
-        'huila': [
-            ('', 'Selecione o município'),
-            ('caconda', 'Caconda'),
-            ('cacula', 'Cacula'),
-            ('caluquembe', 'Caluquembe'),
-            ('cuvango', 'Cuvango'),
-            ('chibia', 'Chibia'),
-            ('chicomba', 'Chicomba'),
-            ('chipindo', 'Chipindo'),
-            ('gambos', 'Gambos'),
-            ('humpata', 'Humpata'),
-            ('jamba', 'Jamba'),
-            ('lubango', 'Lubango'),
-            ('matala', 'Matala'),
-            ('quilengues', 'Quilengues'),
-            ('quipungo', 'Quipungo')
-        ],
-        'luanda': [
-            ('', 'Selecione o município'),
-            ('belas', 'Belas'),
-            ('cacuaco', 'Cacuaco'),
-            ('cazenga', 'Cazenga'),
-            ('icolo_e_bengo', 'Icolo e Bengo'),
-            ('luanda', 'Luanda'),
-            ('quilamba_quiaxi', 'Quilamba Quiaxi'),
-            ('kilamba_kiaxi', 'Kilamba Kiaxi'),
-            ('talatona', 'Talatona'),
-            ('viana', 'Viana')
-        ],
-        # ... outras províncias
-    }
+    'bengo': [
+        ('', 'Selecione o município'),
+        ('ambriz', 'Ambriz'),
+        ('bula_atumba', 'Bula Atumba'),
+        ('dande', 'Dande'),
+        ('dembos', 'Dembos'),
+        ('nambuangongo', 'Nambuangongo'),
+        ('pango_alto', 'Pango Alto')
+    ],
+    'benguela': [
+        ('', 'Selecione o município'),
+        ('benguela', 'Benguela'),
+        ('baia_farta', 'Baía Farta'),
+        ('balombo', 'Balombo'),
+        ('bocoio', 'Bocoio'),
+        ('caimbambo', 'Caimbambo'),
+        ('catumbela', 'Catumbela'),
+        ('chongoroi', 'Chongoroi'),
+        ('cubal', 'Cubal'),
+        ('ganda', 'Ganda'),
+        ('lobito', 'Lobito')
+    ],
+    'bíe': [
+        ('', 'Selecione o município'),
+        ('andulo', 'Andulo'),
+        ('camacupa', 'Camacupa'),
+        ('catabola', 'Catabola'),
+        ('chinguar', 'Chinguar'),
+        ('chitembo', 'Chitembo'),
+        ('cuemba', 'Cuemba'),
+        ('cunhinga', 'Cunhinga'),
+        ('kuito', 'Kuito'),
+        ('nharea', 'Nhárea')
+    ],
+    'cabinda': [
+        ('', 'Selecione o município'),
+        ('belize', 'Belize'),
+        ('buco_zau', 'Buco Zau'),
+        ('cabinda', 'Cabinda'),
+        ('cacongo', 'Cacongo')
+    ],
+    'cunene': [
+        ('', 'Selecione o município'),
+        ('cahama', 'Cahama'),
+        ('cuanhama', 'Cuanhama'),
+        ('curoca', 'Curoca'),
+        ('cuvelai', 'Cuvelai'),
+        ('namacunde', 'Namacunde'),
+        ('ombadja', 'Ombadja')
+    ],
+    'huambo': [
+        ('', 'Selecione o município'),
+        ('bailundo', 'Bailundo'),
+        ('cachiungo', 'Cachiungo'),
+        ('caála', 'Caála'),
+        ('ekunha', 'Ekunha'),
+        ('huambo', 'Huambo'),
+        ('londuimbali', 'Londuimbali'),
+        ('longonjo', 'Longonjo'),
+        ('mungo', 'Mungo'),
+        ('chicala_cholohanga', 'Chicala-Cholohanga'),
+        ('chinjenje', 'Chinjenje'),
+        ('ucuma', 'Ucuma')
+    ],
+    'huila': [
+        ('', 'Selecione o município'),
+        ('caconda', 'Caconda'),
+        ('cacula', 'Cacula'),
+        ('caluquembe', 'Caluquembe'),
+        ('cuvango', 'Cuvango'),
+        ('chibia', 'Chibia'),
+        ('chicomba', 'Chicomba'),
+        ('chipindo', 'Chipindo'),
+        ('gambos', 'Gambos'),
+        ('humpata', 'Humpata'),
+        ('jamba', 'Jamba'),
+        ('lubango', 'Lubango'),
+        ('matala', 'Matala'),
+        ('quilengues', 'Quilengues'),
+        ('quipungo', 'Quipungo')
+    ],
+    'kuando_kubango': [
+        ('', 'Selecione o município'),
+        ('calai', 'Calai'),
+        ('cuangar', 'Cuangar'),
+        ('cuchi', 'Cuchi'),
+        ('cuito_cuanavale', 'Cuito Cuanavale'),
+        ('dirico', 'Dirico'),
+        ('mavinga', 'Mavinga'),
+        ('menongue', 'Menongue'),
+        ('nancova', 'Nancova'),
+        ('rivungo', 'Rivungo')
+    ],
+    'kwanza_norte': [
+        ('', 'Selecione o município'),
+        ('ambaca', 'Ambaca'),
+        ('banga', 'Banga'),
+        ('bolongongo', 'Bolongongo'),
+        ('cambambe', 'Cambambe'),
+        ('cazengo', 'Cazengo'),
+        ('golungo_alto', 'Golungo Alto'),
+        ('gonguembo', 'Gonguembo'),
+        ('lucala', 'Lucala'),
+        ('quiculungo', 'Quiculungo'),
+        ('samba_caju', 'Samba Caju')
+    ],
+    'kwanza_sul': [
+        ('', 'Selecione o município'),
+        ('amboim', 'Amboim'),
+        ('cassongue', 'Cassongue'),
+        ('cela', 'Cela'),
+        ('conda', 'Conda'),
+        ('ebol_bongo', 'Ebol-Bongo'),
+        ('libolo', 'Libolo'),
+        ('mussende', 'Mussende'),
+        ('porto_amboim', 'Porto Amboim'),
+        ('quibala', 'Quibala'),
+        ('quilenda', 'Quilenda'),
+        ('seles', 'Seles'),
+        ('sumbe', 'Sumbe'),
+        ('waku_kungo', 'Waku-Kungo')
+    ],
+    'luanda': [
+        ('', 'Selecione o município'),
+        ('belas', 'Belas'),
+        ('cacuaco', 'Cacuaco'),
+        ('cazenga', 'Cazenga'),
+        ('icolo_e_bengo', 'Icolo e Bengo'),
+        ('luanda', 'Luanda'),
+        ('quilamba_quiaxi', 'Quilamba Quiaxi'),
+        ('kilamba_kiaxi', 'Kilamba Kiaxi'),
+        ('talatona', 'Talatona'),
+        ('viana', 'Viana')
+    ],
+    'lunda_norte': [
+        ('', 'Selecione o município'),
+        ('cambulo', 'Cambulo'),
+        ('capenda_camulemba', 'Capenda-Camulemba'),
+        ('caungula', 'Caungula'),
+        ('chitato', 'Chitato'),
+        ('cuango', 'Cuango'),
+        ('cuílo', 'Cuílo'),
+        ('lubalo', 'Lubalo'),
+        ('lucapa', 'Lucapa'),
+        ('xá_muteba', 'Xá-Muteba')
+    ],
+    'lunda_sul': [
+        ('', 'Selecione o município'),
+        ('cacolo', 'Cacolo'),
+        ('dala', 'Dala'),
+        ('muconda', 'Muconda'),
+        ('saurimo', 'Saurimo')
+    ],
+    'malanje': [
+        ('', 'Selecione o município'),
+        ('cacuso', 'Cacuso'),
+        ('calandula', 'Calandula'),
+        ('cambundi_catembo', 'Cambundi-Catembo'),
+        ('cangandala', 'Cangandala'),
+        ('caombo', 'Caombo'),
+        ('cuaba_nzogo', 'Cuaba Nzogo'),
+        ('cunda_dia_baze', 'Cunda-Dia-Baze'),
+        ('luquembo', 'Luquembo'),
+        ('malanje', 'Malanje'),
+        ('marimba', 'Marimba'),
+        ('massango', 'Massango'),
+        ('mucari', 'Mucari'),
+        ('quela', 'Quela'),
+        ('quirima', 'Quirima')
+    ],
+    'moxico': [
+        ('', 'Selecione o município'),
+        ('alto_zambeze', 'Alto Zambeze'),
+        ('bunda', 'Bunda'),
+        ('camanongue', 'Camanongue'),
+        ('lacunas', 'Lacunas'),
+        ('leua', 'Leua'),
+        ('luau', 'Luau'),
+        ('luacano', 'Luacano'),
+        ('luchazes', 'Luchazes'),
+        ('cameia', 'Cameia'),
+        ('moxico', 'Moxico')
+    ],
+    'namibe': [
+        ('', 'Selecione o município'),
+        ('bibala', 'Bibala'),
+        ('camucuio', 'Camucuio'),
+        ('moçâmedes', 'Moçâmedes'),
+        ('tômbwa', 'Tômbwa'),
+        ('virei', 'Virei')
+    ],
+    'uíge': [
+        ('', 'Selecione o município'),
+        ('alto_cauale', 'Alto Cauale'),
+        ('ambuila', 'Ambuila'),
+        ('bembe', 'Bembe'),
+        ('buengas', 'Buengas'),
+        ('bungo', 'Bungo'),
+        ('damba', 'Damba'),
+        ('milunga', 'Milunga'),
+        ('macocola', 'Macocola'),
+        ('maquela_do_zombo', 'Maquela do Zombo'),
+        ('quimbele', 'Quimbele'),
+        ('quitexe', 'Quitexe'),
+        ('sanza_pombo', 'Sanza Pombo'),
+        ('songo', 'Songo'),
+        ('uíge', 'Uíge'),
+        ('negage', 'Negage')
+    ],
+    'zaire': [
+        ('', 'Selecione o município'),
+        ('cuimba', 'Cuimba'),
+        ('mbanza_kongo', 'Mbanza Kongo'),
+        ('noqui', 'Noqui'),
+        ('nzeto', 'Nzeto'),
+        ('soyo', 'Soyo'),
+        ('tomboco', 'Tomboco')
+    ]
+}
     
     provincia = forms.ChoiceField(
         choices=PROVINCIAS,
@@ -173,26 +372,6 @@ class RegistroUsuarioForm(forms.ModelForm):
             return telemovel_limpo
         return telemovel
     
-    def clean_cpf(self):
-        cpf = self.cleaned_data.get('cpf')
-        if cpf:
-            cpf_limpo = re.sub(r'\D', '', cpf)
-            if len(cpf_limpo) != 11:
-                raise ValidationError('CPF deve ter 11 dígitos')
-            
-            # Cache para verificar CPF existente
-            cache_key = f"cpf_exists_{cpf_limpo}"
-            cpf_exists = cache.get(cache_key)
-            
-            if cpf_exists is None:
-                cpf_exists = Usuario.objects.filter(cpf=cpf_limpo).exists()
-                cache.set(cache_key, cpf_exists, 300)  # 5 minutos
-            
-            if cpf_exists:
-                raise ValidationError('Este CPF já está cadastrado')
-            return cpf_limpo
-        return cpf
-    
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email:
@@ -210,24 +389,6 @@ class RegistroUsuarioForm(forms.ModelForm):
                 raise ValidationError('Este e-mail já está cadastrado')
             return email
         return email
-    
-    def clean_data_nascimento(self):
-        data_nascimento = self.cleaned_data.get('data_nascimento')
-        if not data_nascimento:
-            raise ValidationError('Data de nascimento é obrigatória')
-        
-        hoje = date.today()
-        if data_nascimento > hoje:
-            raise ValidationError('Data de nascimento não pode ser no futuro')
-        
-        idade = hoje.year - data_nascimento.year
-        if (hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day):
-            idade -= 1
-        
-        if idade < 18:
-            raise ValidationError('Você deve ter pelo menos 18 anos para se registrar')
-        
-        return data_nascimento
     
     def clean(self):
         cleaned_data = super().clean()
@@ -248,7 +409,6 @@ class RegistroUsuarioForm(forms.ModelForm):
             
             # Invalidar caches relacionados após criar usuário
             cache_keys_to_delete = [
-                f"cpf_exists_{usuario.cpf}",
                 f"email_exists_{usuario.email}",
                 f"usuario_profile_{usuario.id}",
             ]
@@ -310,13 +470,11 @@ class EditarPerfilForm(forms.ModelForm):
     
     class Meta:
         model = Usuario
-        fields = ['nome', 'email', 'telemovel', 'data_nascimento', 
-                 'bairro', 'cidade', 'provincia', 'municipio']
+        fields = ['nome', 'email', 'telemovel', 'bairro', 'cidade', 'provincia', 'municipio']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Seu nome completo'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'seu@email.com'}),
             'telemovel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+244 900 000 000'}),
-            'data_nascimento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'bairro': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Seu bairro'}),
             'cidade': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sua cidade'}),
             'provincia': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sua província'}),

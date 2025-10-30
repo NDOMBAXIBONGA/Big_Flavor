@@ -336,7 +336,7 @@ def api_dados_usuario(request):
     dados = {
         'nome': usuario.nome,
         'email': usuario.email,
-        'telefone': usuario.telefone,
+        'telemovel': usuario.telemovel,
         'membro_desde': usuario.date_joined.strftime('%d/%m/%Y'),
         'total_pedidos': PedidoEntrega.objects.filter(carrinho__usuario=usuario).count(),
     }

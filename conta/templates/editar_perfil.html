@@ -265,11 +265,6 @@
             border-bottom: 2px solid var(--gradient-primary);
         }
 
-        .info-card-header i {
-            margin-right: 10px;
-            color: var(--primary-color);
-        }
-
         .form-label {
             font-weight: 600;
             color: var(--dark-text);
@@ -720,24 +715,24 @@
                             Informações do Perfil
                         </div>
                         <div class="profile-card-body">
-                            <!-- Avatar Section - Cache por usuário -->
-                            {% cache 3600 profile_avatar request.user.id %}
-                            <div class="col-md-4 text-center" data-aos="fade-left" data-aos-delay="300">
-                                <div class="avatar-container">
-                                    {% if usuario.foto_perfil %}
-                                        <img src="{{ usuario.foto_perfil.url }}" alt="Avatar" class="profile-avatar" 
-                                            data-bs-toggle="modal" data-bs-target="#avatarModal">
-                                    {% else %}
-                                        <img src="{% static 'img/big.jpg' %}" alt="Avatar" class="profile-avatar"
-                                            data-bs-toggle="modal" data-bs-target="#avatarModal">
-                                    {% endif %}
-                                    <div class="avatar-overlay" data-bs-toggle="modal" data-bs-target="#avatarModal">
-                                        <i class="fas fa-camera"></i>
+                            <!-- Avatar Section - Centralizado e responsivo -->
+                            <div class="row justify-content-center mb-5">
+                                <div class="col-md-6 col-lg-4 text-center" data-aos="zoom-in" data-aos-delay="150">
+                                    <div class="avatar-container">
+                                        {% if usuario.foto_perfil %}
+                                            <img src="{{ usuario.foto_perfil.url }}" alt="Avatar" class="profile-avatar" 
+                                                data-bs-toggle="modal" data-bs-target="#avatarModal">
+                                        {% else %}
+                                            <img src="{% static 'img/big.jpg' %}" alt="Avatar" class="profile-avatar"
+                                                data-bs-toggle="modal" data-bs-target="#avatarModal">
+                                        {% endif %}
+                                        <div class="avatar-overlay" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                                            <i class="fas fa-camera"></i>
+                                        </div>
                                     </div>
+                                    <small class="text-muted d-block mt-2">Clique para alterar foto</small>
                                 </div>
-                                <small class="text-white d-block mt-2 opacity-75">Clique para alterar foto</small>
                             </div>
-                            {% endcache %}
 
                             <!-- Formulário SEM CACHE (dinâmico) -->
                             <form method="post" novalidate>
@@ -798,21 +793,6 @@
                                                 </div>
                                             {% endif %}
                                             <div class="form-text">Exemplo: +244 123 456 789</div>
-                                        </div>
-
-                                        <div class="mb-3" data-aos="fade-right" data-aos-delay="350">
-                                            <label for="{{ form.data_nascimento.id_for_label }}" class="form-label">
-                                                <i class="fas fa-birthday-cake"></i>
-                                                {{ form.data_nascimento.label }}
-                                            </label>
-                                            {{ form.data_nascimento }}
-                                            {% if form.data_nascimento.errors %}
-                                                <div class="text-danger small mt-1">
-                                                    {% for error in form.data_nascimento.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
-                                                </div>
-                                            {% endif %}
                                         </div>
                                     </div>
                                     

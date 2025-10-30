@@ -900,11 +900,6 @@
                             </div>
                             
                             <div class="info-item" data-aos="fade-right" data-aos-delay="300">
-                                <div class="info-label">CPF</div>
-                                <div class="info-value">{{ usuario.cpf }}</div>
-                            </div>
-                            
-                            <div class="info-item" data-aos="fade-left" data-aos-delay="400">
                                 <div class="info-label">Telefone</div>
                                 <div class="info-value">
                                     {% if usuario.telemovel %}
@@ -915,18 +910,7 @@
                                 </div>
                             </div>
                             
-                            <div class="info-item" data-aos="fade-right" data-aos-delay="500">
-                                <div class="info-label">Data de Nascimento</div>
-                                <div class="info-value">
-                                    {% if usuario.data_nascimento %}
-                                        {{ usuario.data_nascimento|date:"d/m/Y" }}
-                                    {% else %}
-                                        <span class="empty-field">Não informada</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            
-                            <div class="info-item" data-aos="fade-left" data-aos-delay="600">
+                            <div class="info-item" data-aos="fade-left" data-aos-delay="400">
                                 <div class="info-label">Data de Registro</div>
                                 <div class="info-value">{{ usuario.data_criacao|date:"d/m/Y" }}</div>
                             </div>

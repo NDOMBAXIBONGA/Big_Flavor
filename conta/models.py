@@ -18,8 +18,6 @@ class Usuario(AbstractUser):
     email = models.EmailField('E-mail', unique=True)
     nome = models.CharField('Nome Completo', max_length=100)
     telemovel = models.CharField('Telemóvel', max_length=15, blank=True, null=True)
-    cpf = models.CharField('CPF', max_length=14, unique=True)
-    data_nascimento = models.DateField('Data de Nascimento', blank=True, null=True)
     
     # Endereço
     bairro = models.CharField('Bairro', max_length=100, blank=True, null=True)
@@ -40,7 +38,7 @@ class Usuario(AbstractUser):
     
     # CONFIGURAÇÕES
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nome', 'cpf', 'username']
+    REQUIRED_FIELDS = ['nome', 'username']
     
     class Meta:
         verbose_name = 'Usuário'
@@ -74,21 +72,6 @@ class Usuario(AbstractUser):
         if usuario is None:
             try:
                 usuario = cls.objects.get(id=user_id)
-                cache.set(cache_key, usuario, 3600)  # Cache por 1 hora
-            except cls.DoesNotExist:
-                cache.set(cache_key, None, 300)  # Cache negativo por 5 minutos
-                return None
-        return usuario
-    
-    @classmethod
-    def obter_por_cpf(cls, cpf):
-        """Obtém usuário por CPF com cache"""
-        cache_key = f'usuario_cpf_{cpf}'
-        usuario = cache.get(cache_key)
-        
-        if usuario is None:
-            try:
-                usuario = cls.objects.get(cpf=cpf)
                 cache.set(cache_key, usuario, 3600)  # Cache por 1 hora
             except cls.DoesNotExist:
                 cache.set(cache_key, None, 300)  # Cache negativo por 5 minutos
@@ -144,7 +127,6 @@ class Usuario(AbstractUser):
                 'telemovel': self.telemovel,
                 'cidade': self.cidade,
                 'provincia': self.provincia,
-                'data_nascimento': self.data_nascimento,
                 'data_criacao': self.data_criacao,
                 'is_staff': self.is_staff,
                 'is_active': self.is_active,
@@ -191,7 +173,6 @@ class Usuario(AbstractUser):
         cache_keys = [
             f'usuario_id_{self.id}',
             f'usuario_email_{self.email.lower()}',
-            f'usuario_cpf_{self.cpf}',
             f'usuario_{self.id}_nome_completo',
             f'usuario_{self.id}_informacoes_perfil',
             f'usuario_{self.id}_estatisticas',
@@ -212,11 +193,9 @@ class Usuario(AbstractUser):
         if self.pk:
             try:
                 usuario_antigo = Usuario.objects.get(pk=self.pk)
-                # Se email ou CPF mudaram, limpa caches específicos
+                # Se email mudou, limpa caches específicos
                 if usuario_antigo.email != self.email:
                     cache.delete(f'usuario_email_{usuario_antigo.email.lower()}')
-                if usuario_antigo.cpf != self.cpf:
-                    cache.delete(f'usuario_cpf_{usuario_antigo.cpf}')
             except Usuario.DoesNotExist:
                 pass
         
@@ -293,15 +272,10 @@ def obter_estatisticas_usuarios():
 
 def obter_usuario_por_identificador(identificador):
     """
-    Busca usuário por email, CPF ou ID com cache
+    Busca usuário por email ou ID com cache
     """
     # Tenta por email
     usuario = Usuario.obter_por_email(identificador)
-    if usuario:
-        return usuario
-    
-    # Tenta por CPF
-    usuario = Usuario.obter_por_cpf(identificador)
     if usuario:
         return usuario
     
