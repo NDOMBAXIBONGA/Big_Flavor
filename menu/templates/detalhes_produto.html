@@ -341,6 +341,7 @@
             margin-bottom: 25px;
         }
 
+        /* MELHORIA: Botões com largura igual no desktop */
         .btn-cart-action {
             background: var(--gradient-primary);
             color: white;
@@ -354,6 +355,9 @@
             box-shadow: var(--shadow);
             display: flex;
             align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-width: 0;
         }
 
         .btn-cart-action:hover {
@@ -375,6 +379,9 @@
             box-shadow: var(--shadow);
             display: flex;
             align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-width: 0;
         }
 
         .btn-favorite-action:hover {
@@ -576,16 +583,15 @@
             color: white;
         }
 
-        /* Footer */
+        /* Estilos para o footer responsivo */
         .footer {
             background: #2c3e50;
             color: #ecf0f1;
-            padding: 3rem 0 0;
-            margin-top: 0;
+            padding: clamp(1.5rem, 5vw, 2rem) 0 0;
         }
 
         .footer-title {
-            font-size: 1.2rem;
+            font-size: clamp(1.1rem, 3vw, 1.2rem);
             margin-bottom: 1rem;
             color: #f39c12;
             font-weight: 600;
@@ -595,6 +601,7 @@
             margin-bottom: 0.5rem;
             display: flex;
             align-items: flex-start;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
 
         .contact-item i {
@@ -606,6 +613,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
         }
 
         .hours-item .day {
@@ -622,14 +631,21 @@
             display: flex;
             gap: 0.8rem;
             flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-social {
+                justify-content: flex-start;
+            }
         }
 
         .social-link {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: clamp(35px, 8vw, 40px);
+            height: clamp(35px, 8vw, 40px);
             background: #34495e;
             color: #ecf0f1;
             border-radius: 50%;
@@ -645,10 +661,9 @@
 
         .copyright {
             background: #1a252f;
-            padding: 1.5rem 0;
+            padding: clamp(0.8rem, 3vw, 1rem) 0;
             margin-top: 2rem;
             border-top: 1px solid #34495e;
-            text-align: center;
         }
 
         .copyright-link {
@@ -778,6 +793,17 @@
             .section-title {
                 font-size: 2.2rem;
             }
+            
+            /* MELHORIA: Botões com largura total em telas menores */
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-cart-action,
+            .btn-favorite-action {
+                width: 100%;
+                flex: none;
+            }
         }
 
         @media (max-width: 768px) {
@@ -817,7 +843,7 @@
             .btn-cart-action,
             .btn-favorite-action {
                 width: 100%;
-                justify-content: center;
+                flex: none;
             }
             
             .product-image, .product-image-placeholder {
@@ -1256,7 +1282,7 @@
                                 </div>
 
                                 <div class="action-buttons">
-                                    <form method="post" action="{% url 'adicionar_ao_carrinho' produto.pk %}" class="d-inline-block me-2">
+                                    <form method="post" action="{% url 'adicionar_ao_carrinho' produto.pk %}" class="d-inline-block me-2 flex-fill">
                                         {% csrf_token %}
                                         <input type="hidden" name="quantidade" id="hidden-quantidade" value="1">
                                         <button type="submit" class="btn-cart-action btn-primary-action pulse">
@@ -1266,7 +1292,7 @@
                                     </form>
 
                                     <!-- Botão de Favorito (versão mobile alternativa) -->
-                                    <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}" class="d-inline-block d-lg-none">
+                                    <form method="post" action="{% if eh_favorito %}{% url 'remover_favorito' produto.pk %}{% else %}{% url 'adicionar_favorito' produto.pk %}{% endif %}" class="d-inline-block d-lg-none flex-fill">
                                         {% csrf_token %}
                                         <button type="submit" class="btn-favorite-action {% if eh_favorito %}favorited{% endif %}" title="{% if eh_favorito %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
                                             <i class="{% if eh_favorito %}fas{% else %}far{% endif %} fa-heart me-2"></i>
@@ -1413,54 +1439,89 @@
     {% endcache %}
 
     <!-- Footer - Cache estático -->
-    {% cache 86400 footer_detalhes %}
+    {% cache 86400 footer_dashboard %}
     <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-7">
-                    <div class="row">
-                        <div class="col-md-6">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10 col-xl-8">
+                    <div class="row align-items-start">
+                        <!-- Informações de Contato -->
+                        <div class="col-12 col-md-6 col-lg-5 mb-4">
                             <div class="footer-contact">
-                                <h2>Nosso Endereço</h2>
-                                <p><i class="fa fa-map-marker-alt"></i>123 Street, New York, USA</p>
-                                <p><i class="fa fa-phone-alt"></i>+012 345 67890</p>
-                                <p><i class="fa fa-envelope"></i>info@example.com</p>
-                                <div class="footer-social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-youtube"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
+                                <h2 class="footer-title">Nosso Endereço</h2>
+                                <div class="contact-info">
+                                    <p class="contact-item">
+                                        <i class="fa fa-map-marker-alt me-2"></i>
+                                        <span>123 Street, New York, USA</span>
+                                    </p>
+                                    <p class="contact-item">
+                                        <i class="fa fa-phone-alt me-2"></i>
+                                        <span>+012 345 67890</span>
+                                    </p>
+                                    <p class="contact-item">
+                                        <i class="fa fa-envelope me-2"></i>
+                                        <span>info@example.com</span>
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="footer-link">
-                                <h2>Links Rápidos</h2>
-                                <a href="">Termos de Uso</a>
-                                <a href="">Política de Privacidade</a>
-                                <a href="">Cookies</a>
-                                <a href="">Ajuda</a>
-                                <a href="">FAQs</a>
+
+                        <!-- Horário de Funcionamento -->
+                        <div class="col-12 col-md-6 col-lg-4 mb-4">
+                            <div class="footer-hours">
+                                <h2 class="footer-title">Horário de Funcionamento</h2>
+                                <div class="hours-info">
+                                    <p class="hours-item">
+                                        <span class="day">Segunda - Sexta:</span>
+                                        <span class="time">08:00 - 22:00</span>
+                                    </p>
+                                    <p class="hours-item">
+                                        <span class="day">Sábado:</span>
+                                        <span class="time">09:00 - 23:00</span>
+                                    </p>
+                                    <p class="hours-item">
+                                        <span class="day">Domingo:</span>
+                                        <span class="time">10:00 - 20:00</span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-5">
-                    <div class="footer-newsletter">
-                        <h2>Newsletter</h2>
-                        <p>Inscreva-se para receber nossas novidades e promoções exclusivas</p>
-                        <div class="form">
-                            <input class="form-control" placeholder="Seu Email">
-                            <button class="btn btn-custom">Enviar</button>
+
+                        <!-- Redes Sociais -->
+                        <div class="col-12 col-md-6 col-lg-3 mb-4">
+                            <div class="footer-social-section">
+                                <h2 class="footer-title">Siga-nos</h2>
+                                <div class="footer-social">
+                                    <a href="#" class="social-link" aria-label="Twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="social-link" aria-label="Facebook">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a href="#" class="social-link" aria-label="YouTube">
+                                        <i class="fab fa-youtube"></i>
+                                    </a>
+                                    <a href="#" class="social-link" aria-label="Instagram">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="#" class="social-link" aria-label="LinkedIn">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Copyright -->
         <div class="copyright">
-            <div class="container">
-                <p>Copyright &copy; <a href="#">Big Flavor</a>, Todos os direitos reservados.</p>
+            <div class="container text-center">
+                <p class="mb-0">
+                    Copyright &copy; <a href="#" class="copyright-link">Big Flavor</a>, 
+                    Todos os direitos reservados.
+                </p>
             </div>
         </div>
     </footer>
