@@ -29,10 +29,6 @@
             box-sizing: border-box;
         }
 
-        html {
-    scroll-behavior: smooth;
-}
-
         body {
             background: var(--gradient-dark);
             min-height: 100vh;
