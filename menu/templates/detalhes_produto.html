@@ -45,11 +45,10 @@
             --shadow: 0 10px 30px rgba(0,0,0,0.1);
             --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
             --border-radius: 20px;
-
-            /* Novas variáveis para responsividade */
-    --container-padding: 1rem;
-    --section-padding: 5rem 0;
-    --mobile-section-padding: 3rem 0;
+            --container-padding: 1rem;
+            --section-padding: 5rem 0;
+            --mobile-section-padding: 3rem 0;
+            --transition: all 0.3s ease;
         }
 
         * {
@@ -59,8 +58,8 @@
         }
 
         html {
-    scroll-behavior: smooth;
-}
+            scroll-behavior: smooth;
+        }
 
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -70,80 +69,80 @@
         }
 
         /* Container responsivo */
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--container-padding);
-}
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+        }
 
-/* Navbar Styles */
-.navbar-brand {
-    font-weight: 800;
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -1px;
-}
+        /* Navbar Styles */
+        .navbar-brand {
+            font-weight: 800;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
 
-.navbar {
-    padding: 15px 0;
-    transition: var(--transition);
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.95) !important;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-}
+        .navbar {
+            padding: 15px 0;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
 
-.navbar.scrolled {
-    padding: 10px 0;
-    background: rgba(255, 255, 255, 0.98) !important;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
 
-.nav-link {
-    font-weight: 600;
-    color: var(--dark-text) !important;
-    position: relative;
-    transition: var(--transition);
-    font-size: clamp(0.9rem, 2vw, 1rem);
-}
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark-text) !important;
+            position: relative;
+            transition: var(--transition);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
 
-.nav-link:hover {
-    color: var(--secondary-color) !important;
-}
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--gradient-primary);
-    transition: var(--transition);
-}
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: var(--transition);
+        }
 
-.nav-link:hover::after {
-    width: 100%;
-}
+        .nav-link:hover::after {
+            width: 100%;
+        }
 
-.badge-cart {
-    background: var(--accent-color);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 700;
-    position: absolute;
-    top: -5px;
-    right: -5px;
-}
+        .badge-cart {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
 
         /* Product Hero Section */
         .product-hero {
@@ -360,7 +359,6 @@
             margin-bottom: 25px;
         }
 
-        /* MELHORIA: Botões com largura igual no desktop */
         .btn-cart-action {
             background: var(--gradient-primary);
             color: white;
@@ -426,11 +424,11 @@
             animation: pulse 2s infinite;
         }
 
-        /* Favorite Buttons - MELHORIAS PARA RESPONSIVIDADE */
+        /* Favorite Buttons */
         .favorite-button-mobile {
             position: fixed;
             bottom: 30px;
-            left: 30px; /* Alterado de right para left */
+            left: 30px;
             z-index: 1000;
         }
 
@@ -602,137 +600,131 @@
             color: white;
         }
 
-        /* Estilos para o footer responsivo */
-.footer {
-    background: #2c3e50;
-    color: #ecf0f1;
-    padding: 2rem 0 0;
-}
+        /* FOOTER RESPONSIVO E CENTRALIZADO */
+        .footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 3rem 0 0;
+            text-align: center;
+        }
 
-.footer-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #f39c12;
-    font-weight: 600;
-}
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
 
-.contact-item, .hours-item {
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: flex-start;
-}
+        .footer-section {
+            width: 100%;
+            max-width: 400px;
+        }
 
-.contact-item i {
-    min-width: 25px;
-    color: #f39c12;
-}
+        .footer-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            color: #f39c12;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
 
-.hours-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: #f39c12;
+        }
 
-.hours-item .day {
-    color: #bdc3c7;
-    font-weight: 500;
-}
+        .contact-info, .hours-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
 
-.hours-item .time {
-    color: #ecf0f1;
-    font-weight: 600;
-}
+        .contact-item, .hours-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            padding: 0.5rem 0;
+        }
 
-.footer-social {
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-}
+        .contact-item i {
+            color: #f39c12;
+            width: 20px;
+            text-align: center;
+        }
 
-.social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: #34495e;
-    color: #ecf0f1;
-    border-radius: 50%;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
+        .hours-item {
+            justify-content: space-between;
+            max-width: 280px;
+            margin: 0 auto;
+        }
 
-.social-link:hover {
-    background: #f39c12;
-    color: #2c3e50;
-    transform: translateY(-2px);
-}
+        .hours-item .day {
+            color: #bdc3c7;
+            font-weight: 500;
+            text-align: left;
+            flex: 1;
+        }
 
-.copyright {
-    background: #1a252f;
-    padding: 1rem 0;
-    margin-top: 2rem;
-    border-top: 1px solid #34495e;
-}
+        .hours-item .time {
+            color: #ecf0f1;
+            font-weight: 600;
+            text-align: right;
+        }
 
-.copyright-link {
-    color: #f39c12;
-    text-decoration: none;
-}
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
 
-.copyright-link:hover {
-    text-decoration: underline;
-}
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: #34495e;
+            color: #ecf0f1;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .footer {
-        padding: 1.5rem 0 0;
-    }
-    
-    .footer-title {
-        font-size: 1.1rem;
-    }
-    
-    .footer-social {
-        justify-content: flex-start;
-    }
-    
-    .contact-item, .hours-item {
-        font-size: 0.9rem;
-    }
-    
-    .hours-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.2rem;
-    }
-}
+        .social-link:hover {
+            background: #f39c12;
+            color: #2c3e50;
+            transform: translateY(-3px);
+        }
 
-@media (max-width: 576px) {
-    .footer {
-        text-align: center;
-    }
-    
-    .contact-item, .hours-item {
-        justify-content: center;
-        flex-direction: column;
-        gap: 0.2rem;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .social-link {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .hours-item {
-        align-items: center;
-    }
-}
+        .copyright {
+            background: #1a252f;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid #34495e;
+            width: 100%;
+        }
+
+        .copyright-link {
+            color: #f39c12;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .copyright-link:hover {
+            color: #e67e22;
+            text-decoration: underline;
+        }
 
         /* Floating Elements */
         .floating-element {
@@ -853,7 +845,6 @@
                 font-size: 2.2rem;
             }
             
-            /* MELHORIA: Botões com largura total em telas menores */
             .action-buttons {
                 flex-direction: column;
             }
@@ -862,6 +853,15 @@
             .btn-favorite-action {
                 width: 100%;
                 flex: none;
+            }
+
+            /* Footer para tablet */
+            .footer-content {
+                gap: 2.5rem;
+            }
+
+            .footer-section {
+                max-width: 350px;
             }
         }
 
@@ -925,7 +925,6 @@
                 height: 180px;
             }
             
-            /* Ajustes para botões fixos em dispositivos móveis */
             .favorite-button-mobile {
                 bottom: 30px;
                 left: 20px;
@@ -936,6 +935,47 @@
                 right: 20px;
                 width: 45px;
                 height: 45px;
+            }
+
+            /* Footer para mobile */
+            .footer {
+                padding: 2.5rem 0 0;
+            }
+
+            .footer-content {
+                gap: 2rem;
+            }
+
+            .footer-title {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+            }
+
+            .contact-item, .hours-item {
+                font-size: 0.95rem;
+                gap: 0.6rem;
+            }
+
+            .hours-item {
+                flex-direction: column;
+                gap: 0.2rem;
+                text-align: center;
+            }
+
+            .hours-item .day,
+            .hours-item .time {
+                text-align: center;
+            }
+
+            .social-link {
+                width: 42px;
+                height: 42px;
+                font-size: 1rem;
+            }
+
+            .copyright {
+                padding: 1.2rem 0;
+                margin-top: 2.5rem;
             }
         }
 
@@ -980,7 +1020,6 @@
                 font-size: 1.2rem;
             }
             
-            /* Ajustes finos para telas muito pequenas */
             .favorite-button-mobile {
                 bottom: 20px;
                 left: 15px;
@@ -997,6 +1036,50 @@
                 width: 50px;
                 height: 50px;
                 font-size: 1.3rem;
+            }
+
+            /* Footer para mobile pequeno */
+            .footer {
+                padding: 2rem 0 0;
+            }
+
+            .footer-content {
+                gap: 1.8rem;
+            }
+
+            .footer-section {
+                max-width: 100%;
+                padding: 0 1rem;
+            }
+
+            .footer-title {
+                font-size: 1.1rem;
+            }
+
+            .contact-item, .hours-item {
+                font-size: 0.9rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 0.3rem;
+            }
+
+            .contact-item i {
+                margin-bottom: 0.2rem;
+            }
+
+            .footer-social {
+                gap: 0.8rem;
+            }
+
+            .social-link {
+                width: 40px;
+                height: 40px;
+            }
+
+            .copyright {
+                padding: 1rem 0;
+                margin-top: 2rem;
+                font-size: 0.9rem;
             }
         }
 
@@ -1043,6 +1126,30 @@
             
             .quantity-input {
                 width: 60px;
+            }
+
+            /* Footer para telas muito pequenas */
+            .footer {
+                padding: 1.5rem 0 0;
+            }
+
+            .footer-title {
+                font-size: 1rem;
+            }
+
+            .contact-item, .hours-item {
+                font-size: 0.85rem;
+            }
+
+            .social-link {
+                width: 38px;
+                height: 38px;
+                font-size: 0.9rem;
+            }
+
+            .copyright {
+                font-size: 0.85rem;
+                padding: 0.8rem 0;
             }
         }
     </style>
@@ -1500,87 +1607,77 @@
     {% cache 86400 footer_dashboard %}
     <!-- Footer - Cache estático -->
     <footer class="footer">
-        <div class="container-fluid">
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-10 col-xl-8">
-                    <div class="row align-items-start">
-                        <!-- Informações de Contato -->
-                        <div class="col-12 col-md-6 col-lg-5 mb-4">
-                            <div class="footer-contact">
-                                <h2 class="footer-title">Nosso Endereço</h2>
-                                <div class="contact-info">
-                                    <p class="contact-item">
-                                        <i class="fa fa-map-marker-alt me-2"></i>
-                                        <span>123 Street, New York, USA</span>
-                                    </p>
-                                    <p class="contact-item">
-                                        <i class="fa fa-phone-alt me-2"></i>
-                                        <span>+012 345 67890</span>
-                                    </p>
-                                    <p class="contact-item">
-                                        <i class="fa fa-envelope me-2"></i>
-                                        <span>info@example.com</span>
-                                    </p>
-                                </div>
-                            </div>
+        <div class="container">
+            <div class="footer-content">
+                <!-- Informações de Contato -->
+                <div class="footer-section">
+                    <h2 class="footer-title">Nosso Endereço</h2>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fa fa-map-marker-alt"></i>
+                            <span>123 Street, New York, USA</span>
                         </div>
-
-                        <!-- Horário de Funcionamento -->
-                        <div class="col-12 col-md-6 col-lg-4 mb-4">
-                            <div class="footer-hours">
-                                <h2 class="footer-title">Horário de Funcionamento</h2>
-                                <div class="hours-info">
-                                    <p class="hours-item">
-                                        <span class="day">Segunda - Sexta:</span>
-                                        <span class="time">08:00 - 22:00</span>
-                                    </p>
-                                    <p class="hours-item">
-                                        <span class="day">Sábado:</span>
-                                        <span class="time">09:00 - 23:00</span>
-                                    </p>
-                                    <p class="hours-item">
-                                        <span class="day">Domingo:</span>
-                                        <span class="time">10:00 - 20:00</span>
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="contact-item">
+                            <i class="fa fa-phone-alt"></i>
+                            <span>+012 345 67890</span>
                         </div>
-
-                        <!-- Redes Sociais -->
-                        <div class="col-12 col-md-6 col-lg-3 mb-4">
-                            <div class="footer-social-section">
-                                <h2 class="footer-title">Siga-nos</h2>
-                                <div class="footer-social">
-                                    <a href="#" class="social-link" aria-label="Twitter">
-                                        <i class="fab fa-twitter"></i>
-                                    </a>
-                                    <a href="#" class="social-link" aria-label="Facebook">
-                                        <i class="fab fa-facebook-f"></i>
-                                    </a>
-                                    <a href="#" class="social-link" aria-label="YouTube">
-                                        <i class="fab fa-youtube"></i>
-                                    </a>
-                                    <a href="#" class="social-link" aria-label="Instagram">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                    <a href="#" class="social-link" aria-label="LinkedIn">
-                                        <i class="fab fa-linkedin-in"></i>
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="contact-item">
+                            <i class="fa fa-envelope"></i>
+                            <span>info@example.com</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Copyright -->
-        <div class="copyright">
-            <div class="container text-center">
-                <p class="mb-0">
-                    Copyright &copy; <a href="#" class="copyright-link">Big Flavor</a>, 
-                    Todos os direitos reservados.
-                </p>
+                <!-- Horário de Funcionamento -->
+                <div class="footer-section">
+                    <h2 class="footer-title">Horário de Funcionamento</h2>
+                    <div class="hours-info">
+                        <div class="hours-item">
+                            <span class="day">Segunda - Sexta:</span>
+                            <span class="time">08:00 - 22:00</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="day">Sábado:</span>
+                            <span class="time">09:00 - 23:00</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="day">Domingo:</span>
+                            <span class="time">10:00 - 20:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Redes Sociais -->
+                <div class="footer-section">
+                    <h2 class="footer-title">Siga-nos</h2>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="copyright">
+                <div class="container text-center">
+                    <p class="mb-0">
+                        Copyright &copy; <a href="#" class="copyright-link">Big Flavor</a>, 
+                        Todos os direitos reservados.
+                    </p>
+                </div>
             </div>
         </div>
     </footer>
