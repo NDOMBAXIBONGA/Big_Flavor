@@ -28,6 +28,11 @@
     <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></noscript>
     
     <!-- Cache para CSS estático -->
+    {% cache 86400 css_index %}
+    <link href="{% static 'css/detalhes.css' %}" rel="stylesheet">
+    {% endcache %}
+
+    <!-- Cache para CSS estático -->
     {% cache 86400 css_detalhes %}
     <style>
         :root {
