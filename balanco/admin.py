@@ -131,11 +131,11 @@ class RelatorioBalancoAdmin(admin.ModelAdmin):
     taxa_cancelamento_valor_display.short_description = 'Taxa de Cancelamento (Valor)'
     
     def valor_medio_entrega_display(self, obj):
-        return f"R$ {obj.valor_medio_entrega:.2f}"
+        return f"KZ {obj.valor_medio_entrega:.2f}"
     valor_medio_entrega_display.short_description = 'Valor Médio por Entrega'
     
     def valor_medio_pedido_display(self, obj):
-        return f"R$ {obj.valor_medio_pedido:.2f}"
+        return f"KZ {obj.valor_medio_pedido:.2f}"
     valor_medio_pedido_display.short_description = 'Valor Médio por Pedido'
     
     def eficiencia_operacional_display(self, obj):
@@ -151,11 +151,11 @@ class RelatorioBalancoAdmin(admin.ModelAdmin):
     pedidos_por_dia_display.short_description = 'Pedidos por Dia'
     
     def subtotal_por_dia_display(self, obj):
-        return f"R$ {obj.subtotal_por_dia:.2f}"
+        return f"KZ {obj.subtotal_por_dia:.2f}"
     subtotal_por_dia_display.short_description = 'Subtotal por Dia'
     
     def valor_geral_por_dia_display(self, obj):
-        return f"R$ {obj.valor_geral_por_dia:.2f}"
+        return f"KZ {obj.valor_geral_por_dia:.2f}"
     valor_geral_por_dia_display.short_description = 'Total Geral por Dia'
     
     def acoes_personalizadas(self, obj):

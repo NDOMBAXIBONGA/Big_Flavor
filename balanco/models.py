@@ -172,9 +172,9 @@ class RelatorioBalanco(models.Model):
         print(f"✅ Estatísticas calculadas:")
         print(f"   - Pedidos entregues: {self.total_pedidos_entregues}")
         print(f"   - Pedidos cancelados: {self.total_pedidos_cancelados}")
-        print(f"   - Subtotal (todos pedidos): R$ {self.subtotal_pedidos}")
-        print(f"   - Valor total cancelado: R$ {self.valor_total_cancelados}")
-        print(f"   - Total geral: R$ {self.total_geral}")
+        print(f"   - Subtotal (todos pedidos): KZ {self.subtotal_pedidos}")
+        print(f"   - Valor total cancelado: KZ {self.valor_total_cancelados}")
+        print(f"   - Total geral: KZ {self.total_geral}")
         print(f"   - Total pedidos no período: {self.total_pedidos_periodo}")
     
     # PROPRIEDADES PARA CÁLCULOS (com cache)
